@@ -1,0 +1,31 @@
+{
+  "name": "@mikemajesty/microservice-crud",
+  "version": "0.0.01",
+  "description": "Monorepo CLI",
+  "main": "src/cli.js",
+  "scripts": {
+    "permission": "chmod -R 777 ./bin/*",
+    "crud": "node ./bin/microservice-crud"
+  },
+  "bin": {
+    "microservice-crud": "bin/microservice-crud"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "cli",
+    "microservice-crud"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "arg": "^5.0.1",
+    "cli-select": "^1.1.2",
+    "colorette": "^2.0.19",
+    "esm": "^3.2.25",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^10.1.0",
+    "prompt-sync": "^4.2.0",
+    "rimraf": "^3.0.2"
+  }
+}
