@@ -1,8 +1,3 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 const getModuleSwagger = (name) => `import { CreatedModel } from '@/infra/repository/types';
 import { Swagger } from '@/utils/swagger';
 

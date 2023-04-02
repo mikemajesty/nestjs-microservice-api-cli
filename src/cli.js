@@ -6,6 +6,11 @@ const { exec } = require('child_process');
 const cliSelect = require('cli-select');
 const prompt = require('prompt-sync')();
 
+const { getCoreUsecaseCreateTest } = require('./templates/postgres/core/use-cases/__tests__/create.spec');
+const { getCoreUsecaseUpdateTest } = require('./templates/postgres/core/use-cases/__tests__/update.spec');
+const { getCoreUsecaseDeleteTest } = require('./templates/postgres/core/use-cases/__tests__/delete.spec');
+const { getCoreUsecaseListTest } = require('./templates/postgres/core/use-cases/__tests__/list.spec');
+const { getCoreUsecaseGetByIDTest } = require('./templates/postgres/core/use-cases/__tests__/getByID.spec');
 const { getCoreUsecaseGetByID } = require('./templates/postgres/core/use-cases/getByID');
 const { getCoreUsecaseList } = require('./templates/postgres/core/use-cases/list');
 const { getCoreEntity } = require('./templates/postgres/core/entity/entity');
@@ -37,7 +42,7 @@ const createPostgresCrud = async (name) => {
     fs.mkdirSync(dirRoot)
 
     fs.mkdirSync(`${dirRoot}/modules`)
-    
+
     fs.mkdirSync(`${dirRoot}/core`)
 
     const dirCore = `${dirRoot}/core/${name}`;
@@ -61,6 +66,15 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${useCasesPath}/${name}-list.ts`, getCoreUsecaseList(name))
     fs.writeFileSync(`${useCasesPath}/${name}-update.ts`, getCoreUsecaseUpdate(name))
 
+    const useCasesPathTest = `${useCasesPath}/__tests__`
+    fs.mkdirSync(useCasesPathTest)
+
+    fs.writeFileSync(`${useCasesPathTest}/${name}-create.spec.ts`, getCoreUsecaseCreateTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDTest(name))
+
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
 
@@ -78,7 +92,6 @@ const createPostgresCrud = async (name) => {
     if (fs.existsSync(dirRoot)) {
       fs.rmSync(dirRoot, { recursive: true });
     }
-
     return `${name}`
   }
 
@@ -138,17 +151,52 @@ export async function cli(args) {
   try {
 
     exec('zenity --file-selection --directory --title="Choose your path" --filename=$HOME/', async (err, dest) => {
+      const src = paths[0]
+
       if (err) {
-        console.log(err)
+        if (fs.existsSync(src)) {
+          fs.rmSync(src, { recursive: true });
+        }
+        console.error(err.message)
         return
       }
 
-      const src = paths[0]
+      // VALIDATE 
+      fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
+        if (err) {
+          if (fs.existsSync(src)) {
+            fs.rmSync(src, { recursive: true });
+          }
+          console.error(err.message)
+          return
+        }
 
-      fs.readdir(src, function (err, files) {
-        for (const file of files) {
-          const source = `${src}/${file}`;
-          const destination = `${dest}/src/${file}`.replace('\n', '');
+        for (const folder of ['core', 'modules']) {
+          const source = folders.find(f => f === folder)
+          if (!source) {
+            console.log(bold(red('error')))
+            console.error('select nestjs microservice api root')
+            return
+          }
+        }
+      });
+
+
+
+      // CREATE CRUD
+      fs.readdir(src, function (err, folders) {
+        if (err) {
+          if (fs.existsSync(src)) {
+            fs.rmSync(src, { recursive: true });
+          }
+          console.error(err.message)
+          return
+        }
+
+
+        for (const folder of folders) {
+          const source = `${src}/${folder}`;
+          const destination = `${dest}/src/${folder}`.replace('\n', '');
 
           fse.copySync(source, destination, { overwrite: true });
 
@@ -158,12 +206,12 @@ export async function cli(args) {
         }
       });
 
-      
-      console.log(bold(green('done')))
 
-      if (userInput.type === 'api') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/microservice-crud/blob/master/APP.md'))
-      }
+      // console.log(bold(green('done')))
+
+      // if (userInput.type === 'api') {
+      //   console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/microservice-crud/blob/master/APP.md'))
+      // }
     });
 
   } catch (error) {
