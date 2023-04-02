@@ -35,7 +35,7 @@ import {
 @Controller()
 @ApiTags('${name}')
 @ApiBearerAuth()
-@Roles(UserRoleRole.BACKOFFICE)
+@Roles(UserRole.BACKOFFICE)
 export class ${capitalizeFirstLetter(name)}Controller {
   constructor(
     private readonly ${name}CreateUsecase: I${capitalizeFirstLetter(name)}CreateAdapter,

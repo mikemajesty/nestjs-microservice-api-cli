@@ -7,7 +7,7 @@ const getModuleSchema = (name) => `import { Prop, Schema, SchemaFactory } from '
 import { Document } from 'mongoose';
 import * as paginate from 'mongoose-paginate-v2';
 
-import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}Role } from '@/core/${name}/entity/${name}';
+import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 
 export type ${capitalizeFirstLetter(name)}Document = Document & ${capitalizeFirstLetter(name)}Entity;
 

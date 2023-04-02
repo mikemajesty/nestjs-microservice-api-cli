@@ -9,7 +9,6 @@ import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/
 import { ${capitalizeFirstLetter(name)}CreateInput } from '@/modules/${name}/types';
 import { expectZodError } from '@/utils/tests';
 
-import { ${capitalizeFirstLetter(name)}Role } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
 
@@ -52,9 +51,7 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
     await expectZodError(
       () => usecase.execute({}),
       (issues) => {
-        expect(issues).toEqual([
-          { message: 'Required', path: 'name' }
-        ]);
+        expect(issues).toEqual([{ message: 'Required', path: 'name' }]);
       }
     );
   });

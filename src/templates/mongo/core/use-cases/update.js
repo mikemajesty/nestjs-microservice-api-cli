@@ -6,6 +6,7 @@ function capitalizeFirstLetter(string) {
 const getCoreUsecaseUpdate = (name) => `import { ILoggerAdapter } from '@/infra/logger';
 import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput, ${capitalizeFirstLetter(name)}UpdateSchema } from '@/modules/${name}/types';
 import { ValidateSchema } from '@/utils/decorators/validate-schema.decorator';
+import { ApiNotFoundException } from '@/utils/exception';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';

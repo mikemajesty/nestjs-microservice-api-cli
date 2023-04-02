@@ -9,7 +9,7 @@ import { I${capitalizeFirstLetter(name)}GetByIDAdapter } from '@/modules/${name}
 import { ApiNotFoundException } from '@/utils/exception';
 import { expectZodError, generateUUID } from '@/utils/tests';
 
-import { ${capitalizeFirstLetter(name)}Entity, } from '../../entity/${name}';
+import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-getByID';
 

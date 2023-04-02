@@ -45,8 +45,8 @@ import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document,
     },
     {
       provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-      useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, loggerService: ILoggerAdapter) => {
-        return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository, loggerService);
+      useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
+        return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository);
       },
       inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
     },

@@ -27,6 +27,27 @@ const { getModuleSchema } = require('./templates/postgres/modules/schema');
 const { getModuleSwagger } = require('./templates/postgres/modules/swagger');
 const { getModuleType } = require('./templates/postgres/modules/types');
 
+const { getCoreUsecaseCreateTest: getCoreUsecaseCreateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/create.spec');
+const { getCoreUsecaseUpdateTest: getCoreUsecaseUpdateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/update.spec');
+const { getCoreUsecaseDeleteTest: getCoreUsecaseDeleteMongoTest } = require('./templates/mongo/core/use-cases/__tests__/delete.spec');
+const { getCoreUsecaseListTest: getCoreUsecaseListMongoTest } = require('./templates/mongo/core/use-cases/__tests__/list.spec');
+const { getCoreUsecaseGetByIDTest: getCoreUsecaseGetByIDMongoTest } = require('./templates/mongo/core/use-cases/__tests__/getByID.spec');
+const { getCoreUsecaseGetByID: getCoreUsecaseGetByIDMongo } = require('./templates/mongo/core/use-cases/getByID');
+const { getCoreUsecaseList: getCoreUsecaseListMongo } = require('./templates/mongo/core/use-cases/list');
+const { getCoreEntity: getCoreEntityMongo } = require('./templates/mongo/core/entity/entity');
+const { getCoreRepository: getCoreRepositoryMongo } = require('./templates/mongo/core/repository/repository');
+const { getCoreUsecaseCreate: getCoreUsecaseCreateMongo } = require('./templates/mongo/core/use-cases/create');
+const { getCoreUsecaseDelete: getCoreUsecaseDeleteMongo } = require('./templates/mongo/core/use-cases/delete');
+const { getCoreUsecaseUpdate: getCoreUsecaseUpdateMongo } = require('./templates/mongo/core/use-cases/update');
+
+const { getModuleAdapter: getModuleAdapterMongo } = require('./templates/mongo/modules/adapter');
+const { getModuleController: getModuleControllerMongo } = require('./templates/mongo/modules/controller');
+const { getModule: getModuleMongo } = require('./templates/mongo/modules/module');
+const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/mongo/modules/repository');
+const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/modules/schema');
+const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
+const { getModuleType: getModuleTypeMongo } = require('./templates/mongo/modules/types');
+
 
 const createPostgresCrud = async (name) => {
   if (!name) throw new Error('--name is required')
@@ -97,10 +118,78 @@ const createPostgresCrud = async (name) => {
 
 }
 
+const createMongoCrud = async (name) => {
+  if (!name) throw new Error('--name is required')
+  name = name.toLowerCase()
+
+  const dirRoot = `${__dirname}/scafold/mongo/${name}`
+
+  try {
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+
+    fs.mkdirSync(dirRoot)
+
+    fs.mkdirSync(`${dirRoot}/modules`)
+
+    fs.mkdirSync(`${dirRoot}/core`)
+
+    const dirCore = `${dirRoot}/core/${name}`;
+    fs.mkdirSync(dirCore)
+
+    const entityPath = `${dirCore}/entity`;
+    const repositoryPath = `${dirCore}/repository`;
+    const useCasesPath = `${dirCore}/use-cases`;
+
+    fs.mkdirSync(entityPath)
+    fs.mkdirSync(repositoryPath)
+    fs.mkdirSync(useCasesPath)
+
+    fs.writeFileSync(`${entityPath}/${name}.ts`, getCoreEntityMongo(name))
+    fs.writeFileSync(`${repositoryPath}/${name}.ts`, getCoreRepositoryMongo(name))
+
+
+    fs.writeFileSync(`${useCasesPath}/${name}-create.ts`, getCoreUsecaseCreateMongo(name))
+    fs.writeFileSync(`${useCasesPath}/${name}-delete.ts`, getCoreUsecaseDeleteMongo(name))
+    fs.writeFileSync(`${useCasesPath}/${name}-getByID.ts`, getCoreUsecaseGetByIDMongo(name))
+    fs.writeFileSync(`${useCasesPath}/${name}-list.ts`, getCoreUsecaseListMongo(name))
+    fs.writeFileSync(`${useCasesPath}/${name}-update.ts`, getCoreUsecaseUpdateMongo(name))
+
+    const useCasesPathTest = `${useCasesPath}/__tests__`
+    fs.mkdirSync(useCasesPathTest)
+
+    fs.writeFileSync(`${useCasesPathTest}/${name}-create.spec.ts`, getCoreUsecaseCreateMongoTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateMongoTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteMongoTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListMongoTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDMongoTest(name))
+
+    const modulesPath = `${dirRoot}/modules/${name}`;
+    fs.mkdirSync(modulesPath)
+
+    fs.writeFileSync(`${modulesPath}/adapter.ts`, getModuleAdapterMongo(name))
+    fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleControllerMongo(name))
+    fs.writeFileSync(`${modulesPath}/module.ts`, getModuleMongo(name))
+    fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
+    fs.writeFileSync(`${modulesPath}/schema.ts`, getModuleSchemaMongo(name))
+    fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwaggerMongo(name))
+    fs.writeFileSync(`${modulesPath}/types.ts`, getModuleTypeMongo(name))
+
+    return `${name}`
+  } catch (error) {
+    console.log('error', error)
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+    return `${name}`
+  }
+
+}
+
 export const parseArgumentsInoOptions = async (input) => {
   return {
-    module: input.type === 'module' ? await createMonorepoModule(input.name) : false,
-    test: input.type === 'test' ? await createMonorepoTest(input.name) : false,
+    mongoCrud: input.type === 'mongo:crud' ? await createMongoCrud(input.name) : false,
     postgresCrud: input.type === 'postgres:crud' ? await createPostgresCrud(input.name) : false
   }
 }
@@ -109,7 +198,7 @@ export async function cli(args) {
 
   console.log(bold(green('Selecting template...')))
   const cli = await cliSelect({
-    values: [bold('POTGRES:CRUD'), bold('MODULE'), bold('TEST')],
+    values: [bold('POTGRES:CRUD'), bold('MONGO:CRUD')],
     valueRenderer: (value, selected) => {
       if (selected) {
         return value;
@@ -119,7 +208,7 @@ export async function cli(args) {
     },
   })
 
-  const mapSelectType = { 0: 'postgres:crud', 1: 'module', 2: 'test' }[cli.id]
+  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud' }[cli.id]
   const userInput = { name: undefined, type: undefined }
 
   userInput.type = mapSelectType
@@ -207,6 +296,8 @@ export async function cli(args) {
       });
 
 
+      // fs.rmSync(src, { recursive: true });
+      
       // console.log(bold(green('done')))
 
       // if (userInput.type === 'api') {

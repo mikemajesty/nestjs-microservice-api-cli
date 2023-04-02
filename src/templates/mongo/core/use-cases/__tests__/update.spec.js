@@ -8,10 +8,10 @@ const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ${capitalizeFirstLetter(name)}UpdateInput } from '@/modules/${name}/types';
-import { ApiConflictException, ApiNotFoundException } from '@/utils/exception';
+import { ApiNotFoundException } from '@/utils/exception';
 import { expectZodError, generateUUID } from '@/utils/tests';
 
-import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}Role } from '../../entity/${name}';
+import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
 
@@ -69,11 +69,6 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
   test('should throw error when ${name} not found', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
     await expect(usecase.execute(${name}Body)).rejects.toThrowError(ApiNotFoundException);
-  });
-
-  test('should throw error when ${name} exists', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${name}Response);
-    await expect(usecase.execute(${name}Body)).rejects.toThrowError(ApiConflictException);
   });
 });
 `
