@@ -21,19 +21,10 @@ export type ${capitalizeFirstLetter(name)}CreateInput = z.infer<typeof ${capital
 export type ${capitalizeFirstLetter(name)}CreateOutput = Promise<CreatedModel>;
 
 export const ${capitalizeFirstLetter(name)}UpdateSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
-  name: true
-})
-  .partial()
-  .merge(${capitalizeFirstLetter(name)}EntitySchema.pick({ id: true }));
-
+  id: true
+}).merge(${capitalizeFirstLetter(name)}CreateSchema.partial());
 export type ${capitalizeFirstLetter(name)}UpdateInput = z.infer<typeof ${capitalizeFirstLetter(name)}UpdateSchema>;
 export type ${capitalizeFirstLetter(name)}UpdateOutput = Promise<Schema>;
-
-export const ${capitalizeFirstLetter(name)}GetByIdSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
-  id: true
-});
-export type ${capitalizeFirstLetter(name)}GetByIDInput = z.infer<typeof ${capitalizeFirstLetter(name)}GetByIdSchema>;
-export type ${capitalizeFirstLetter(name)}GetByIDOutput = Promise<Schema>;
 
 export const ${capitalizeFirstLetter(name)}ListSchema = z.intersection(PaginationSchema, SortSchema.merge(SearchSchema));
 
@@ -45,6 +36,12 @@ export const ${capitalizeFirstLetter(name)}DeleteSchema = ${capitalizeFirstLette
 });
 export type ${capitalizeFirstLetter(name)}DeleteInput = z.infer<typeof ${capitalizeFirstLetter(name)}DeleteSchema>;
 export type ${capitalizeFirstLetter(name)}DeleteOutput = Promise<Schema>;
+
+export const ${capitalizeFirstLetter(name)}GetByIdSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
+  id: true
+});
+export type ${capitalizeFirstLetter(name)}GetByIDInput = z.infer<typeof ${capitalizeFirstLetter(name)}GetByIdSchema>;
+export type ${capitalizeFirstLetter(name)}GetByIDOutput = Promise<Schema>;
 `
 
 module.exports = {
