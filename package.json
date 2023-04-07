@@ -1,11 +1,11 @@
 {
   "name": "@mikemajesty/microservice-crud",
-  "version": "0.0.03",
+  "version": "0.0.04",
   "description": "Monorepo CLI",
   "main": "src/cli.js",
   "scripts": {
     "permission": "chmod -R 777 ./bin/*",
-    "crud": "node ./bin/microservice-crud"
+    "crud": "ENV=local node ./bin/microservice-crud"
   },
   "bin": {
     "@mikemajesty/microservice-crud": "bin/microservice-crud",

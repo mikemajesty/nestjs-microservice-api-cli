@@ -2,7 +2,6 @@ const fs = require('fs');
 const { bold, green, red } = require('colorette');
 const fse = require('fs-extra');
 const path = require('path');
-const { exec } = require('child_process');
 const cliSelect = require('cli-select');
 const prompt = require('prompt-sync')();
 
@@ -239,9 +238,12 @@ export async function cli(args) {
 
   try {
 
-    exec('zenity --file-selection --directory --title="Choose your path" --filename=$HOME/', async (err, dest) => {
-      const src = paths[0]
+    const dest = path.resolve(`${__dirname}/../../../../`)
 
+    const src = paths[0]
+
+    // VALIDATE 
+    fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
       if (err) {
         if (fs.existsSync(src)) {
           fs.rmSync(src, { recursive: true });
@@ -250,59 +252,39 @@ export async function cli(args) {
         return
       }
 
-      // VALIDATE 
-      fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
-        if (err) {
-          if (fs.existsSync(src)) {
-            fs.rmSync(src, { recursive: true });
-          }
-          console.error(err.message)
+      for (const folder of ['core', 'modules']) {
+        const source = folders.find(f => f === folder)
+        if (!source) {
+          console.log(bold(red('error')))
+          console.error('select nestjs microservice api root')
           return
         }
+      }
+    });
 
-        for (const folder of ['core', 'modules']) {
-          const source = folders.find(f => f === folder)
-          if (!source) {
-            console.log(bold(red('error')))
-            console.error('select nestjs microservice api root')
-            return
-          }
+
+
+    // CREATE CRUD
+    fs.readdir(src, function (err, folders) {
+      if (err) {
+        if (fs.existsSync(src)) {
+          fs.rmSync(src, { recursive: true });
         }
-      });
+        console.error(err.message)
+        return
+      }
 
 
+      for (const folder of folders) {
+        const source = `${src}/${folder}`;
+        const destination = `${dest}/src/${folder}`.replace('\n', '');
 
-      // CREATE CRUD
-      fs.readdir(src, function (err, folders) {
-        if (err) {
-          if (fs.existsSync(src)) {
-            fs.rmSync(src, { recursive: true });
-          }
-          console.error(err.message)
-          return
+        fse.copySync(source, destination, { overwrite: true });
+
+        if (fs.existsSync(source)) {
+          fs.rmSync(source, { recursive: true });
         }
-
-
-        for (const folder of folders) {
-          const source = `${src}/${folder}`;
-          const destination = `${dest}/src/${folder}`.replace('\n', '');
-
-          fse.copySync(source, destination, { overwrite: true });
-
-          if (fs.existsSync(source)) {
-            fs.rmSync(source, { recursive: true });
-          }
-        }
-      });
-
-
-      // fs.rmSync(src, { recursive: true });
-
-      // console.log(bold(green('done')))
-
-      // if (userInput.type === 'api') {
-      //   console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/microservice-crud/blob/master/APP.md'))
-      // }
+      }
     });
 
   } catch (error) {
