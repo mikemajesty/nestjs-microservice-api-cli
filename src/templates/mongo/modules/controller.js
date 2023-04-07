@@ -1,3 +1,4 @@
+const pluralize = require('pluralize')
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -45,14 +46,14 @@ export class ${capitalizeFirstLetter(name)}Controller {
     private readonly ${name}GetByIDUsecase: I${capitalizeFirstLetter(name)}GetByIDAdapter
   ) {}
 
-  @Post('/${name}')
+  @Post('/${pluralize(name)}')
   @ApiResponse(SwagggerResponse.create[200])
   @ApiBody(SwagggerRequest.createBody)
   async create(@Body() input: ${capitalizeFirstLetter(name)}CreateInput): ${capitalizeFirstLetter(name)}CreateOutput {
     return this.${name}CreateUsecase.execute(input);
   }
 
-  @Put('/${name}')
+  @Put('/${pluralize(name)}')
   @ApiResponse(SwagggerResponse.update[200])
   @ApiResponse(SwagggerResponse.update[404])
   @ApiBody(SwagggerRequest.updateBody)
@@ -60,7 +61,7 @@ export class ${capitalizeFirstLetter(name)}Controller {
     return this.${name}UpdateUsecase.execute(input);
   }
 
-  @Get('/${name}')
+  @Get('/${pluralize(name)}')
   @ApiQuery(SwagggerRequest.listQuery.pagination.limit)
   @ApiQuery(SwagggerRequest.listQuery.pagination.page)
   @ApiQuery(SwagggerRequest.listQuery.sort)
@@ -72,7 +73,7 @@ export class ${capitalizeFirstLetter(name)}Controller {
     return await this.${name}ListUsecase.execute(input);
   }
 
-  @Get('/${name}/:id')
+  @Get('/${pluralize(name)}/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse(SwagggerResponse.getByID[200])
   @ApiResponse(SwagggerResponse.getByID[404])

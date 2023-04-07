@@ -1,6 +1,6 @@
 {
   "name": "@mikemajesty/microservice-crud",
-  "version": "0.0.01",
+  "version": "0.0.02",
   "description": "Monorepo CLI",
   "main": "src/cli.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "crud": "node ./bin/microservice-crud"
   },
   "bin": {
+    "@mikemajesty/microservice-crud": "bin/microservice-crud",
     "microservice-crud": "bin/microservice-crud"
   },
   "publishConfig": {
@@ -25,6 +26,7 @@
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
     "fs-extra": "^10.1.0",
+    "pluralize": "^8.0.0",
     "prompt-sync": "^4.2.0",
     "rimraf": "^3.0.2"
   }

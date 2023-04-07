@@ -1,7 +1,7 @@
-import fs from 'fs';
-import { bold, green, red } from 'colorette';
+const fs = require('fs');
+const { bold, green, red } = require('colorette');
 const fse = require('fs-extra');
-import path from 'path';
+const path = require('path');
 const { exec } = require('child_process');
 const cliSelect = require('cli-select');
 const prompt = require('prompt-sync')();
@@ -297,7 +297,7 @@ export async function cli(args) {
 
 
       // fs.rmSync(src, { recursive: true });
-      
+
       // console.log(bold(green('done')))
 
       // if (userInput.type === 'api') {
