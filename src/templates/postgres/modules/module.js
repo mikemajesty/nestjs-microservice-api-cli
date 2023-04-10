@@ -14,6 +14,7 @@ import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-
 import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-getByID';
 import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
+import { RedisCacheModule } from '@/infra/cache/redis';
 import { LoggerModule } from '@/infra/logger';
 import { TokenModule } from '@/libs/auth';
 import { IsLoggedMiddleware } from '@/utils/middlewares/is-logged.middleware';
@@ -30,7 +31,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 import { ${capitalizeFirstLetter(name)}Schema } from './schema';
 
 @Module({
-  imports: [TokenModule, LoggerModule, TypeOrmModule.forFeature([${capitalizeFirstLetter(name)}Schema])],
+  imports: [TokenModule, LoggerModule, TypeOrmModule.forFeature([${capitalizeFirstLetter(name)}Schema]), RedisCacheModule],
   controllers: [${capitalizeFirstLetter(name)}Controller],
   providers: [
     {

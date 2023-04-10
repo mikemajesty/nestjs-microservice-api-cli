@@ -13,6 +13,7 @@ import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-
 import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-getByID';
 import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
+import { RedisCacheModule } from '@/infra/cache/redis';
 import { ConnectionName } from '@/infra/database/enum';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
@@ -31,7 +32,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document, ${capitalizeFirstLetter(name)}Schema } from './schema';
 
 @Module({
-  imports: [TokenModule, SecretsModule, LoggerModule],
+  imports: [TokenModule, SecretsModule, LoggerModule, RedisCacheModule],
   controllers: [${capitalizeFirstLetter(name)}Controller],
   providers: [
     {
