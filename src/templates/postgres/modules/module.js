@@ -4,8 +4,7 @@ function capitalizeFirstLetter(string) {
 }
 
 const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ModelCtor, Sequelize } from 'sequelize-typescript';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
@@ -15,7 +14,10 @@ import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '@/core/${name}/use
 import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { RedisCacheModule } from '@/infra/cache/redis';
-import { LoggerModule } from '@/infra/logger';
+import { IDataBaseAdapter } from '@/infra/database';
+import { PostgresDatabaseModule } from '@/infra/database/postgres/module';
+import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
+import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenModule } from '@/libs/auth';
 import { IsLoggedMiddleware } from '@/utils/middlewares/is-logged.middleware';
 
@@ -28,18 +30,18 @@ import {
 } from './adapter';
 import { ${capitalizeFirstLetter(name)}Controller } from './controller';
 import { ${capitalizeFirstLetter(name)}Repository } from './repository';
-import { ${capitalizeFirstLetter(name)}Schema } from './schema';
 
 @Module({
-  imports: [TokenModule, LoggerModule, TypeOrmModule.forFeature([${capitalizeFirstLetter(name)}Schema]), RedisCacheModule],
+  imports: [TokenModule, LoggerModule, RedisCacheModule, PostgresDatabaseModule],
   controllers: [${capitalizeFirstLetter(name)}Controller],
   providers: [
     {
       provide: I${capitalizeFirstLetter(name)}Repository,
-      useFactory: (repository: Repository<${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity>) => {
-        return new ${capitalizeFirstLetter(name)}Repository(repository);
+      useFactory: (database: IDataBaseAdapter) => {
+        const repository = database.getDatabase<Sequelize>().model(${capitalizeFirstLetter(name)}Schema);
+        return new ${capitalizeFirstLetter(name)}Repository(repository as ModelCtor<${capitalizeFirstLetter(name)}Schema> & ${capitalizeFirstLetter(name)}Entity);
       },
-      inject: [getRepositoryToken(${capitalizeFirstLetter(name)}Schema)]
+      inject: [IDataBaseAdapter]
     },
     {
       provide: I${capitalizeFirstLetter(name)}CreateAdapter,
@@ -49,7 +51,7 @@ import { ${capitalizeFirstLetter(name)}Schema } from './schema';
     {
       provide: I${capitalizeFirstLetter(name)}UpdateAdapter,
       useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}UpdateUsecase(repository),
-      inject: [I${capitalizeFirstLetter(name)}Repository]
+      inject: [ILoggerAdapter, I${capitalizeFirstLetter(name)}Repository]
     },
     {
       provide: I${capitalizeFirstLetter(name)}GetByIDAdapter,

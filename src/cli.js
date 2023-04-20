@@ -22,7 +22,7 @@ const { getModuleAdapter } = require('./templates/postgres/modules/adapter');
 const { getModuleController } = require('./templates/postgres/modules/controller');
 const { getModule } = require('./templates/postgres/modules/module');
 const { getModuleRepository } = require('./templates/postgres/modules/repository');
-const { getModuleSchema } = require('./templates/postgres/modules/schema');
+const { getModuleSchema } = require('./templates/postgres/schemas/schema');
 const { getModuleSwagger } = require('./templates/postgres/modules/swagger');
 const { getModuleType } = require('./templates/postgres/modules/types');
 
@@ -43,7 +43,7 @@ const { getModuleAdapter: getModuleAdapterMongo } = require('./templates/mongo/m
 const { getModuleController: getModuleControllerMongo } = require('./templates/mongo/modules/controller');
 const { getModule: getModuleMongo } = require('./templates/mongo/modules/module');
 const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/mongo/modules/repository');
-const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/modules/schema');
+const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/schemas/schema');
 const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
 const { getModuleType: getModuleTypeMongo } = require('./templates/mongo/modules/types');
 
@@ -88,23 +88,28 @@ const createPostgresCrud = async (name) => {
 
     const useCasesPathTest = `${useCasesPath}/__tests__`
     fs.mkdirSync(useCasesPathTest)
-
     fs.writeFileSync(`${useCasesPathTest}/${name}-create.spec.ts`, getCoreUsecaseCreateTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDTest(name))
 
+    const schemasPath = `${__dirname}/scafold/postgres/schemas`;
+    if (fs.existsSync(schemasPath)) {
+      fs.rmSync(schemasPath, { recursive: true });
+    }
+    fs.mkdirSync(schemasPath)
+    fs.writeFileSync(`${schemasPath}/${name}.ts`, getModuleSchema(name))
+
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
-
     fs.writeFileSync(`${modulesPath}/adapter.ts`, getModuleAdapter(name))
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleController(name))
     fs.writeFileSync(`${modulesPath}/module.ts`, getModule(name))
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepository(name))
-    fs.writeFileSync(`${modulesPath}/schema.ts`, getModuleSchema(name))
     fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwagger(name))
     fs.writeFileSync(`${modulesPath}/types.ts`, getModuleType(name))
+
 
     return `${name}`
   } catch (error) {
@@ -163,6 +168,15 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteMongoTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListMongoTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDMongoTest(name))
+
+    const schemasPath = `${__dirname}/scafold/mongo/schemas`;
+    
+    if (fs.existsSync(schemasPath)) {
+      fs.rmSync(schemasPath, { recursive: true });
+    }
+
+    fs.mkdirSync(schemasPath)
+    fs.writeFileSync(`${schemasPath}/${name}.ts`, getModuleSchemaMongo(name))
 
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
@@ -238,29 +252,30 @@ export async function cli(args) {
 
   try {
 
-    const dest = path.resolve(`${__dirname}/../../../../`)
+    // const dest = path.resolve(`${__dirname}/../../../../`)
+    const dest = '/home/mike/Documents/Mike/nestjs-microservice-api'
 
     const src = paths[0]
 
     // VALIDATE 
-    fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
-      if (err) {
-        if (fs.existsSync(src)) {
-          fs.rmSync(src, { recursive: true });
-        }
-        console.error(err.message)
-        return
-      }
+    // fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
+    //   if (err) {
+    //     if (fs.existsSync(src)) {
+    //       fs.rmSync(src, { recursive: true });
+    //     }
+    //     console.error(err.message)
+    //     return
+    //   }
 
-      for (const folder of ['core', 'modules']) {
-        const source = folders.find(f => f === folder)
-        if (!source) {
-          console.log(bold(red('error')))
-          console.error('select nestjs microservice api root')
-          return
-        }
-      }
-    });
+    //   for (const folder of ['core', 'modules']) {
+    //     const source = folders.find(f => f === folder)
+    //     if (!source) {
+    //       console.log(bold(red('error')))
+    //       console.error('select nestjs microservice api root')
+    //       return
+    //     }
+    //   }
+    // });
 
 
 
@@ -280,10 +295,29 @@ export async function cli(args) {
         const destination = `${dest}/src/${folder}`.replace('\n', '');
 
         fse.copySync(source, destination, { overwrite: true });
+        
+        const destPathSchema = `${dest}/src/infra/database/${userInput.type === 'postgres:crud' ? 'postgres' : 'mongo'}/schemas`;
+        
+        console.log('destPathSchema', destPathSchema)
+        
+        const pathSchema = path.resolve(src, '../schemas');
+
+        console.log('pathSchema', pathSchema)
+        fse.copySync(pathSchema, destPathSchema, { overwrite: true });
 
         if (fs.existsSync(source)) {
           fs.rmSync(source, { recursive: true });
         }
+      }
+
+      console.log(bold(green('===done===')))
+
+      if (userInput.type === 'postgres:crud') {
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/potgres.README.md'))
+      }
+
+      if (userInput.type === 'mongo:crud') {
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/mongo.README.md'))
       }
     });
 

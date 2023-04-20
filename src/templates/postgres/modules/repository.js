@@ -4,40 +4,38 @@ function capitalizeFirstLetter(string) {
 }
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { ModelCtor } from 'sequelize-typescript';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-import { PostgresRepository } from '@/infra/repository/postgres/repository';
-import { ValidateDatabaseSort } from '@/utils/decorators/validate-allowed-sort-order.decorator';
-import { SearchTypeEnum, ValidatePostgresFilter } from '@/utils/decorators/validate-postgres-filter.decorator';
-import { calucaleSkip } from '@/utils/pagination';
+import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
+import { SequelizeRepository } from '@/infra/repository/postgres/repository';
+import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/modules/${name}/types';
+import { DatabaseOptionsSchema, DatabaseOptionsType } from '@/utils/database/sequelize';
+import { ConvertPaginateInputToSequelizeFilter } from '@/utils/decorators/database/postgres/convert-paginate-input-to-sequelize-filter.decorator';
+import { ValidateDatabaseSortAllowed } from '@/utils/decorators/database/validate-database-sort-allowed.decorator';
+import { SearchTypeEnum } from '@/utils/decorators/types';
 
-import { ${capitalizeFirstLetter(name)}Schema } from './schema';
-import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from './types';
+type Model = ModelCtor<${capitalizeFirstLetter(name)}Schema> & ${capitalizeFirstLetter(name)}Entity;
 
 @Injectable()
-export class ${capitalizeFirstLetter(name)}Repository
-  extends PostgresRepository<${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity>
-  implements Omit<I${capitalizeFirstLetter(name)}Repository, 'updateMany' | 'seed'>
-{
-  constructor(readonly repository: Repository<${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity>) {
+export class ${capitalizeFirstLetter(name)}Repository extends SequelizeRepository<Model> implements I${capitalizeFirstLetter(name)}Repository {
+  constructor(readonly repository: Model) {
     super(repository);
   }
 
-  @ValidatePostgresFilter([{ name: 'name', type: SearchTypeEnum.like }])
-  @ValidateDatabaseSort(['createdAt', 'name'])
-  async paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
-    const skip = calucaleSkip(input);
+  @ValidateDatabaseSortAllowed(['createdAt', 'name', 'breed', 'age'])
+  @ConvertPaginateInputToSequelizeFilter([
+    { name: 'name', type: SearchTypeEnum.like },
+    { name: 'breed', type: SearchTypeEnum.like },
+    { name: 'age', type: SearchTypeEnum.equal }
+  ])
+  async paginate(input: ${capitalizeFirstLetter(name)}ListInput, options: DatabaseOptionsType): Promise<${capitalizeFirstLetter(name)}ListOutput> {
+    const { schema } = DatabaseOptionsSchema.parse(options);
 
-    const [docs, total] = await this.repository.findAndCount({
-      take: input.limit,
-      skip,
-      order: input.sort,
-      where: input.search
-    });
+    const list = await this.repository.schema(schema).findAndCountAll(input);
 
-    return { docs, total, page: input.page, limit: input.limit };
+    return { docs: list.rows, limit: input.limit, page: input.page, total: list.count };
   }
 }
 `

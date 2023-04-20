@@ -1,4 +1,6 @@
 
+const pluralize = require('pluralize')
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -12,7 +14,7 @@ import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${na
 export type ${capitalizeFirstLetter(name)}Document = Document & ${capitalizeFirstLetter(name)}Entity;
 
 @Schema({
-  collection: '${name}-collection',
+  collection: '${pluralize(name)}',
   autoIndex: true,
   timestamps: true
 })
