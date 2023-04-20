@@ -252,30 +252,29 @@ export async function cli(args) {
 
   try {
 
-    // const dest = path.resolve(`${__dirname}/../../../../`)
-    const dest = '/home/mike/Documents/Mike/nestjs-microservice-api'
+    const dest = path.resolve(`${__dirname}/../../../../`)
 
     const src = paths[0]
 
     // VALIDATE 
-    // fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
-    //   if (err) {
-    //     if (fs.existsSync(src)) {
-    //       fs.rmSync(src, { recursive: true });
-    //     }
-    //     console.error(err.message)
-    //     return
-    //   }
+    fs.readdir(dest.replace('\n', '') + '/src', function (err, folders) {
+      if (err) {
+        if (fs.existsSync(src)) {
+          fs.rmSync(src, { recursive: true });
+        }
+        console.error(err.message)
+        return
+      }
 
-    //   for (const folder of ['core', 'modules']) {
-    //     const source = folders.find(f => f === folder)
-    //     if (!source) {
-    //       console.log(bold(red('error')))
-    //       console.error('select nestjs microservice api root')
-    //       return
-    //     }
-    //   }
-    // });
+      for (const folder of ['core', 'modules']) {
+        const source = folders.find(f => f === folder)
+        if (!source) {
+          console.log(bold(red('error')))
+          console.error('select nestjs microservice api root')
+          return
+        }
+      }
+    });
 
 
 
