@@ -4,7 +4,7 @@
 
  - Access the app.module.ts file
   ```
-    /src/app.module.ts
+    src/app.module.ts
   ```
  - Add your Mongo Module in the Imports array. 
   ```

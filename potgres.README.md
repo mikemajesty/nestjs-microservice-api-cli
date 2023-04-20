@@ -4,7 +4,7 @@
 
  - Access the config.ts file
   ```
-    /src/infra/database/postgres/config.ts
+    src/infra/database/postgres/config.ts
   ```
  - Add your Postgres schema in the addModels function. 
   ```
@@ -15,7 +15,7 @@
 
  - Access the app.module.ts file
   ```
-    /src/app.module.ts
+    src/app.module.ts
   ```
  - Add your Postgres Module in the Imports array. 
   ```

@@ -313,11 +313,11 @@ export async function cli(args) {
       console.log(bold(green('===done===')))
 
       if (userInput.type === 'postgres:crud') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/potgres.README.md'))
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/potgres.README.md')))
       }
 
       if (userInput.type === 'mongo:crud') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/mongo.README.md'))
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/mongo.README.md')))
       }
     });
 
