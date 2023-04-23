@@ -297,11 +297,8 @@ export async function cli(args) {
         
         const destPathSchema = `${dest}/src/infra/database/${userInput.type === 'postgres:crud' ? 'postgres' : 'mongo'}/schemas`;
         
-        console.log('destPathSchema', destPathSchema)
-        
         const pathSchema = path.resolve(src, '../schemas');
 
-        console.log('pathSchema', pathSchema)
         fse.copySync(pathSchema, destPathSchema, { overwrite: true });
 
         if (fs.existsSync(source)) {
