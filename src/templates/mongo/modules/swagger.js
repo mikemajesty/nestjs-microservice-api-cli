@@ -1,12 +1,13 @@
-const getModuleSwagger = (name) => `import { CreatedModel } from '@/infra/repository';
+const pluralize = require('pluralize')
+
+const getModuleSwagger = (name) => `import { CreatedModel } from '@/infra/repository/types';
 import { Swagger } from '@/utils/swagger';
 
 const entity = {
-  id: '<id>',
   name: '<name>'
 };
 
-const entityFull = { ...entity, deletedAt: '<deletedAt>', createdAt: '<createdAt>', updatedAt: '<updatedAt>' };
+const entityFull = { ...entity, updatedAt: '<updatedAt>', createdAt: '<createdAt>', deletedAt: '<deletedAt>' };
 
 export const SwagggerResponse = {
   create: {
@@ -24,7 +25,7 @@ export const SwagggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${name}s',
+      route: 'api/${pluralize(name)}',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -37,7 +38,7 @@ export const SwagggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${name}s/:id',
+      route: 'api/${pluralize(name)}/:id',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -50,7 +51,7 @@ export const SwagggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${name}s/:id',
+      route: 'api/${pluralize(name)}s/:id',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -80,7 +81,7 @@ export const SwagggerRequest = {
     search: Swagger.defaultApiQueryOptions({
       name: 'search',
       required: false,
-      description: '<b>name:name'
+      description: '<b>name:miau'
     })
   }
 };

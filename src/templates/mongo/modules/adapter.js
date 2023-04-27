@@ -3,18 +3,11 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const getModuleAdapter = (name) => `import {
-  ${capitalizeFirstLetter(name)}CreateInput,
-  ${capitalizeFirstLetter(name)}CreateOutput,
-  ${capitalizeFirstLetter(name)}DeleteInput,
-  ${capitalizeFirstLetter(name)}DeleteOutput,
-  ${capitalizeFirstLetter(name)}GetByIDInput,
-  ${capitalizeFirstLetter(name)}GetByIDOutput,
-  ${capitalizeFirstLetter(name)}ListInput,
-  ${capitalizeFirstLetter(name)}ListOutput,
-  ${capitalizeFirstLetter(name)}UpdateInput,
-  ${capitalizeFirstLetter(name)}UpdateOutput
-} from './types';
+const getModuleAdapter = (name) => `import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateOutput } from '@/core/${name}/use-cases/${name}-create';
+import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteOutput } from '@/core/${name}/use-cases/${name}-delete';
+import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput } from '@/core/${name}/use-cases/${name}-getByID';
+import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
+import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
 
 export abstract class I${capitalizeFirstLetter(name)}CreateAdapter {
   abstract execute(input: ${capitalizeFirstLetter(name)}CreateInput): Promise<${capitalizeFirstLetter(name)}CreateOutput>;

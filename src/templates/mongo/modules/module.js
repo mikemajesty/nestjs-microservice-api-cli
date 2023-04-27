@@ -5,7 +5,7 @@ function capitalizeFirstLetter(string) {
 
 const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/mongoose';
-import mongoose, { Connection } from 'mongoose';
+import mongoose, { Connection, PaginateModel } from 'mongoose';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
@@ -15,9 +15,11 @@ import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-ca
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { RedisCacheModule } from '@/infra/cache/redis';
 import { ConnectionName } from '@/infra/database/enum';
+import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document, ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/mongo/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
 import { TokenModule } from '@/libs/auth';
+import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
 import { IsLoggedMiddleware } from '@/utils/middlewares/is-logged.middleware';
 
 import {
@@ -29,7 +31,6 @@ import {
 } from './adapter';
 import { ${capitalizeFirstLetter(name)}Controller } from './controller';
 import { ${capitalizeFirstLetter(name)}Repository } from './repository';
-import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document, ${capitalizeFirstLetter(name)}Schema } from './schema';
 
 @Module({
   imports: [TokenModule, SecretsModule, LoggerModule, RedisCacheModule],
@@ -37,17 +38,28 @@ import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document,
   providers: [
     {
       provide: I${capitalizeFirstLetter(name)}Repository,
-      useFactory: (connection: Connection) => {
-        return new ${capitalizeFirstLetter(name)}Repository(
-          connection.model<${capitalizeFirstLetter(name)}Document, mongoose.PaginateModel<${capitalizeFirstLetter(name)}Document>>(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema)
-        );
+      useFactory: async (connection: Connection) => {
+        type Model = mongoose.PaginateModel<${capitalizeFirstLetter(name)}Document>;
+
+        // use if you want transaction
+        const repository: MongoRepositoryModelSessionType<PaginateModel<${capitalizeFirstLetter(name)}Document>> = connection.model<
+          ${capitalizeFirstLetter(name)}Document,
+          Model
+        >(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema);
+
+        repository.connection = connection;
+
+        // use if you not want transaction
+        // const repository: PaginateModel<${capitalizeFirstLetter(name)}Document> = connection.model<${capitalizeFirstLetter(name)}Document, Model>(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema);
+
+        return new ${capitalizeFirstLetter(name)}Repository(repository);
       },
       inject: [getConnectionToken(ConnectionName.USER)]
     },
     {
       provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-      useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
-        return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository);
+      useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, loggerService: ILoggerAdapter) => {
+        return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository, loggerService);
       },
       inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
     },

@@ -44,8 +44,6 @@ const { getModule: getModuleMongo } = require('./templates/mongo/modules/module'
 const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/mongo/modules/repository');
 const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/schemas/schema');
 const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
-const { getModuleType: getModuleTypeMongo } = require('./templates/mongo/modules/types');
-
 
 const createPostgresCrud = async (name) => {
   if (!name) throw new Error('--name is required')
@@ -184,7 +182,6 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
     fs.writeFileSync(`${modulesPath}/schema.ts`, getModuleSchemaMongo(name))
     fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwaggerMongo(name))
-    fs.writeFileSync(`${modulesPath}/types.ts`, getModuleTypeMongo(name))
 
     return `${name}`
   } catch (error) {

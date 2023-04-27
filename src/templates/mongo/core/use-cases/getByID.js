@@ -3,13 +3,19 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const getCoreUsecaseGetByID = (name) => `import { ${capitalizeFirstLetter(name)}GetByIdSchema } from '@/modules/${name}/types';
-import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput } from '@/modules/${name}/types';
+const getCoreUsecaseGetByID = (name) => `import { z } from 'zod';
+
 import { ValidateSchema } from '@/utils/decorators/validate-schema.decorator';
 import { ApiNotFoundException } from '@/utils/exception';
 
-import { ${capitalizeFirstLetter(name)}Entity } from '../entity/${name}';
+import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from '../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
+
+export const ${capitalizeFirstLetter(name)}GetByIdSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
+  id: true
+});
+export type ${capitalizeFirstLetter(name)}GetByIDInput = z.infer<typeof ${capitalizeFirstLetter(name)}GetByIdSchema>;
+export type ${capitalizeFirstLetter(name)}GetByIDOutput = Promise<${capitalizeFirstLetter(name)}Entity>;
 
 export class ${capitalizeFirstLetter(name)}GetByIdUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}
@@ -22,7 +28,9 @@ export class ${capitalizeFirstLetter(name)}GetByIdUsecase {
       throw new ApiNotFoundException('${name}NotFound');
     }
 
-    return new ${capitalizeFirstLetter(name)}Entity(${name});
+    const entity = new ${capitalizeFirstLetter(name)}Entity(${name});
+
+    return entity;
   }
 }
 `
