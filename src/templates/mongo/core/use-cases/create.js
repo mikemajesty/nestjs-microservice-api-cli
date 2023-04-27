@@ -13,9 +13,7 @@ import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}Ent
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
 
 export const ${capitalizeFirstLetter(name)}CreateSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
-  login: true,
-  password: true,
-  roles: true
+  name: true
 });
 
 export type ${capitalizeFirstLetter(name)}CreateInput = z.infer<typeof ${capitalizeFirstLetter(name)}CreateSchema>;
