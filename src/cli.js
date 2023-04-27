@@ -24,7 +24,6 @@ const { getModule } = require('./templates/postgres/modules/module');
 const { getModuleRepository } = require('./templates/postgres/modules/repository');
 const { getModuleSchema } = require('./templates/postgres/schemas/schema');
 const { getModuleSwagger } = require('./templates/postgres/modules/swagger');
-const { getModuleType } = require('./templates/postgres/modules/types');
 
 const { getCoreUsecaseCreateTest: getCoreUsecaseCreateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/create.spec');
 const { getCoreUsecaseUpdateTest: getCoreUsecaseUpdateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/update.spec');
@@ -108,8 +107,6 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/module.ts`, getModule(name))
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepository(name))
     fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwagger(name))
-    fs.writeFileSync(`${modulesPath}/types.ts`, getModuleType(name))
-
 
     return `${name}`
   } catch (error) {
@@ -170,7 +167,7 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDMongoTest(name))
 
     const schemasPath = `${__dirname}/scafold/mongo/schemas`;
-    
+
     if (fs.existsSync(schemasPath)) {
       fs.rmSync(schemasPath, { recursive: true });
     }
@@ -295,15 +292,19 @@ export async function cli(args) {
         const destination = `${dest}/src/${folder}`.replace('\n', '');
 
         fse.copySync(source, destination, { overwrite: true });
-        
+
         const destPathSchema = `${dest}/src/infra/database/${userInput.type === 'postgres:crud' ? 'postgres' : 'mongo'}/schemas`;
-        
+
         const pathSchema = path.resolve(src, '../schemas');
 
         fse.copySync(pathSchema, destPathSchema, { overwrite: true });
 
         if (fs.existsSync(source)) {
           fs.rmSync(source, { recursive: true });
+        }
+
+        if (fs.existsSync(pathSchema + `/${name}.ts`)) {
+          fs.rmSync(pathSchema + `/${name}.ts`, { recursive: true });
         }
       }
 

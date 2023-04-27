@@ -76,12 +76,12 @@ export const SwagggerRequest = {
     sort: Swagger.defaultApiQueryOptions({
       name: 'sort',
       required: false,
-      description: "<b>createdAt:desc,name:asc"
+      description: '<b>createdAt:desc,name:asc'
     }),
     search: Swagger.defaultApiQueryOptions({
       name: 'search',
       required: false,
-      description: "<b>name:miau"
+      description: '<b>name:miau'
     })
   }
 };

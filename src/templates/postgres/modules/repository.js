@@ -32,9 +32,7 @@ export class ${capitalizeFirstLetter(name)}Repository extends SequelizeRepositor
   }
 
   @ValidateDatabaseSortAllowed(['createdAt', 'name'])
-  @ConvertPaginateInputToSequelizeFilter([
-    { name: 'name', type: SearchTypeEnum.like }
-  ])
+  @ConvertPaginateInputToSequelizeFilter([{ name: 'name', type: SearchTypeEnum.like }])
   async paginate(input: ${capitalizeFirstLetter(name)}ListInput, options: DatabaseOptionsType): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const { schema } = DatabaseOptionsSchema.parse(options);
 
