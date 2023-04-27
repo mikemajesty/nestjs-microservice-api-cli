@@ -1,3 +1,5 @@
+const pluralize = require('pluralize')
+
 const getModuleSwagger = (name) => `import { CreatedModel } from '@/infra/repository/types';
 import { Swagger } from '@/utils/swagger';
 
@@ -23,7 +25,7 @@ export const SwagggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${name}',
+      route: 'api/${pluralize(name)}',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -36,7 +38,7 @@ export const SwagggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${name}/:id',
+      route: 'api/${pluralize(name)}/:id',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -49,7 +51,7 @@ export const SwagggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${name}/:id',
+      route: 'api/${pluralize(name)}s/:id',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -74,12 +76,12 @@ export const SwagggerRequest = {
     sort: Swagger.defaultApiQueryOptions({
       name: 'sort',
       required: false,
-      description: '<b>createdAt:desc,name:asc'
+      description: "<b>createdAt:desc,name:asc"
     }),
     search: Swagger.defaultApiQueryOptions({
       name: 'search',
       required: false,
-      description: '<b>name:miau,breed:siamese'
+      description: "<b>name:miau"
     })
   }
 };

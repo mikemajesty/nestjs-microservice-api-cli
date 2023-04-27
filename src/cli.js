@@ -252,7 +252,8 @@ export async function cli(args) {
 
   try {
 
-    const dest = path.resolve(`${__dirname}/../../../../`)
+    // const dest = path.resolve(`${__dirname}/../../../../`)
+    const dest = path.resolve(`/home/mike/Documents/Mike/nestjs-microservice-api`)
 
     const src = paths[0]
 

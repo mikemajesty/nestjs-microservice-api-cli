@@ -4,13 +4,14 @@ function capitalizeFirstLetter(string) {
 }
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
+import { Transaction } from 'sequelize';
 import { ModelCtor } from 'sequelize-typescript';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
+import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { SequelizeRepository } from '@/infra/repository/postgres/repository';
-import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/modules/${name}/types';
 import { DatabaseOptionsSchema, DatabaseOptionsType } from '@/utils/database/sequelize';
 import { ConvertPaginateInputToSequelizeFilter } from '@/utils/decorators/database/postgres/convert-paginate-input-to-sequelize-filter.decorator';
 import { ValidateDatabaseSortAllowed } from '@/utils/decorators/database/validate-database-sort-allowed.decorator';
@@ -24,18 +25,22 @@ export class ${capitalizeFirstLetter(name)}Repository extends SequelizeRepositor
     super(repository);
   }
 
-  @ValidateDatabaseSortAllowed(['createdAt', 'name', 'breed', 'age'])
+  async startSession<TTransaction = Transaction>(): Promise<TTransaction> {
+    const transaction = await this.repository.sequelize.transaction();
+
+    return transaction as TTransaction;
+  }
+
+  @ValidateDatabaseSortAllowed(['createdAt', 'name'])
   @ConvertPaginateInputToSequelizeFilter([
-    { name: 'name', type: SearchTypeEnum.like },
-    { name: 'breed', type: SearchTypeEnum.like },
-    { name: 'age', type: SearchTypeEnum.equal }
+    { name: 'name', type: SearchTypeEnum.like }
   ])
   async paginate(input: ${capitalizeFirstLetter(name)}ListInput, options: DatabaseOptionsType): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const { schema } = DatabaseOptionsSchema.parse(options);
 
     const list = await this.repository.schema(schema).findAndCountAll(input);
 
-    return { docs: list.rows, limit: input.limit, page: input.page, total: list.count };
+    return { docs: list.rows.map((r) => new ${capitalizeFirstLetter(name)}Entity(r)), limit: input.limit, page: input.page, total: list.count };
   }
 }
 `

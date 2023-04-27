@@ -38,19 +38,19 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
     {
       provide: I${capitalizeFirstLetter(name)}Repository,
       useFactory: (database: IDataBaseAdapter) => {
-        const repository = database.getDatabase<Sequelize>().model(${capitalizeFirstLetter(name)}Schema);
-        return new ${capitalizeFirstLetter(name)}Repository(repository as ModelCtor<${capitalizeFirstLetter(name)}Schema> & ${capitalizeFirstLetter(name)}Entity);
+        const repossitory = database.getDatabase<Sequelize>().model(${capitalizeFirstLetter(name)}Schema);
+        return new ${capitalizeFirstLetter(name)}Repository(repossitory as ModelCtor<${capitalizeFirstLetter(name)}Schema> & ${capitalizeFirstLetter(name)}Entity);
       },
       inject: [IDataBaseAdapter]
     },
     {
       provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-      useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}CreateUsecase(repository),
-      inject: [I${capitalizeFirstLetter(name)}Repository]
+      useFactory: (logger: ILoggerAdapter, repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}CreateUsecase(repository, logger),
+      inject: [ILoggerAdapter, I${capitalizeFirstLetter(name)}Repository]
     },
     {
       provide: I${capitalizeFirstLetter(name)}UpdateAdapter,
-      useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}UpdateUsecase(repository),
+      useFactory: (logger: ILoggerAdapter, repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}UpdateUsecase(repository, logger),
       inject: [ILoggerAdapter, I${capitalizeFirstLetter(name)}Repository]
     },
     {

@@ -3,19 +3,29 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const getCoreUsecaseUpdate = (name) => `import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput, ${capitalizeFirstLetter(name)}UpdateSchema } from '@/modules/${name}/types';
+const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
+
+import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
+import { ILoggerAdapter } from '@/infra/logger';
+import { DatabaseOptionsType } from '@/utils/database/sequelize';
 import { ValidateSchema } from '@/utils/decorators/validate-schema.decorator';
 import { ApiNotFoundException } from '@/utils/exception';
 
-import { ${capitalizeFirstLetter(name)}Entity } from './../entity/${name}';
+import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from './../entity/${name}';
+
+export const ${capitalizeFirstLetter(name)}UpdateSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
+  id: true
+}).merge(${capitalizeFirstLetter(name)}EntitySchema.omit({ id: true }).partial());
+
+export type ${capitalizeFirstLetter(name)}UpdateInput = z.infer<typeof ${capitalizeFirstLetter(name)}UpdateSchema>;
+export type ${capitalizeFirstLetter(name)}UpdateOutput = Promise<${capitalizeFirstLetter(name)}Entity>;
 
 export class ${capitalizeFirstLetter(name)}UpdateUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}
+  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerServide: ILoggerAdapter) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}UpdateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}UpdateInput): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
-    const ${name} = await this.${name}Repository.findById(input.id);
+    const ${name} = await this.${name}Repository.findById<DatabaseOptionsType>(input.id);
 
     if (!${name}) {
       throw new ApiNotFoundException('${name}NotFound');
@@ -27,7 +37,9 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase {
 
     await this.${name}Repository.updateOne({ id: entity.id }, entity);
 
-    const updated = await this.${name}Repository.findById(entity.id);
+    this.loggerServide.info({ message: '${name} updated.', obj: { ${name}: input } });
+
+    const updated = await this.${name}Repository.findById<DatabaseOptionsType>(entity.id);
 
     return new ${capitalizeFirstLetter(name)}Entity(updated);
   }
