@@ -5,7 +5,9 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
 
+import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
+import { ApiInternalServerException } from '@/utils/exception';
 import { expectZodError } from '@/utils/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -23,11 +25,17 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
           useValue: {}
         },
         {
+          provide: ILoggerAdapter,
+          useValue: {
+            info: jest.fn()
+          }
+        },
+        {
           provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository);
+          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository, logger);
           },
-          inject: [I${capitalizeFirstLetter(name)}Repository]
+          inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
         }
       ]
     }).compile();
@@ -48,7 +56,20 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
   test('should ${name} create successfully', async () => {
     const ${name} = { name: 'dummy' };
     repository.create = jest.fn().mockResolvedValue(${name});
+    repository.startSession = jest.fn().mockResolvedValue({
+      commit: jest.fn()
+    });
     await expect(usecase.execute(${name})).resolves.toEqual(${name});
+  });
+
+  test('should throw error when create exception', async () => {
+    const ${name} = { name: 'dummy' };
+    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException('error'));
+    repository.startSession = jest.fn().mockResolvedValue({
+      commit: jest.fn(),
+      rollback: jest.fn()
+    });
+    await expect(usecase.execute(${name})).rejects.toThrow(ApiInternalServerException);
   });
 });
 `

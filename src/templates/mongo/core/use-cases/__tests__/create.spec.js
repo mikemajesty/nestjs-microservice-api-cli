@@ -5,12 +5,13 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
 
+import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
-import { ${capitalizeFirstLetter(name)}CreateInput } from '@/modules/${name}/types';
+import { ApiInternalServerException } from '@/utils/exception';
 import { expectZodError } from '@/utils/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
+import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
 
 const ${name} = {
   name: 'dummy'
@@ -28,23 +29,23 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
           useValue: {}
         },
         {
+          provide: ILoggerAdapter,
+          useValue: {
+            info: jest.fn()
+          }
+        },
+        {
           provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository);
+          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository, logger);
           },
-          inject: [I${capitalizeFirstLetter(name)}Repository]
+          inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
         }
       ]
     }).compile();
 
     usecase = app.get(I${capitalizeFirstLetter(name)}CreateAdapter);
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
-  });
-
-  test('should create successfully', async () => {
-    repository.findOne = jest.fn().mockResolvedValue(null);
-    repository.create = jest.fn().mockResolvedValue(${name});
-    await expect(usecase.execute(${name})).resolves.toEqual(${name});
   });
 
   test('should throw error when invalid parameters', async () => {
@@ -54,6 +55,25 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
         expect(issues).toEqual([{ message: 'Required', path: 'name' }]);
       }
     );
+  });
+
+  test('should create successfully', async () => {
+    repository.findOne = jest.fn().mockResolvedValue(null);
+    repository.create = jest.fn().mockResolvedValue(${name});
+    repository.startSession = jest.fn().mockResolvedValue({
+      commitTransaction: jest.fn()
+    });
+    await expect(usecase.execute(${name})).resolves.toEqual(${name});
+  });
+
+  test('should throw error when create exception', async () => {
+    repository.findOne = jest.fn().mockResolvedValue(null);
+    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException('error'));
+    repository.startSession = jest.fn().mockResolvedValue({
+      commitTransaction: jest.fn(),
+      abortTransaction: jest.fn()
+    });
+    await expect(usecase.execute(${name})).rejects.toThrow(ApiInternalServerException);
   });
 });
 `

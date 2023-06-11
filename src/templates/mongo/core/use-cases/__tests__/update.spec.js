@@ -7,12 +7,12 @@ const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testin
 
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
-import { ${capitalizeFirstLetter(name)}UpdateInput } from '@/modules/${name}/types';
 import { ApiNotFoundException } from '@/utils/exception';
 import { expectZodError, generateUUID } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
+import { ${capitalizeFirstLetter(name)}UpdateInput } from '../${name}-update';
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
 
 const ${name}Body = {

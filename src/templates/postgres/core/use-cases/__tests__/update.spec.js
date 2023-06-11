@@ -5,6 +5,7 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testing';
 
+import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
 import { expectZodError, generateUUID } from '@/utils/tests';
@@ -30,11 +31,17 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
           useValue: {}
         },
         {
+          provide: ILoggerAdapter,
+          useValue: {
+            info: jest.fn()
+          }
+        },
+        {
           provide: I${capitalizeFirstLetter(name)}UpdateAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}UpdateUsecase(${name}Repository);
+          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${capitalizeFirstLetter(name)}UpdateUsecase(${name}Repository, logger);
           },
-          inject: [I${capitalizeFirstLetter(name)}Repository]
+          inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
         }
       ]
     }).compile();
