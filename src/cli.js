@@ -180,7 +180,6 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleControllerMongo(name))
     fs.writeFileSync(`${modulesPath}/module.ts`, getModuleMongo(name))
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
-    fs.writeFileSync(`${modulesPath}/schema.ts`, getModuleSchemaMongo(name))
     fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwaggerMongo(name))
 
     return `${name}`

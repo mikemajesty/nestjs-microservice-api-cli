@@ -26,7 +26,7 @@ export class ${capitalizeFirstLetter(name)}DeleteUsecase {
     const model = await this.${name}Repository.findById(id);
 
     if (!model) {
-      throw new ApiNotFoundException('${name}NotFound');
+      throw new ApiNotFoundException();
     }
 
     const ${name} = new ${capitalizeFirstLetter(name)}Entity(model);

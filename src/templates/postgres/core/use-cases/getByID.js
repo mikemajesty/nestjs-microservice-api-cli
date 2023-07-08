@@ -28,7 +28,7 @@ export class ${capitalizeFirstLetter(name)}GetByIdUsecase {
     const ${name} = await this.${name}Repository.findById<DatabaseOptionsType>(id);
 
     if (!${name}) {
-      throw new ApiNotFoundException('${name}NotFound');
+      throw new ApiNotFoundException();
     }
 
     return new ${capitalizeFirstLetter(name)}Entity(${name});
