@@ -30,10 +30,10 @@
     "balanced-match" "^1.0.0"
     "concat-map" "0.0.1"
 
-"chmod@^0.2.1":
-  "integrity" "sha512-+B2EMoAfT4SCgDmkL33fUTowRb1dB+aTVMF5CGOPYEG+vkQnHmPxV066AZppw/1PnzWRGK89pGyWUxOae2iqTw=="
-  "resolved" "https://registry.npmjs.org/chmod/-/chmod-0.2.1.tgz"
-  "version" "0.2.1"
+"chmod@^0.1.0":
+  "integrity" "sha512-P/ZC10SFOn19dRwI3YVq9s8X8PDSaOtj6FNGLqprPjTKHl2bl831WIxGkP4AL9q3XxL4LIa8R8pumb7ZBc7UaA=="
+  "resolved" "https://registry.npmjs.org/chmod/-/chmod-0.1.0.tgz"
+  "version" "0.1.0"
   dependencies:
     "deep-extend" "^0.2.8"
     "stat-mode" "~0.1.0"

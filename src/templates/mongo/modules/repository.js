@@ -13,11 +13,9 @@ import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}
 import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document } from '@/infra/database/mongo/schemas/${name}';
 import { MongoRepository } from '@/infra/repository';
 import { MongoRepositoryModelSessionType, MongoRepositorySession } from '@/utils/database/mongoose';
-import {
-  SearchTypeEnum,
-  ValidateMongooseFilter
-} from '@/utils/decorators/database/mongo/validate-mongoose-filter.decorator';
+import { ValidateMongooseFilter } from '@/utils/decorators/database/mongo/validate-mongoose-filter.decorator';
 import { ValidateDatabaseSortAllowed } from '@/utils/decorators/database/validate-database-sort-allowed.decorator';
+import { SearchTypeEnum } from '@/utils/decorators/types';
 
 @Injectable()
 export class ${capitalizeFirstLetter(name)}Repository extends MongoRepository<${capitalizeFirstLetter(name)}Document> implements I${capitalizeFirstLetter(name)}Repository {
@@ -33,7 +31,7 @@ export class ${capitalizeFirstLetter(name)}Repository extends MongoRepository<${
   }
 
   @ValidateMongooseFilter([{ name: 'name', type: SearchTypeEnum.like }])
-  @ValidateDatabaseSortAllowed(['name', 'createdAt'])
+  @ValidateDatabaseSortAllowed('name', 'createdAt')
   async paginate({ limit, page, sort, search }: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const ${pluralize(name)} = await this.entity.paginate(search, { page, limit, sort });
 
