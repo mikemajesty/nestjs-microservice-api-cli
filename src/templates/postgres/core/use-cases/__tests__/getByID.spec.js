@@ -7,7 +7,7 @@ const getCoreUsecaseGetByIDTest = (name) => `import { Test } from '@nestjs/testi
 
 import { I${capitalizeFirstLetter(name)}GetByIDAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests';
+import { expectZodError, generateUUID } from '@/utils/tests/tests';;
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-getByID';

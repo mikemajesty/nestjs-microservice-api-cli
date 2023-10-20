@@ -8,7 +8,7 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { ApiInternalServerException } from '@/utils/exception';
-import { expectZodError } from '@/utils/tests';
+import { expectZodError } from '@/utils/tests/tests';;
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';

@@ -7,7 +7,7 @@ const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testin
 
 import { I${capitalizeFirstLetter(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests';
+import { expectZodError, generateUUID } from '@/utils/tests/tests';;
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
