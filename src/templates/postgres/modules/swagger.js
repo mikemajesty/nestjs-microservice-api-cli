@@ -1,7 +1,7 @@
 const pluralize = require('pluralize')
 
 const getModuleSwagger = (name) => `import { CreatedModel } from '@/infra/repository/types';
-import { Swagger } from '@/utils/swagger';
+import { Swagger } from '@/utils/docs/swagger';
 
 const entity = {
   name: '<name>'

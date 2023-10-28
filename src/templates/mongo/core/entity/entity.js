@@ -5,7 +5,7 @@ function capitalizeFirstLetter(string) {
 
 const getCoreEntity = (name) => `import { z } from 'zod';
 
-import { IEntity, withID } from '@/utils/entity';
+import { BaseEntity, withID } from '@/utils/entity';
 
 const ID = z.string().uuid();
 const Name = z.string().min(1).max(200).trim();
@@ -23,23 +23,12 @@ export const ${capitalizeFirstLetter(name)}EntitySchema = z.object({
 
 type ${capitalizeFirstLetter(name)} = z.infer<typeof ${capitalizeFirstLetter(name)}EntitySchema>;
 
-export class ${capitalizeFirstLetter(name)}Entity implements IEntity {
-  id: string;
-
+export class ${capitalizeFirstLetter(name)}Entity extends BaseEntity<${capitalizeFirstLetter(name)}Entity>() {
   name: string;
 
-  deletedAt?: Date;
-
-  createdAt: Date;
-
-  updatedAt: Date;
-
   constructor(entity: ${capitalizeFirstLetter(name)}) {
+    super();
     Object.assign(this, ${capitalizeFirstLetter(name)}EntitySchema.parse(withID(entity)));
-  }
-
-  setDelete() {
-    this.deletedAt = new Date();
   }
 }
 `

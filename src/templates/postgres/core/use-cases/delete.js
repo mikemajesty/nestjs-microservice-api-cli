@@ -32,7 +32,7 @@ export class ${capitalizeFirstLetter(name)}DeleteUsecase {
 
     const ${name} = new ${capitalizeFirstLetter(name)}Entity(model);
 
-    ${name}.setDelete();
+    ${name}.setDeleted();
 
     await this.${name}Repository.updateOne({ id: ${name}.id }, ${name});
 
