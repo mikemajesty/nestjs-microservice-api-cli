@@ -1,3 +1,8 @@
+import { getIndexLib } from './templates/libs';
+import { getAdapterLib } from './templates/libs/adapter';
+import { getModuleLib } from './templates/libs/module';
+import { getServiceLib } from './templates/libs/service';
+
 const fs = require('fs');
 const { bold, green, red } = require('colorette');
 const fse = require('fs-extra');
@@ -44,6 +49,33 @@ const { getModule: getModuleMongo } = require('./templates/mongo/modules/module'
 const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/mongo/modules/repository');
 const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/schemas/schema');
 const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
+
+const createLib = async (name) => {
+  if (!name) throw new Error('--name is required')
+  name = name.toLowerCase()
+  const dirRoot = `${__dirname}/scafold/libs/${name}`
+
+  try {
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+
+    fs.mkdirSync(dirRoot)
+
+    fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterLib(name))
+    fs.writeFileSync(`${dirRoot}/index.ts`, getIndexLib(name))
+    fs.writeFileSync(`${dirRoot}/module.ts`, getModuleLib(name))
+    fs.writeFileSync(`${dirRoot}/service.ts`, getServiceLib(name))
+
+    return `${name}`
+  } catch (error) {
+    console.log('error', error)
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+    return `${name}`
+  }
+}
 
 const createPostgresCrud = async (name) => {
   if (!name) throw new Error('--name is required')
@@ -196,7 +228,8 @@ const createMongoCrud = async (name) => {
 export const parseArgumentsInoOptions = async (input) => {
   return {
     mongoCrud: input.type === 'mongo:crud' ? await createMongoCrud(input.name) : false,
-    postgresCrud: input.type === 'postgres:crud' ? await createPostgresCrud(input.name) : false
+    postgresCrud: input.type === 'postgres:crud' ? await createPostgresCrud(input.name) : false,
+    libCreate: input.type === 'lib' ? await createLib(input.name) : false
   }
 }
 
@@ -204,7 +237,7 @@ export async function cli(args) {
 
   console.log(bold(green('Selecting template...')))
   const cli = await cliSelect({
-    values: [bold('POTGRES:CRUD'), bold('MONGO:CRUD')],
+    values: [bold('POTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB')],
     valueRenderer: (value, selected) => {
       if (selected) {
         return value;
@@ -214,7 +247,7 @@ export async function cli(args) {
     },
   })
 
-  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud' }[cli.id]
+  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud', 2: "lib" }[cli.id]
   const userInput = { name: undefined, type: undefined }
 
   userInput.type = mapSelectType
@@ -239,7 +272,17 @@ export async function cli(args) {
 
   for (const key in options) {
     if (options[key]) {
-      paths.push(path.resolve(`${__dirname}/../src/scafold/${userInput.type === 'postgres:crud' ? 'postgres' : 'mongo'}/`, options[key]))
+      if (userInput.type === 'postgres:crud') {
+        paths.push(path.resolve(`${__dirname}/../src/scafold/postgres/`, options[key]))
+      }
+
+      if (userInput.type === 'mongo:crud') {
+        paths.push(path.resolve(`${__dirname}/../src/scafold/mongo/`, options[key]))
+      }
+
+      if (userInput.type === 'lib') {
+        paths.push(path.resolve(`${__dirname}/../src/scafold/libs/`, options[key]))
+      }
     }
   }
 
@@ -270,7 +313,6 @@ export async function cli(args) {
     });
 
 
-
     // CREATE CRUD
     fs.readdir(src, function (err, folders) {
       if (err) {
@@ -281,25 +323,38 @@ export async function cli(args) {
         return
       }
 
-
       for (const folder of folders) {
-        const source = `${src}/${folder}`;
-        const destination = `${dest}/src/${folder}`.replace('\n', '');
 
-        fse.copySync(source, destination, { overwrite: true });
-
-        const destPathSchema = `${dest}/src/infra/database/${userInput.type === 'postgres:crud' ? 'postgres' : 'mongo'}/schemas`;
-
-        const pathSchema = path.resolve(src, '../schemas');
-
-        fse.copySync(pathSchema, destPathSchema, { overwrite: true });
-
-        if (fs.existsSync(source)) {
-          fs.rmSync(source, { recursive: true });
+        if (userInput.type === 'lib') {
+          const source = `${src}/${folder}`;
+          const destination = `${dest}/src/libs/${options.libCreate}/${folder}`.replace('\n', '');
+          fse.copySync(source, destination, { overwrite: true });
+          if (fs.existsSync(source)) {
+            fs.rmSync(source, { recursive: true });
+          }
+          continue
         }
 
-        if (fs.existsSync(pathSchema + `/${name}.ts`)) {
-          fs.rmSync(pathSchema + `/${name}.ts`, { recursive: true });
+        if (userInput.type === 'postgres:crud' || userInput.type === 'mongo:crud') {
+          const source = `${src}/${folder}`;
+          const destination = `${dest}/src/${folder}`.replace('\n', '');
+
+          fse.copySync(source, destination, { overwrite: true });
+
+          const destPathSchema = `${dest}/src/infra/database/${userInput.type === 'postgres:crud' ? 'postgres' : 'mongo'}/schemas`;
+
+          const pathSchema = path.resolve(src, '../schemas');
+
+          fse.copySync(pathSchema, destPathSchema, { overwrite: true });
+
+          if (fs.existsSync(source)) {
+            fs.rmSync(source, { recursive: true });
+          }
+
+          if (fs.existsSync(pathSchema + `/${name}.ts`)) {
+            fs.rmSync(pathSchema + `/${name}.ts`, { recursive: true });
+          }
+
         }
       }
 
@@ -311,6 +366,10 @@ export async function cli(args) {
 
       if (userInput.type === 'mongo:crud') {
         console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/mongo.README.md')))
+      }
+
+      if (userInput.type === 'lib') {
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/lib.README.md')))
       }
     });
 
