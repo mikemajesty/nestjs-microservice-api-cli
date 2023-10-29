@@ -1,7 +1,14 @@
+import { getIndexInfra } from './templates/infra';
+import { getAdapterInfra } from './templates/infra/adapter';
+import { getModuleInfa } from './templates/infra/module';
+import { getServiceInfra } from './templates/infra/service';
 import { getIndexLib } from './templates/libs';
 import { getAdapterLib } from './templates/libs/adapter';
 import { getModuleLib } from './templates/libs/module';
 import { getServiceLib } from './templates/libs/service';
+import { getModuleControllerModule } from './templates/module/controller';
+import { getModuleModule } from './templates/module/module';
+import { getModuleSwaggerModule } from './templates/module/swagger';
 
 const fs = require('fs');
 const { bold, green, red } = require('colorette');
@@ -49,6 +56,61 @@ const { getModule: getModuleMongo } = require('./templates/mongo/modules/module'
 const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/mongo/modules/repository');
 const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/schemas/schema');
 const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
+
+const createModule = async (name) => { 
+  if (!name) throw new Error('--name is required')
+  name = name.toLowerCase()
+  const dirRoot = `${__dirname}/scafold/module/${name}`
+
+  console.log("dirRoot", dirRoot)
+  try {
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+
+    fs.mkdirSync(dirRoot)
+
+    fs.writeFileSync(`${dirRoot}/controller.ts`, getModuleControllerModule(name))
+    fs.writeFileSync(`${dirRoot}/module.ts`, getModuleModule(name))
+    fs.writeFileSync(`${dirRoot}/swagger.ts`, getModuleSwaggerModule(name))
+
+    return `${name}`
+  } catch (error) {
+    console.log('errorCreateModule', error)
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+    return `${name}`
+  }
+}
+
+const createInfra = async (name) => {
+  if (!name) throw new Error('--name is required')
+  name = name.toLowerCase()
+  const dirRoot = `${__dirname}/scafold/infra/${name}`
+
+  console.log("dirRoot", dirRoot)
+  try {
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+
+    fs.mkdirSync(dirRoot)
+
+    fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterInfra(name))
+    fs.writeFileSync(`${dirRoot}/index.ts`, getIndexInfra(name))
+    fs.writeFileSync(`${dirRoot}/module.ts`, getModuleInfa(name))
+    fs.writeFileSync(`${dirRoot}/service.ts`, getServiceInfra(name))
+
+    return `${name}`
+  } catch (error) {
+    console.log('errorCreateInfra', error)
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+    return `${name}`
+  }
+ }
 
 const createLib = async (name) => {
   if (!name) throw new Error('--name is required')
@@ -229,7 +291,9 @@ export const parseArgumentsInoOptions = async (input) => {
   return {
     mongoCrud: input.type === 'mongo:crud' ? await createMongoCrud(input.name) : false,
     postgresCrud: input.type === 'postgres:crud' ? await createPostgresCrud(input.name) : false,
-    libCreate: input.type === 'lib' ? await createLib(input.name) : false
+    libCreate: input.type === 'lib' ? await createLib(input.name) : false,
+    infraCreate: input.type === 'infra' ? await createInfra(input.name) : false,
+    moduleCreate: input.type === 'module' ? await createModule(input.name) : false,
   }
 }
 
@@ -237,7 +301,7 @@ export async function cli(args) {
 
   console.log(bold(green('Selecting template...')))
   const cli = await cliSelect({
-    values: [bold('POTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB')],
+    values: [bold('POTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB'), bold('INFRA'), bold('MODULE')],
     valueRenderer: (value, selected) => {
       if (selected) {
         return value;
@@ -247,7 +311,7 @@ export async function cli(args) {
     },
   })
 
-  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud', 2: "lib" }[cli.id]
+  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud', 2: "lib", 3: "infra", 4: "module" }[cli.id]
   const userInput = { name: undefined, type: undefined }
 
   userInput.type = mapSelectType
@@ -282,6 +346,14 @@ export async function cli(args) {
 
       if (userInput.type === 'lib') {
         paths.push(path.resolve(`${__dirname}/../src/scafold/libs/`, options[key]))
+      }
+
+      if (userInput.type === 'infra') {
+        paths.push(path.resolve(`${__dirname}/../src/scafold/infra/`, options[key]))
+      }
+
+      if (userInput.type === 'module') {
+        paths.push(path.resolve(`${__dirname}/../src/scafold/module/`, options[key]))
       }
     }
   }
@@ -324,6 +396,26 @@ export async function cli(args) {
       }
 
       for (const folder of folders) {
+
+        if (userInput.type === 'infra') { 
+          const source = `${src}/${folder}`;
+          const destination = `${dest}/src/infra/${options.infraCreate}/${folder}`.replace('\n', '');
+          fse.copySync(source, destination, { overwrite: true });
+          if (fs.existsSync(source)) {
+            fs.rmSync(source, { recursive: true });
+          }
+          continue
+        }
+
+        if (userInput.type === 'module') { 
+          const source = `${src}/${folder}`;
+          const destination = `${dest}/src/modules/${options.moduleCreate}/${folder}`.replace('\n', '');
+          fse.copySync(source, destination, { overwrite: true });
+          if (fs.existsSync(source)) {
+            fs.rmSync(source, { recursive: true });
+          }
+          continue
+        }
 
         if (userInput.type === 'lib') {
           const source = `${src}/${folder}`;
@@ -370,6 +462,14 @@ export async function cli(args) {
 
       if (userInput.type === 'lib') {
         console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/lib.README.md')))
+      }
+
+      if (userInput.type === 'infra') {
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/infra.README.md')))
+      }
+      
+      if (userInput.type === 'module') {
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/module.README.md')))
       }
     });
 
