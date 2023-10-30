@@ -6,13 +6,13 @@ function capitalizeFirstLetter(string) {
 const getCoreUsecaseListTest = (name) => `import { Test } from '@nestjs/testing';
 
 import { I${capitalizeFirstLetter(name)}ListAdapter } from '@/modules/${name}/adapter';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput, ${capitalizeFirstLetter(name)}ListUsecase } from '../${name}-list';
 
-const successInput: ${capitalizeFirstLetter(name)}ListInput = { limit: 1, page: 1, search: {}, sort: { createdAt: -1 } }
+const successInput: ${capitalizeFirstLetter(name)}ListInput = { limit: 1, page: 1, search: {}, sort: { createdAt: -1 } };
 
 const failureInput: ${capitalizeFirstLetter(name)}ListInput = { search: null, sort: null, limit: 10, page: 1 };
 
@@ -30,8 +30,8 @@ describe('${capitalizeFirstLetter(name)}ListUsecase', () => {
         },
         {
           provide: I${capitalizeFirstLetter(name)}ListAdapter,
-          useFactory: (birdRepository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}ListUsecase(birdRepository);
+          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
+            return new ${capitalizeFirstLetter(name)}ListUsecase(${name}Repository);
           },
           inject: [I${capitalizeFirstLetter(name)}Repository]
         }
@@ -76,9 +76,7 @@ describe('${capitalizeFirstLetter(name)}ListUsecase', () => {
 
     repository.paginate = jest.fn().mockResolvedValue(paginateOutput);
 
-    await expect(usecase.execute(successInput)).resolves.toEqual(
-      paginateOutput
-    );
+    await expect(usecase.execute(successInput)).resolves.toEqual(paginateOutput);
   });
 });
 `

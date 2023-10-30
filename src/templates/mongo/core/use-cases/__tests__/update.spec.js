@@ -8,7 +8,7 @@ const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -35,8 +35,8 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
         },
         {
           provide: I${capitalizeFirstLetter(name)}UpdateAdapter,
-          useFactory: (birdRepository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
-            return new ${capitalizeFirstLetter(name)}UpdateUsecase(birdRepository, logger);
+          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${capitalizeFirstLetter(name)}UpdateUsecase(${name}Repository, logger);
           },
           inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
         }
@@ -51,7 +51,7 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
     await expectZodError(
       () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof("id") }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
       }
     );
   });

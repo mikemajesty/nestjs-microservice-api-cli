@@ -7,7 +7,7 @@ const getCoreUsecaseGetByIDTest = (name) => `import { Test } from '@nestjs/testi
 
 import { I${capitalizeFirstLetter(name)}GetByIDAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -18,7 +18,6 @@ const successInput: ${capitalizeFirstLetter(name)}GetByIDInput = {
 };
 
 const failureInput: ${capitalizeFirstLetter(name)}GetByIDInput = {};
-
 
 describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}GetByIDAdapter;
@@ -34,8 +33,8 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
         },
         {
           provide: I${capitalizeFirstLetter(name)}GetByIDAdapter,
-          useFactory: (birdRepository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}GetByIdUsecase(birdRepository);
+          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
+            return new ${capitalizeFirstLetter(name)}GetByIdUsecase(${name}Repository);
           },
           inject: [I${capitalizeFirstLetter(name)}Repository]
         }
@@ -50,7 +49,7 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
     await expectZodError(
       () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof("id") }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
       }
     );
   });
