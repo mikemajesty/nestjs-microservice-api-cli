@@ -18,7 +18,7 @@ export const ${capitalizeFirstLetter(name)}UpdateSchema = ${capitalizeFirstLette
 }).merge(${capitalizeFirstLetter(name)}EntitySchema.omit({ id: true }).partial());
 
 export type ${capitalizeFirstLetter(name)}UpdateInput = z.infer<typeof ${capitalizeFirstLetter(name)}UpdateSchema>;
-export type ${capitalizeFirstLetter(name)}UpdateOutput = Promise<${capitalizeFirstLetter(name)}Entity>;
+export type ${capitalizeFirstLetter(name)}UpdateOutput = ${capitalizeFirstLetter(name)}Entity;
 
 export class ${capitalizeFirstLetter(name)}UpdateUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerServide: ILoggerAdapter) {}

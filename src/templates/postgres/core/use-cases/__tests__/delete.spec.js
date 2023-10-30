@@ -5,18 +5,19 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testing';
 
-import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
+import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteOutput, ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
 import { I${capitalizeFirstLetter(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
 
-const ${name}Response = {
-  id: generateUUID(),
-  name: 'dummy'
-} as ${capitalizeFirstLetter(name)}Entity;
+const successInput: ${capitalizeFirstLetter(name)}DeleteInput = {
+  id: generateUUID()
+};
+
+const failureInput: ${capitalizeFirstLetter(name)}DeleteInput = {};
 
 describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}DeleteAdapter;
@@ -43,25 +44,32 @@ describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
   });
 
-  test('should throw error when invalid parameters', async () => {
+  test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute({}),
+      () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: 'id' }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
       }
     );
   });
 
-  test('should throw error when ${name} not found', async () => {
+  test('when ${name} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
-    await expect(usecase.execute({ id: generateUUID() })).rejects.toThrowError(ApiNotFoundException);
+
+    await expect(usecase.execute(successInput)).rejects.toThrowError(ApiNotFoundException);
   });
 
-  test('should delete successfully', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${name}Response);
+  test('when ${name} deleted successfully, should expect a ${name} that has been deleted', async () => {
+    const findByIdOutput: ${capitalizeFirstLetter(name)}DeleteOutput = new ${capitalizeFirstLetter(name)}Entity({
+      id: generateUUID(),
+      name: 'dummy'
+    });
+
+    repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
     repository.updateOne = jest.fn();
-    await expect(usecase.execute({ id: generateUUID() })).resolves.toEqual({
-      ...${name}Response,
+
+    await expect(usecase.execute(successInput)).resolves.toEqual({
+      ...findByIdOutput,
       deletedAt: expect.any(Date)
     });
   });

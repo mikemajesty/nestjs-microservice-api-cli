@@ -18,7 +18,7 @@ export const ${capitalizeFirstLetter(name)}CreateSchema = ${capitalizeFirstLette
 });
 
 export type ${capitalizeFirstLetter(name)}CreateInput = z.infer<typeof ${capitalizeFirstLetter(name)}CreateSchema>;
-export type ${capitalizeFirstLetter(name)}CreateOutput = Promise<CreatedModel>;
+export type ${capitalizeFirstLetter(name)}CreateOutput = CreatedModel;
 
 export class ${capitalizeFirstLetter(name)}CreateUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerServide: ILoggerAdapter) {}

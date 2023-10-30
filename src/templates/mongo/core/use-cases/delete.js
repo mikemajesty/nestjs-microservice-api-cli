@@ -16,7 +16,7 @@ export const ${capitalizeFirstLetter(name)}DeleteSchema = ${capitalizeFirstLette
 });
 
 export type ${capitalizeFirstLetter(name)}DeleteInput = z.infer<typeof ${capitalizeFirstLetter(name)}DeleteSchema>;
-export type ${capitalizeFirstLetter(name)}DeleteOutput = Promise<${capitalizeFirstLetter(name)}Entity>;
+export type ${capitalizeFirstLetter(name)}DeleteOutput = ${capitalizeFirstLetter(name)}Entity;
 
 export class ${capitalizeFirstLetter(name)}DeleteUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}

@@ -16,7 +16,7 @@ import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}
 export const ${capitalizeFirstLetter(name)}ListSchema = z.intersection(PaginationSchema, SortSchema.merge(SearchSchema));
 
 export type ${capitalizeFirstLetter(name)}ListInput = PaginationInput<${capitalizeFirstLetter(name)}Entity>;
-export type ${capitalizeFirstLetter(name)}ListOutput = Promise<PaginationOutput<${capitalizeFirstLetter(name)}Entity>>;
+export type ${capitalizeFirstLetter(name)}ListOutput = PaginationOutput<${capitalizeFirstLetter(name)}Entity>;
 
 export class ${capitalizeFirstLetter(name)}ListUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}

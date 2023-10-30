@@ -11,12 +11,14 @@ import { expectZodError, generateUUID } from '@/utils/tests/tests';;
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-getByID';
+import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-getByID';
 
-const ${name}Response = {
-  id: '61cc35f3-03d9-4b7f-9c63-59f32b013ef5',
-  name: 'dummy'
-} as ${capitalizeFirstLetter(name)}Entity;
+const successInput: ${capitalizeFirstLetter(name)}GetByIDInput = {
+  id: generateUUID()
+};
+
+const failureInput: ${capitalizeFirstLetter(name)}GetByIDInput = {};
+
 
 describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}GetByIDAdapter;
@@ -32,8 +34,8 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
         },
         {
           provide: I${capitalizeFirstLetter(name)}GetByIDAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}GetByIdUsecase(${name}Repository);
+          useFactory: (birdRepository: I${capitalizeFirstLetter(name)}Repository) => {
+            return new ${capitalizeFirstLetter(name)}GetByIdUsecase(birdRepository);
           },
           inject: [I${capitalizeFirstLetter(name)}Repository]
         }
@@ -44,23 +46,30 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
   });
 
-  test('should throw error when invalid parameters', async () => {
+  test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute({}),
+      () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: 'id' }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof("id") }]);
       }
     );
   });
 
-  test('should throw error when ${name} not found', async () => {
+  test('when ${name} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
-    await expect(usecase.execute({ id: generateUUID() })).rejects.toThrowError(ApiNotFoundException);
+
+    await expect(usecase.execute(successInput)).rejects.toThrowError(ApiNotFoundException);
   });
 
-  test('should getById successfully', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${name}Response);
-    await expect(usecase.execute({ id: generateUUID() })).resolves.toEqual(${name}Response);
+  test('when ${name} found, should expect a ${name} that has been found', async () => {
+    const findByIdOutput: ${capitalizeFirstLetter(name)}GetByIDOutput = new ${capitalizeFirstLetter(name)}Entity({
+      id: '61cc35f3-03d9-4b7f-9c63-59f32b013ef5',
+      name: 'dummy'
+    });
+
+    repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
+
+    await expect(usecase.execute(successInput)).resolves.toEqual(findByIdOutput);
   });
 });
 `

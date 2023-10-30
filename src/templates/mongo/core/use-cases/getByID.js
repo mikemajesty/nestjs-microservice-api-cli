@@ -15,7 +15,7 @@ export const ${capitalizeFirstLetter(name)}GetByIdSchema = ${capitalizeFirstLett
   id: true
 });
 export type ${capitalizeFirstLetter(name)}GetByIDInput = z.infer<typeof ${capitalizeFirstLetter(name)}GetByIdSchema>;
-export type ${capitalizeFirstLetter(name)}GetByIDOutput = Promise<${capitalizeFirstLetter(name)}Entity>;
+export type ${capitalizeFirstLetter(name)}GetByIDOutput = ${capitalizeFirstLetter(name)}Entity;
 
 export class ${capitalizeFirstLetter(name)}GetByIdUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}

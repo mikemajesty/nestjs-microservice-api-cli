@@ -27,8 +27,8 @@ import {
 } from './adapter';
 import { SwagggerRequest, SwagggerResponse } from './swagger';
 
-@Controller()
-@ApiTags('${name}')
+@Controller('${pluralize(name)}')
+@ApiTags('${pluralize(name)}')
 @ApiBearerAuth()
 @Roles(UserRole.USER)
 export class ${capitalizeFirstLetter(name)}Controller {
@@ -40,36 +40,36 @@ export class ${capitalizeFirstLetter(name)}Controller {
     private readonly ${name}Delete: I${capitalizeFirstLetter(name)}DeleteAdapter
   ) {}
 
-  @Post('/${pluralize(name)}')
+  @Post()
   @ApiResponse(SwagggerResponse.create[200])
   @ApiBody(SwagggerRequest.createBody)
-  async create(@Req() { body }: ApiRequest): ${capitalizeFirstLetter(name)}CreateOutput {
+  async create(@Req() { body }: ApiRequest): Promise<${capitalizeFirstLetter(name)}CreateOutput> {
     return await this.${name}Create.execute(body as ${capitalizeFirstLetter(name)}CreateInput);
   }
 
-  @Put('/${pluralize(name)}')
+  @Put()
   @ApiResponse(SwagggerResponse.update[200])
   @ApiResponse(SwagggerResponse.update[404])
   @ApiBody(SwagggerRequest.updateBody)
-  async update(@Req() { body }: ApiRequest): ${capitalizeFirstLetter(name)}UpdateOutput {
+  async update(@Req() { body }: ApiRequest): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
     return await this.${name}Update.execute(body as ${capitalizeFirstLetter(name)}UpdateInput);
   }
 
-  @Get('/${pluralize(name)}/:id')
+  @Get('/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse(SwagggerResponse.getByID[200])
   @ApiResponse(SwagggerResponse.getByID[404])
-  async getById(@Req() { params }: ApiRequest): ${capitalizeFirstLetter(name)}GetByIDOutput {
+  async getById(@Req() { params }: ApiRequest): Promise<${capitalizeFirstLetter(name)}GetByIDOutput> {
     return await this.${name}GetByID.execute(params as ${capitalizeFirstLetter(name)}GetByIDInput);
   }
 
-  @Get('/${pluralize(name)}')
+  @Get()
   @ApiQuery(SwagggerRequest.listQuery.pagination.limit)
   @ApiQuery(SwagggerRequest.listQuery.pagination.page)
   @ApiQuery(SwagggerRequest.listQuery.sort)
   @ApiQuery(SwagggerRequest.listQuery.search)
   @ApiResponse(SwagggerResponse.list[200])
-  async list(@Req() { query }: ApiRequest): ${capitalizeFirstLetter(name)}ListOutput {
+  async list(@Req() { query }: ApiRequest): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const input: ${capitalizeFirstLetter(name)}ListInput = {
       sort: SortHttpSchema.parse(query.sort),
       search: SearchHttpSchema.parse(query.search),
@@ -80,11 +80,11 @@ export class ${capitalizeFirstLetter(name)}Controller {
     return await this.${name}List.execute(input);
   }
 
-  @Delete('/${pluralize(name)}/:id')
+  @Delete('/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse(SwagggerResponse.delete[200])
   @ApiResponse(SwagggerResponse.delete[404])
-  async delete(@Req() { params }: ApiRequest): ${capitalizeFirstLetter(name)}DeleteOutput {
+  async delete(@Req() { params }: ApiRequest): Promise<${capitalizeFirstLetter(name)}DeleteOutput> {
     return await this.${name}Delete.execute(params as ${capitalizeFirstLetter(name)}DeleteInput);
   }
 }

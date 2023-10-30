@@ -5,19 +5,16 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseListTest = (name) => `import { Test } from '@nestjs/testing';
 
-import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
+import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput, ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { I${capitalizeFirstLetter(name)}ListAdapter } from '@/modules/${name}/adapter';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
 
-const ${name}Response = {
-  id: generateUUID(),
-  name: 'dummy',
-  createdAt: new Date(),
-  updatedAt: new Date()
-} as ${capitalizeFirstLetter(name)}Entity;
+const successInput: ${capitalizeFirstLetter(name)}ListInput = { limit: 1, page: 1, search: {}, sort: { createdAt: -1 } };
+
+const failureInput: ${capitalizeFirstLetter(name)}ListInput = { search: null, sort: null, limit: 10, page: 1 };
 
 describe('${capitalizeFirstLetter(name)}ListUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}ListAdapter;
@@ -44,32 +41,41 @@ describe('${capitalizeFirstLetter(name)}ListUsecase', () => {
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
   });
 
-  test('should throw error when invalid parameters', async () => {
+  test('when sort input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute({ search: null, sort: null, limit: 10, page: 1 }),
+      () => usecase.execute(failureInput),
       (issues) => {
         expect(issues).toEqual([{ message: 'Expected object, received null', path: 'sort' }]);
       }
     );
   });
 
-  test('should list successfully', async () => {
-    const response = { docs: [${name}Response], page: 1, limit: 1, total: 1 };
-    repository.paginate = jest.fn().mockResolvedValue(response);
-    await expect(usecase.execute({ limit: 1, page: 1, search: {}, sort: { createdAt: -1 } })).resolves.toEqual({
-      docs: [${name}Response],
+  test('when ${name} are found, should expect an ${name} list', async () => {
+    const doc = new ${capitalizeFirstLetter(name)}Entity({
+      id: generateUUID(),
+      name: 'dummy',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    const paginateOutput: ${capitalizeFirstLetter(name)}ListOutput = { docs: [doc], page: 1, limit: 1, total: 1 };
+
+    repository.paginate = jest.fn().mockResolvedValue(paginateOutput);
+
+    await expect(usecase.execute(successInput)).resolves.toEqual({
+      docs: [doc],
       page: 1,
       limit: 1,
       total: 1
     });
   });
 
-  test('should list successfully when docs is empty', async () => {
-    const response = { docs: [], page: 1, limit: 1, total: 1 };
-    repository.paginate = jest.fn().mockResolvedValue(response);
-    await expect(usecase.execute({ limit: 1, page: 1, search: {}, sort: { createdAt: -1 } })).resolves.toEqual(
-      response
-    );
+  test('when ${name} not found, should expect an empty list', async () => {
+    const paginateOutput: ${capitalizeFirstLetter(name)}ListOutput = { docs: [], page: 1, limit: 1, total: 1 };
+
+    repository.paginate = jest.fn().mockResolvedValue(paginateOutput);
+
+    await expect(usecase.execute(successInput)).resolves.toEqual(paginateOutput);
   });
 });
 `

@@ -8,14 +8,16 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { ApiInternalServerException } from '@/utils/exception';
-import { expectZodError } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';;
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
+import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateOutput, ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
+import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 
-const ${name} = {
-  name: 'dummy'
-} as ${capitalizeFirstLetter(name)}CreateInput;
+const successInput: ${capitalizeFirstLetter(name)}CreateInput = {
+  name: "name"
+}
+const failureInput: ${capitalizeFirstLetter(name)}CreateInput = {}
 
 describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}CreateAdapter;
@@ -36,8 +38,8 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
         },
         {
           provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
-            return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository, logger);
+          useFactory: (birdRepository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${capitalizeFirstLetter(name)}CreateUsecase(birdRepository, logger);
           },
           inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
         }
@@ -48,32 +50,36 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
   });
 
-  test('should throw error when invalid parameters', async () => {
+  test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute({}),
+      () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: 'name' }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('name') }]);
       }
     );
   });
 
-  test('should create successfully', async () => {
+  test('when ${name} created successfully, should expect a ${name} that has been created', async () => {
+    const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: generateUUID() }
+
     repository.findOne = jest.fn().mockResolvedValue(null);
-    repository.create = jest.fn().mockResolvedValue(${name});
+    repository.create = jest.fn().mockResolvedValue(createOutput);
     repository.startSession = jest.fn().mockResolvedValue({
       commitTransaction: jest.fn()
     });
-    await expect(usecase.execute(${name})).resolves.toEqual(${name});
+
+    await expect(usecase.execute(successInput)).resolves.toEqual(createOutput);
   });
 
-  test('should throw error when create exception', async () => {
+  test('when transaction throw an error, should expect an error', async () => {
     repository.findOne = jest.fn().mockResolvedValue(null);
-    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException('error'));
+    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException());
     repository.startSession = jest.fn().mockResolvedValue({
       commitTransaction: jest.fn(),
       abortTransaction: jest.fn()
     });
-    await expect(usecase.execute(${name})).rejects.toThrow(ApiInternalServerException);
+
+    await expect(usecase.execute(successInput)).rejects.toThrow(ApiInternalServerException);
   });
 });
 `

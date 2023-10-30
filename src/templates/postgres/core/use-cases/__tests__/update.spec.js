@@ -8,16 +8,17 @@ const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
+import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput, ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
 
-const ${name}Response = {
-  id: generateUUID(),
-  name: 'dummy'
-} as ${capitalizeFirstLetter(name)}Entity;
+const successInput: ${capitalizeFirstLetter(name)}UpdateInput = {
+  id: generateUUID()
+};
+
+const failureInput: ${capitalizeFirstLetter(name)}UpdateInput = {};
 
 describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}UpdateAdapter;
@@ -50,24 +51,31 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
   });
 
-  test('should throw error when invalid parameters', async () => {
+  test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute({}),
+      () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: 'id' }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
       }
     );
   });
 
-  test('should throw error when ${name} not found', async () => {
+  test('when ${name} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
-    await expect(usecase.execute({ id: generateUUID() })).rejects.toThrowError(ApiNotFoundException);
+
+    await expect(usecase.execute(successInput)).rejects.toThrowError(ApiNotFoundException);
   });
 
-  test('should update successfully', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${name}Response);
+  test('when ${name} updated successfully, should expect an ${name} that has been updated', async () => {
+    const findByIdOutput: ${capitalizeFirstLetter(name)}UpdateOutput = new ${capitalizeFirstLetter(name)}Entity({
+      id: generateUUID(),
+      name: 'dummy'
+    });
+
+    repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
     repository.updateOne = jest.fn().mockResolvedValue(null);
-    await expect(usecase.execute({ id: generateUUID() })).resolves.toEqual(${name}Response);
+
+    await expect(usecase.execute(successInput)).resolves.toEqual(findByIdOutput);
   });
 });
 `

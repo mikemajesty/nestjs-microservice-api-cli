@@ -8,10 +8,17 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { ApiInternalServerException } from '@/utils/exception';
-import { expectZodError } from '@/utils/tests/tests';;
+import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
+import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
+import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateOutput, ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
+
+const successInput: ${capitalizeFirstLetter(name)}CreateInput = {
+  name: 'dummy'
+};
+
+const failureInput: ${capitalizeFirstLetter(name)}CreateInput = {};
 
 describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
   let usecase: I${capitalizeFirstLetter(name)}CreateAdapter;
@@ -44,32 +51,34 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
     repository = app.get(I${capitalizeFirstLetter(name)}Repository);
   });
 
-  test('should throw error when invalid parameters', async () => {
+  test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute({}),
+      () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: 'name' }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('name') }]);
       }
     );
   });
 
-  test('should ${name} create successfully', async () => {
-    const ${name} = { name: 'dummy' };
-    repository.create = jest.fn().mockResolvedValue(${name});
+  test('when ${name} created successfully, should expect a ${name} that has been created', async () => {
+    const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: generateUUID() };
+
+    repository.create = jest.fn().mockResolvedValue(createOutput);
     repository.startSession = jest.fn().mockResolvedValue({
       commit: jest.fn()
     });
-    await expect(usecase.execute(${name})).resolves.toEqual(${name});
+
+    await expect(usecase.execute(successInput)).resolves.toEqual(createOutput);
   });
 
-  test('should throw error when create exception', async () => {
-    const ${name} = { name: 'dummy' };
-    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException('error'));
+  test('when transaction throw an error, should expect an error', async () => {
     repository.startSession = jest.fn().mockResolvedValue({
       commit: jest.fn(),
       rollback: jest.fn()
     });
-    await expect(usecase.execute(${name})).rejects.toThrow(ApiInternalServerException);
+    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException());
+
+    await expect(usecase.execute(successInput)).rejects.toThrow(ApiInternalServerException);
   });
 });
 `
