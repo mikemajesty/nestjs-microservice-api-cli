@@ -5,7 +5,7 @@ function capitalizeFirstLetter(string) {
 
 const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/mongoose';
-import mongoose, { Connection, PaginateModel } from 'mongoose';
+import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
@@ -45,12 +45,12 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
         const repository: MongoRepositoryModelSessionType<PaginateModel<${capitalizeFirstLetter(name)}Document>> = connection.model<
           ${capitalizeFirstLetter(name)}Document,
           Model
-        >(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema);
+        >(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema as Schema);
 
         repository.connection = connection;
 
         // use if you not want transaction
-        // const repository: PaginateModel<${capitalizeFirstLetter(name)}Document> = connection.model<${capitalizeFirstLetter(name)}Document, Model>(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema);
+        // const repository: PaginateModel<${capitalizeFirstLetter(name)}Document> = connection.model<${capitalizeFirstLetter(name)}Document, Model>(${capitalizeFirstLetter(name)}.name, ${capitalizeFirstLetter(name)}Schema as Schema);
 
         return new ${capitalizeFirstLetter(name)}Repository(repository);
       },
