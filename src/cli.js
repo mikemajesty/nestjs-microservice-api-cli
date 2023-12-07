@@ -140,8 +140,7 @@ const createLib = async (name) => {
 }
 
 const createPostgresCrud = async (name) => {
-  if (!name) throw new Error('--name is required')
-  name = name.toLowerCase()
+  name = getName(name);
 
   const dirRoot = `${__dirname}/scafold/postgres/${name}`
 
@@ -479,4 +478,10 @@ export async function cli(args) {
       fs.rmSync(paths[0], { recursive: true });
     }
   }
+}
+
+const getName = (name) => {
+  if (!name) throw new Error('--name is required');
+  name = String(name).trim().replace(" ", "").toLowerCase();
+  return name;
 }
