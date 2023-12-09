@@ -6,7 +6,6 @@ function capitalizeFirstLetter(string) {
 const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-import { DatabaseOptionsType } from '@/utils/database/sequelize';
 import { ValidateSchema } from '@/utils/decorators/validate-schema.decorator';
 import { ApiNotFoundException } from '@/utils/exception';
 
@@ -24,7 +23,7 @@ export class ${capitalizeFirstLetter(name)}DeleteUsecase {
 
   @ValidateSchema(${capitalizeFirstLetter(name)}DeleteSchema)
   async execute({ id }: ${capitalizeFirstLetter(name)}DeleteInput): Promise<${capitalizeFirstLetter(name)}DeleteOutput> {
-    const model = await this.${name}Repository.findById<DatabaseOptionsType>(id);
+    const model = await this.${name}Repository.findById(id);
 
     if (!model) {
       throw new ApiNotFoundException();

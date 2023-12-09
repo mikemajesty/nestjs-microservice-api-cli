@@ -1,16 +1,5 @@
 #### Postgres CRUD
 
-### Add Schema to Sequelize.
-
- - Access the config.ts file
-  ```
-    src/infra/database/postgres/config.ts
-  ```
- - Add your Postgres schema in the addModels function. 
-  ```
-    sequelizeConfig.addModels([NewSchema]);
-  ```
-
 ### Add Module to microservice.
 
  - Access the app.module.ts file

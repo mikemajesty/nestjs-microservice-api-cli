@@ -5,18 +5,27 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const getModuleSchema = (name) => `import { Column, DataType, Model, Table } from 'sequelize-typescript';
+const getModuleSchema = (name) => `import { Max, Min } from 'class-validator';
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
-@Table({ timestamps: true, tableName: '${pluralize(name)}' })
-export class ${capitalizeFirstLetter(name)}Schema extends Model {
-  @Column({ primaryKey: true, type: DataType.UUID })
+@Entity({ name: '${pluralize(name)}' })
+export class ${capitalizeFirstLetter(name)}Schema extends BaseEntity {
+  @Column({ type: 'uuid', primary: true })
   id: string;
 
-  @Column(DataType.STRING)
+  @Min(1)
+  @Max(200)
+  @Column()
   name: string;
 
-  @Column({ allowNull: true, type: DataType.DATE })
-  deletedAt?: Date;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt: Date;
 }
 `
 

@@ -7,7 +7,6 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
-import { ApiInternalServerException } from '@/utils/exception';
 import { expectZodError, generateUUID } from '@/utils/tests/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
@@ -64,21 +63,8 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
     const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: generateUUID() };
 
     repository.create = jest.fn().mockResolvedValue(createOutput);
-    repository.startSession = jest.fn().mockResolvedValue({
-      commit: jest.fn()
-    });
 
     await expect(usecase.execute(successInput)).resolves.toEqual(createOutput);
-  });
-
-  test('when transaction throw an error, should expect an error', async () => {
-    repository.startSession = jest.fn().mockResolvedValue({
-      commit: jest.fn(),
-      rollback: jest.fn()
-    });
-    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException());
-
-    await expect(usecase.execute(successInput)).rejects.toThrow(ApiInternalServerException);
   });
 });
 `
