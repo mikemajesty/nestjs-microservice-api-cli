@@ -7,10 +7,11 @@ const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } f
 import { getConnectionToken } from '@nestjs/mongoose';
 import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
 
+import { IsLoggedMiddleware } from '@/common/middlewares';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
 import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
-import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-getByID';
+import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { RedisCacheModule } from '@/infra/cache/redis';
@@ -20,7 +21,6 @@ import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
 import { TokenModule } from '@/libs/auth';
 import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
-import { IsLoggedMiddleware } from '@/utils/middlewares/is-logged.middleware';
 
 import {
   I${capitalizeFirstLetter(name)}CreateAdapter,

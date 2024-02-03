@@ -8,13 +8,13 @@ const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testin
 import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteOutput, ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
 import { I${capitalizeFirstLetter(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';
+import { expectZodError, getMockUUID } from '@/utils/tests/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
 
 const successInput: ${capitalizeFirstLetter(name)}DeleteInput = {
-  id: generateUUID()
+  id: getMockUUID()
 };
 
 const failureInput: ${capitalizeFirstLetter(name)}DeleteInput = {};
@@ -48,7 +48,7 @@ describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
     await expectZodError(
       () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
     );
   });
@@ -61,7 +61,7 @@ describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
 
   test('when ${name} deleted successfully, should expect a ${name} that has been deleted', async () => {
     const findByIdOutput: ${capitalizeFirstLetter(name)}DeleteOutput = new ${capitalizeFirstLetter(name)}Entity({
-      id: generateUUID(),
+      id: getMockUUID(),
       name: 'dummy'
     });
 

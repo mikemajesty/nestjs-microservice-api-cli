@@ -7,7 +7,7 @@ function capitalizeFirstLetter(string) {
 
 const getModuleSchema = (name) => `import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
-@Table({ timestamps: true, tableName: '${pluralize(name)}' })
+@Table({ timestamps: true, tableName: '${pluralize(name)}', underscored: true })
 export class ${capitalizeFirstLetter(name)}Schema extends Model {
   @Column({ primaryKey: true, type: DataType.UUID })
   id: string;

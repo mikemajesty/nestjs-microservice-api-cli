@@ -21,8 +21,8 @@ const { getCoreUsecaseCreateTest } = require('./templates/postgres/core/use-case
 const { getCoreUsecaseUpdateTest } = require('./templates/postgres/core/use-cases/__tests__/update.spec');
 const { getCoreUsecaseDeleteTest } = require('./templates/postgres/core/use-cases/__tests__/delete.spec');
 const { getCoreUsecaseListTest } = require('./templates/postgres/core/use-cases/__tests__/list.spec');
-const { getCoreUsecaseGetByIDTest } = require('./templates/postgres/core/use-cases/__tests__/getByID.spec');
-const { getCoreUsecaseGetByID } = require('./templates/postgres/core/use-cases/getByID');
+const { getCoreUsecaseGetByIDTest } = require('./templates/postgres/core/use-cases/__tests__/get-by-id.spec');
+const { getCoreUsecaseGetByID } = require('./templates/postgres/core/use-cases/get-by-id');
 const { getCoreUsecaseList } = require('./templates/postgres/core/use-cases/list');
 const { getCoreEntity } = require('./templates/postgres/core/entity/entity');
 const { getCoreRepository } = require('./templates/postgres/core/repository/repository');
@@ -41,8 +41,8 @@ const { getCoreUsecaseCreateTest: getCoreUsecaseCreateMongoTest } = require('./t
 const { getCoreUsecaseUpdateTest: getCoreUsecaseUpdateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/update.spec');
 const { getCoreUsecaseDeleteTest: getCoreUsecaseDeleteMongoTest } = require('./templates/mongo/core/use-cases/__tests__/delete.spec');
 const { getCoreUsecaseListTest: getCoreUsecaseListMongoTest } = require('./templates/mongo/core/use-cases/__tests__/list.spec');
-const { getCoreUsecaseGetByIDTest: getCoreUsecaseGetByIDMongoTest } = require('./templates/mongo/core/use-cases/__tests__/getByID.spec');
-const { getCoreUsecaseGetByID: getCoreUsecaseGetByIDMongo } = require('./templates/mongo/core/use-cases/getByID');
+const { getCoreUsecaseGetByIDTest: getCoreUsecaseGetByIDMongoTest } = require('./templates/mongo/core/use-cases/__tests__/get-by-id.spec');
+const { getCoreUsecaseGetByID: getCoreUsecaseGetByIDMongo } = require('./templates/mongo/core/use-cases/get-by-id');
 const { getCoreUsecaseList: getCoreUsecaseListMongo } = require('./templates/mongo/core/use-cases/list');
 const { getCoreEntity: getCoreEntityMongo } = require('./templates/mongo/core/entity/entity');
 const { getCoreRepository: getCoreRepositoryMongo } = require('./templates/mongo/core/repository/repository');
@@ -172,7 +172,7 @@ const createPostgresCrud = async (name) => {
 
     fs.writeFileSync(`${useCasesPath}/${name}-create.ts`, getCoreUsecaseCreate(name))
     fs.writeFileSync(`${useCasesPath}/${name}-delete.ts`, getCoreUsecaseDelete(name))
-    fs.writeFileSync(`${useCasesPath}/${name}-getByID.ts`, getCoreUsecaseGetByID(name))
+    fs.writeFileSync(`${useCasesPath}/${name}-get-by-id.ts`, getCoreUsecaseGetByID(name))
     fs.writeFileSync(`${useCasesPath}/${name}-list.ts`, getCoreUsecaseList(name))
     fs.writeFileSync(`${useCasesPath}/${name}-update.ts`, getCoreUsecaseUpdate(name))
 
@@ -182,7 +182,7 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListTest(name))
-    fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-get-by-id.spec.ts`, getCoreUsecaseGetByIDTest(name))
 
     const schemasPath = `${__dirname}/scafold/postgres/schemas`;
     if (fs.existsSync(schemasPath)) {
@@ -244,7 +244,7 @@ const createMongoCrud = async (name) => {
 
     fs.writeFileSync(`${useCasesPath}/${name}-create.ts`, getCoreUsecaseCreateMongo(name))
     fs.writeFileSync(`${useCasesPath}/${name}-delete.ts`, getCoreUsecaseDeleteMongo(name))
-    fs.writeFileSync(`${useCasesPath}/${name}-getByID.ts`, getCoreUsecaseGetByIDMongo(name))
+    fs.writeFileSync(`${useCasesPath}/${name}-get-by-id.ts`, getCoreUsecaseGetByIDMongo(name))
     fs.writeFileSync(`${useCasesPath}/${name}-list.ts`, getCoreUsecaseListMongo(name))
     fs.writeFileSync(`${useCasesPath}/${name}-update.ts`, getCoreUsecaseUpdateMongo(name))
 
@@ -255,7 +255,7 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateMongoTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteMongoTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListMongoTest(name))
-    fs.writeFileSync(`${useCasesPathTest}/${name}-getByID.spec.ts`, getCoreUsecaseGetByIDMongoTest(name))
+    fs.writeFileSync(`${useCasesPathTest}/${name}-get-by-id.spec.ts`, getCoreUsecaseGetByIDMongoTest(name))
 
     const schemasPath = `${__dirname}/scafold/mongo/schemas`;
 
@@ -300,7 +300,7 @@ export async function cli(args) {
 
   console.log(bold(green('Selecting template...')))
   const cli = await cliSelect({
-    values: [bold('POTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB'), bold('INFRA'), bold('MODULE')],
+    values: [bold('POSTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB'), bold('INFRA'), bold('MODULE')],
     valueRenderer: (value, selected) => {
       if (selected) {
         return value;
@@ -452,7 +452,7 @@ export async function cli(args) {
       console.log(bold(green('===done===')))
 
       if (userInput.type === 'postgres:crud') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/potgres.README.md')))
+        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/postgres.README.md')))
       }
 
       if (userInput.type === 'mongo:crud') {

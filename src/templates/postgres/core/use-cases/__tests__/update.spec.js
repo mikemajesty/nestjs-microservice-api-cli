@@ -8,14 +8,14 @@ const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';
+import { expectZodError, getMockUUID } from '@/utils/tests/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput, ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
 
 const successInput: ${capitalizeFirstLetter(name)}UpdateInput = {
-  id: generateUUID()
+  id: getMockUUID()
 };
 
 const failureInput: ${capitalizeFirstLetter(name)}UpdateInput = {};
@@ -55,7 +55,7 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
     await expectZodError(
       () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
     );
   });
@@ -68,7 +68,7 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
 
   test('when ${name} updated successfully, should expect an ${name} that has been updated', async () => {
     const findByIdOutput: ${capitalizeFirstLetter(name)}UpdateOutput = new ${capitalizeFirstLetter(name)}Entity({
-      id: generateUUID(),
+      id: getMockUUID(),
       name: 'dummy'
     });
 

@@ -7,15 +7,17 @@ const getModuleRepository = (name) => `import { Injectable } from '@nestjs/commo
 import { Transaction } from 'sequelize';
 import { ModelCtor } from 'sequelize-typescript';
 
+import {
+  ConvertPaginateInputToSequelizeFilter,
+  SearchTypeEnum,
+  ValidateDatabaseSortAllowed
+} from '@/common/decorators';
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { SequelizeRepository } from '@/infra/repository/postgres/repository';
 import { DatabaseOptionsSchema, DatabaseOptionsType } from '@/utils/database/sequelize';
-import { ConvertPaginateInputToSequelizeFilter } from '@/utils/decorators/database/postgres/convert-paginate-input-to-sequelize-filter.decorator';
-import { ValidateDatabaseSortAllowed } from '@/utils/decorators/database/validate-database-sort-allowed.decorator';
-import { SearchTypeEnum } from '@/utils/decorators/types';
 
 type Model = ModelCtor<${capitalizeFirstLetter(name)}Schema> & ${capitalizeFirstLetter(name)}Entity;
 

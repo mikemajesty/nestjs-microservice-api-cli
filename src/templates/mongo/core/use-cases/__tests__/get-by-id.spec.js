@@ -7,14 +7,14 @@ const getCoreUsecaseGetByIDTest = (name) => `import { Test } from '@nestjs/testi
 
 import { I${capitalizeFirstLetter(name)}GetByIDAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';
+import { expectZodError, getMockUUID } from '@/utils/tests/tests';
 
+import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-getByID';
-import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
+import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
 
 const successInput: ${capitalizeFirstLetter(name)}GetByIDInput = {
-  id: generateUUID()
+  id: getMockUUID()
 };
 
 const failureInput: ${capitalizeFirstLetter(name)}GetByIDInput = {};
@@ -25,6 +25,7 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
+      imports: [],
       providers: [
         {
           provide: I${capitalizeFirstLetter(name)}Repository,
@@ -48,7 +49,7 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
     await expectZodError(
       () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
     );
   });
@@ -61,9 +62,10 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
 
   test('when ${name} found, should expect a ${name} that has been found', async () => {
     const findByIdOutput: ${capitalizeFirstLetter(name)}GetByIDOutput = new ${capitalizeFirstLetter(name)}Entity({
-      id: generateUUID(),
+      id: '61cc35f3-03d9-4b7f-9c63-59f32b013ef5',
       name: 'dummy'
     });
+
     repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
 
     await expect(usecase.execute(successInput)).resolves.toEqual(findByIdOutput);

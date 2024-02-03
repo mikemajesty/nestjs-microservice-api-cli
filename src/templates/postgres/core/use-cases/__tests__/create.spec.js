@@ -8,7 +8,7 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { ApiInternalServerException } from '@/utils/exception';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';
+import { expectZodError, getMockUUID } from '@/utils/tests/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -55,13 +55,13 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
     await expectZodError(
       () => usecase.execute(failureInput),
       (issues) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameof('name') }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('name') }]);
       }
     );
   });
 
   test('when ${name} created successfully, should expect a ${name} that has been created', async () => {
-    const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: generateUUID() };
+    const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: getMockUUID() };
 
     repository.create = jest.fn().mockResolvedValue(createOutput);
     repository.startSession = jest.fn().mockResolvedValue({

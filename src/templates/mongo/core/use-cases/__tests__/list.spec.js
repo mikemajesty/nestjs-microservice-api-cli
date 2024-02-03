@@ -6,7 +6,7 @@ function capitalizeFirstLetter(string) {
 const getCoreUsecaseListTest = (name) => `import { Test } from '@nestjs/testing';
 
 import { I${capitalizeFirstLetter(name)}ListAdapter } from '@/modules/${name}/adapter';
-import { expectZodError, generateUUID } from '@/utils/tests/tests';
+import { expectZodError, getMockUUID } from '@/utils/tests/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -53,7 +53,7 @@ describe('${capitalizeFirstLetter(name)}ListUsecase', () => {
 
   test('when ${name} are found, should expect an ${name} list', async () => {
     const doc = new ${capitalizeFirstLetter(name)}Entity({
-      id: generateUUID(),
+      id: getMockUUID(),
       name: 'dummy',
       createdAt: new Date(),
       updatedAt: new Date()

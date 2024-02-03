@@ -5,10 +5,10 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 
+import { ValidateSchema } from '@/common/decorators';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ILoggerAdapter } from '@/infra/logger';
 import { DatabaseOptionsType } from '@/utils/database/sequelize';
-import { ValidateSchema } from '@/utils/decorators/validate-schema.decorator';
 import { ApiNotFoundException } from '@/utils/exception';
 
 import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from './../entity/${name}';

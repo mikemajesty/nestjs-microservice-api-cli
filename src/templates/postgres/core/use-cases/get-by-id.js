@@ -5,9 +5,9 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseGetByID = (name) => `import { z } from 'zod';
 
+import { ValidateSchema } from '@/common/decorators';
 import { ${capitalizeFirstLetter(name)}EntitySchema } from '@/core/${name}/entity/${name}';
 import { DatabaseOptionsType } from '@/utils/database/sequelize';
-import { ValidateSchema } from '@/utils/decorators/validate-schema.decorator';
 import { ApiNotFoundException } from '@/utils/exception';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../entity/${name}';
