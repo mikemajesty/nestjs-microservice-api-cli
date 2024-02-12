@@ -57,7 +57,7 @@ const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/m
 const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/schemas/schema');
 const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
 
-const createModule = async (name) => { 
+const createModule = async (name) => {
   if (!name) throw new Error('--name is required')
   name = name.toLowerCase()
   const dirRoot = `${__dirname}/scafold/module/${name}`
@@ -110,7 +110,7 @@ const createInfra = async (name) => {
     }
     return `${name}`
   }
- }
+}
 
 const createLib = async (name) => {
   if (!name) throw new Error('--name is required')
@@ -396,7 +396,7 @@ export async function cli(args) {
 
       for (const folder of folders) {
 
-        if (userInput.type === 'infra') { 
+        if (userInput.type === 'infra') {
           const source = `${src}/${folder}`;
           const destination = `${dest}/src/infra/${options.infraCreate}/${folder}`.replace('\n', '');
           fse.copySync(source, destination, { overwrite: true });
@@ -406,7 +406,7 @@ export async function cli(args) {
           continue
         }
 
-        if (userInput.type === 'module') { 
+        if (userInput.type === 'module') {
           const source = `${src}/${folder}`;
           const destination = `${dest}/src/modules/${options.moduleCreate}/${folder}`.replace('\n', '');
           fse.copySync(source, destination, { overwrite: true });
@@ -466,7 +466,7 @@ export async function cli(args) {
       if (userInput.type === 'infra') {
         console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/infra.README.md')))
       }
-      
+
       if (userInput.type === 'module') {
         console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/module.README.md')))
       }
