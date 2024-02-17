@@ -2,25 +2,31 @@
 
 ### Add Schema to Sequelize.
 
- - Access the config.ts file
-  ```
-    src/infra/database/postgres/config.ts
-  ```
- - Add your Postgres schema in the addModels function. 
-  ```
-    sequelizeConfig.addModels([NewSchema]);
-  ```
+- Access the config.ts file
+
+```
+  src/infra/database/postgres/service.ts
+```
+
+- Add your Postgres schema in the addModels function.
+
+```
+  instance.addModels([NewSchema]);
+```
 
 ### Add Module to microservice.
 
- - Access the app.module.ts file
-  ```
-    src/app.module.ts
-  ```
- - Add your Postgres Module in the Imports array. 
-  ```
-    imports: [NewModule]
-  ```
+- Access the app.module.ts file
+
+```
+  src/app.module.ts
+```
+
+- Add your Postgres Module in the Imports array.
+
+```
+  imports: [NewModule]
+```
 
 ---
 
@@ -32,4 +38,3 @@ The following is a list of all the people that have contributed Nestjs monorepo 
 
 It is available under the MIT license.
 [License](https://opensource.org/licenses/mit-license.php)
-
