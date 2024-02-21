@@ -23,11 +23,11 @@ export const ${capitalizeFirstLetter(name)}EntitySchema = z.object({
 
 type ${capitalizeFirstLetter(name)} = z.infer<typeof ${capitalizeFirstLetter(name)}EntitySchema>;
 
-export class ${capitalizeFirstLetter(name)}Entity extends BaseEntity<${capitalizeFirstLetter(name)}Entity>(${capitalizeFirstLetter(name)}EntitySchema) {
+export class ${capitalizeFirstLetter(name)}Entity extends BaseEntity<${capitalizeFirstLetter(name)}Entity>() {
   name: string;
 
   constructor(entity: ${capitalizeFirstLetter(name)}) {
-    super();
+    super(${capitalizeFirstLetter(name)}EntitySchema);
     Object.assign(this, this.validate(entity));
   }
 }
