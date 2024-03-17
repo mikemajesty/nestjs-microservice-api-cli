@@ -7,7 +7,7 @@ const getCoreUsecaseListTest = (name) => `import { Test } from '@nestjs/testing'
 
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput, ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { I${capitalizeFirstLetter(name)}ListAdapter } from '@/modules/${name}/adapter';
-import { expectZodError, getMockUUID } from '@/utils/tests/tests';
+import { expectZodError, getMockUUID } from '@/utils/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
