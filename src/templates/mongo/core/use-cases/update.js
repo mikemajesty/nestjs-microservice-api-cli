@@ -8,6 +8,7 @@ const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 import { ValidateSchema } from '@/common/decorators';
 import { ILoggerAdapter } from '@/infra/logger';
 import { ApiNotFoundException } from '@/utils/exception';
+import { IUsecase } from '@/utils/usecase';
 
 import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from '../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
@@ -19,8 +20,8 @@ export const ${capitalizeFirstLetter(name)}UpdateSchema = ${capitalizeFirstLette
 export type ${capitalizeFirstLetter(name)}UpdateInput = Partial<z.infer<typeof ${capitalizeFirstLetter(name)}UpdateSchema>>;
 export type ${capitalizeFirstLetter(name)}UpdateOutput = ${capitalizeFirstLetter(name)}Entity;
 
-export class ${capitalizeFirstLetter(name)}UpdateUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerServide: ILoggerAdapter) {}
+export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
+  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerService: ILoggerAdapter) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}UpdateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}UpdateInput): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
@@ -36,7 +37,7 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase {
 
     await this.${name}Repository.updateOne({ id: entity.id }, entity);
 
-    this.loggerServide.info({ message: '${name} updated.', obj: { ${name}: input } });
+    this.loggerService.info({ message: '${name} updated.', obj: { ${name}: input } });
 
     const updated = await this.${name}Repository.findById(entity.id);
 

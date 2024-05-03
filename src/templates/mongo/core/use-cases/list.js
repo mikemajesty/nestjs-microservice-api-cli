@@ -10,6 +10,7 @@ import { ValidateSchema } from '@/common/decorators';
 import { PaginationInput, PaginationOutput, PaginationSchema } from '@/utils/pagination';
 import { SearchSchema } from '@/utils/search';
 import { SortSchema } from '@/utils/sort';
+import { IUsecase } from '@/utils/usecase';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
@@ -19,7 +20,7 @@ export const ${capitalizeFirstLetter(name)}ListSchema = z.intersection(Paginatio
 export type ${capitalizeFirstLetter(name)}ListInput = PaginationInput<${capitalizeFirstLetter(name)}Entity>;
 export type ${capitalizeFirstLetter(name)}ListOutput = PaginationOutput<${capitalizeFirstLetter(name)}Entity>;
 
-export class ${capitalizeFirstLetter(name)}ListUsecase {
+export class ${capitalizeFirstLetter(name)}ListUsecase implements IUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}ListSchema)

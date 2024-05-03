@@ -7,6 +7,7 @@ const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
 import { ValidateSchema } from '@/common/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
+import { IUsecase } from '@/utils/usecase';
 
 import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from '../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
@@ -18,7 +19,7 @@ export const ${capitalizeFirstLetter(name)}DeleteSchema = ${capitalizeFirstLette
 export type ${capitalizeFirstLetter(name)}DeleteInput = z.infer<typeof ${capitalizeFirstLetter(name)}DeleteSchema>;
 export type ${capitalizeFirstLetter(name)}DeleteOutput = ${capitalizeFirstLetter(name)}Entity;
 
-export class ${capitalizeFirstLetter(name)}DeleteUsecase {
+export class ${capitalizeFirstLetter(name)}DeleteUsecase implements IUsecase {
   constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}DeleteSchema)

@@ -19,7 +19,7 @@ const input = new ${capitalizeFirstLetter(name)}Entity({
 
 const output = new ${capitalizeFirstLetter(name)}Entity({ ...input, updatedAt: new Date(), createdAt: new Date(), deletedAt: null });
 
-export const SwagggerResponse = {
+export const SwaggerResponse = {
   create: {
     200: Swagger.defaultResponseJSON({
       status: 200,
@@ -75,7 +75,7 @@ export const SwagggerResponse = {
   }
 };
 
-export const SwagggerRequest = {
+export const SwaggerRequest = {
   createBody: Swagger.defaultRequestJSON({ ...input, id: undefined } as ${capitalizeFirstLetter(name)}Entity),
   updateBody: Swagger.defaultRequestJSON({ ...input, id: '<id>' } as ${capitalizeFirstLetter(name)}Entity),
   listQuery: {
