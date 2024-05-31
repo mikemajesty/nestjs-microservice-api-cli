@@ -5,7 +5,7 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/common/decorators';
+import { ValidateSchema } from '@/utils/decorators';
 import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
 import { DatabaseOptionsType } from '@/utils/database/sequelize';

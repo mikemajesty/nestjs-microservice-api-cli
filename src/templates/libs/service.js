@@ -6,7 +6,7 @@ function capitalizeFirstLetter(string) {
 const getServiceLib = (name) => `import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
-import { ValidateSchema } from '@/common/decorators';
+import { ValidateSchema } from '@/utils/decorators';
 
 import { I${capitalizeFirstLetter(name)}Adapter } from './adapter';
 

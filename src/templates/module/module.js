@@ -4,15 +4,15 @@ function capitalizeFirstLetter(string) {
 
 const getModuleModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
-import { IsLoggedMiddleware } from '@/common/middlewares';
+import { IsLoggedMiddleware } from '@/observables/middlewares';
 import { RedisCacheModule } from '@/infra/cache/redis';
 import { LoggerModule } from '@/infra/logger';
-import { TokenModule } from '@/libs/auth';
+import { TokenLibModule } from '@/libs/token';
 
 import { ${capitalizeFirstLetter(name)}Controller } from './controller';
 
 @Module({
-  imports: [TokenModule, LoggerModule, RedisCacheModule],
+  imports: [TokenLibModule, LoggerModule, RedisCacheModule],
   controllers: [${capitalizeFirstLetter(name)}Controller]
 })
 export class ${capitalizeFirstLetter(name)}Module implements NestModule {

@@ -6,7 +6,7 @@ function capitalizeFirstLetter(string) {
 const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ModelCtor, Sequelize } from 'sequelize-typescript';
 
-import { IsLoggedMiddleware } from '@/common/middlewares';
+import { IsLoggedMiddleware } from '@/observables/middlewares';
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
@@ -19,7 +19,7 @@ import { IDataBaseAdapter } from '@/infra/database';
 import { PostgresDatabaseModule } from '@/infra/database/postgres/module';
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
-import { TokenModule } from '@/libs/auth';
+import { TokenLibModule } from '@/libs/token';
 
 import {
   I${capitalizeFirstLetter(name)}CreateAdapter,
@@ -32,7 +32,7 @@ import { ${capitalizeFirstLetter(name)}Controller } from './controller';
 import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenModule, LoggerModule, RedisCacheModule, PostgresDatabaseModule],
+  imports: [TokenLibModule, LoggerModule, RedisCacheModule, PostgresDatabaseModule],
   controllers: [${capitalizeFirstLetter(name)}Controller],
   providers: [
     {

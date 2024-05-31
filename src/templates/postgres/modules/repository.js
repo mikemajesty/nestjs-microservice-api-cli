@@ -11,7 +11,7 @@ import {
   ConvertPaginateInputToSequelizeFilter,
   SearchTypeEnum,
   ValidateDatabaseSortAllowed
-} from '@/common/decorators';
+} from '@/utils/decorators';
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';

@@ -7,7 +7,7 @@ const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } f
 import { getConnectionToken } from '@nestjs/mongoose';
 import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
 
-import { IsLoggedMiddleware } from '@/common/middlewares';
+import { IsLoggedMiddleware } from '@/observables/middlewares';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
 import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
@@ -19,7 +19,7 @@ import { ConnectionName } from '@/infra/database/enum';
 import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document, ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/mongo/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
-import { TokenModule } from '@/libs/auth';
+import { TokenLibModule } from '@/libs/token';
 import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
 
 import {
@@ -33,7 +33,7 @@ import { ${capitalizeFirstLetter(name)}Controller } from './controller';
 import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenModule, SecretsModule, LoggerModule, RedisCacheModule],
+  imports: [TokenLibModule, SecretsModule, LoggerModule, RedisCacheModule],
   controllers: [${capitalizeFirstLetter(name)}Controller],
   providers: [
     {
