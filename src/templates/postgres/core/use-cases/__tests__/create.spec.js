@@ -7,7 +7,6 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
-import { ApiInternalServerException } from '@/utils/exception';
 import { expectZodError, getMockUUID } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
