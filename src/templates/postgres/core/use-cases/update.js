@@ -8,7 +8,7 @@ const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 import { ValidateSchema } from '@/utils/decorators';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ILoggerAdapter } from '@/infra/logger';
-import { DatabaseOptionsType } from '@/utils/database/sequelize';
+;
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
@@ -26,7 +26,7 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
 
   @ValidateSchema(${capitalizeFirstLetter(name)}UpdateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}UpdateInput): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
-    const ${name} = await this.${name}Repository.findById<DatabaseOptionsType>(input.id);
+    const ${name} = await this.${name}Repository.findById(input.id);
 
     if (!${name}) {
       throw new ApiNotFoundException();
@@ -40,7 +40,7 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
 
     this.loggerService.info({ message: '${name} updated.', obj: { ${name}: input } });
 
-    const updated = await this.${name}Repository.findById<DatabaseOptionsType>(entity.id);
+    const updated = await this.${name}Repository.findById(entity.id);
 
     return new ${capitalizeFirstLetter(name)}Entity(updated);
   }

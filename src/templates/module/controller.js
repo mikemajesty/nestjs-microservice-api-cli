@@ -9,7 +9,7 @@ const getModuleControllerModule = (name) => `import { Controller, Get, Req } fro
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { Roles } from '@/utils/decorators';
-import { UserRole } from '@/core/user/entity/user';
+import { UserRoleEnum } from '@/core/user/entity/user';
 import { ApiRequest } from '@/utils/request';
 
 import { SwagggerResponse } from './swagger';
@@ -17,7 +17,7 @@ import { SwagggerResponse } from './swagger';
 @Controller('${pluralize(name)}')
 @ApiTags('${name}')
 @ApiBearerAuth()
-@Roles(UserRole.USER)
+@Roles(UserRoleEnum.USER)
 export class ${capitalizeFirstLetter(name)}Controller {
   @Get()
   @ApiResponse(SwagggerResponse.get[200])

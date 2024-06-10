@@ -7,7 +7,7 @@ const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
 import { ValidateSchema } from '@/utils/decorators';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-import { DatabaseOptionsType } from '@/utils/database/sequelize';
+;
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
@@ -25,7 +25,7 @@ export class ${capitalizeFirstLetter(name)}DeleteUsecase implements IUsecase {
 
   @ValidateSchema(${capitalizeFirstLetter(name)}DeleteSchema)
   async execute({ id }: ${capitalizeFirstLetter(name)}DeleteInput): Promise<${capitalizeFirstLetter(name)}DeleteOutput> {
-    const model = await this.${name}Repository.findById<DatabaseOptionsType>(id);
+    const model = await this.${name}Repository.findById(id);
 
     if (!model) {
       throw new ApiNotFoundException();

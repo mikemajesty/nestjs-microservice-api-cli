@@ -35,7 +35,7 @@ export const SwaggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${pluralize(name)}',
+      route: 'api/v1/${pluralize(name)}',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -48,7 +48,7 @@ export const SwaggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${pluralize(name)}/:id',
+      route: 'api/v1/${pluralize(name)}/:id',
       message: '${name}NotFound',
       description: '${name} not found.'
     })
@@ -61,7 +61,7 @@ export const SwaggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/${pluralize(name)}/:id',
+      route: 'api/v1/${pluralize(name)}/:id',
       message: '${name}NotFound',
       description: '${name} not found.'
     })

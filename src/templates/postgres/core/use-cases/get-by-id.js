@@ -7,7 +7,7 @@ const getCoreUsecaseGetByID = (name) => `import { z } from 'zod';
 
 import { ValidateSchema } from '@/utils/decorators';
 import { ${capitalizeFirstLetter(name)}EntitySchema } from '@/core/${name}/entity/${name}';
-import { DatabaseOptionsType } from '@/utils/database/sequelize';
+;
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
@@ -26,7 +26,7 @@ export class ${capitalizeFirstLetter(name)}GetByIdUsecase implements IUsecase {
 
   @ValidateSchema(${capitalizeFirstLetter(name)}GetByIdSchema)
   async execute({ id }: ${capitalizeFirstLetter(name)}GetByIDInput): Promise<${capitalizeFirstLetter(name)}GetByIDOutput> {
-    const ${name} = await this.${name}Repository.findById<DatabaseOptionsType>(id);
+    const ${name} = await this.${name}Repository.findById(id);
 
     if (!${name}) {
       throw new ApiNotFoundException();

@@ -8,7 +8,7 @@ const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
 import { ValidateSchema } from '@/utils/decorators';
 import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
-import { DatabaseOptionsType } from '@/utils/database/sequelize';
+;
 import { IUsecase } from '@/utils/usecase';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
@@ -28,19 +28,11 @@ export class ${capitalizeFirstLetter(name)}CreateUsecase implements IUsecase {
   async execute(input: ${capitalizeFirstLetter(name)}CreateInput): Promise<${capitalizeFirstLetter(name)}CreateOutput> {
     const entity = new ${capitalizeFirstLetter(name)}Entity(input);
 
-    const transaction = await this.${name}Repository.startSession();
-    try {
-      const ${name} = await this.${name}Repository.create<DatabaseOptionsType>(entity, { transaction });
+    const ${name} = await this.${name}Repository.create(entity);
 
-      await transaction.commit();
+    this.loggerService.info({ message: '${name} created.', obj: { ${name} } });
 
-      this.loggerService.info({ message: '${name} created.', obj: { ${name} } });
-
-      return ${name};
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
+    return ${name};
   }
 }
 `

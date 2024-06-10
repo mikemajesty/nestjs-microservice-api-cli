@@ -64,21 +64,8 @@ describe('${capitalizeFirstLetter(name)}CreateUsecase', () => {
     const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: getMockUUID() };
 
     repository.create = jest.fn().mockResolvedValue(createOutput);
-    repository.startSession = jest.fn().mockResolvedValue({
-      commit: jest.fn()
-    });
-
+   
     await expect(usecase.execute(successInput)).resolves.toEqual(createOutput);
-  });
-
-  test('when transaction throw an error, should expect an error', async () => {
-    repository.startSession = jest.fn().mockResolvedValue({
-      commit: jest.fn(),
-      rollback: jest.fn()
-    });
-    repository.create = jest.fn().mockRejectedValue(new ApiInternalServerException());
-
-    await expect(usecase.execute(successInput)).rejects.toThrow(ApiInternalServerException);
   });
 });
 `

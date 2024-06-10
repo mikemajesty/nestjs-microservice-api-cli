@@ -13,7 +13,7 @@ import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name
 import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
-import { UserRole } from '@/core/user/entity/user';
+import { UserRoleEnum } from '@/core/user/entity/user';
 import { ApiRequest } from '@/utils/request';
 import { SearchHttpSchema } from '@/utils/search';
 import { SortHttpSchema } from '@/utils/sort';
@@ -30,7 +30,7 @@ import { SwaggerRequest, SwaggerResponse } from './swagger';
 @Controller('${pluralize(name)}')
 @ApiTags('${pluralize(name)}')
 @ApiBearerAuth()
-@Roles(UserRole.USER)
+@Roles(UserRoleEnum.USER)
 export class ${capitalizeFirstLetter(name)}Controller {
   constructor(
     private readonly ${name}Create: I${capitalizeFirstLetter(name)}CreateAdapter,
@@ -47,12 +47,13 @@ export class ${capitalizeFirstLetter(name)}Controller {
     return await this.${name}Create.execute(body as ${capitalizeFirstLetter(name)}CreateInput);
   }
 
-  @Put()
+  @Put(':id')
   @ApiResponse(SwaggerResponse.update[200])
   @ApiResponse(SwaggerResponse.update[404])
   @ApiBody(SwaggerRequest.updateBody)
-  async update(@Req() { body }: ApiRequest): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
-    return await this.${name}Update.execute(body as ${capitalizeFirstLetter(name)}UpdateInput);
+  @ApiParam({ name: 'id', required: true })
+  async update(@Req() { body, params }: ApiRequest): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
+    return await this.${name}Update.execute({ ...body, id: params.id } as ${capitalizeFirstLetter(name)}UpdateInput);
   }
 
   @Get('/:id')
