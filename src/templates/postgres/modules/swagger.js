@@ -8,7 +8,7 @@ function capitalizeFirstLetter(string) {
 const getModuleSwagger = (name) => `import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { ${capitalizeFirstLetter(name)}CreateOutput } from '@/core/${name}/use-cases/${name}-create';
 import { ${capitalizeFirstLetter(name)}DeleteOutput } from '@/core/${name}/use-cases/${name}-delete';
-import { ${capitalizeFirstLetter(name)}GetByIDOutput } from '@/core/${name}/use-cases/${name}-get-by-id';
+import { ${capitalizeFirstLetter(name)}GetByIdOutput } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
 import { Swagger } from '@/utils/docs/swagger';
@@ -40,10 +40,10 @@ export const SwaggerResponse = {
       description: '${name} not found.'
     })
   },
-  getByID: {
+  getById: {
     200: Swagger.defaultResponseJSON({
       status: 200,
-      json: output as ${capitalizeFirstLetter(name)}GetByIDOutput,
+      json: output as ${capitalizeFirstLetter(name)}GetByIdOutput,
       description: '${name} found.'
     }),
     404: Swagger.defaultResponseError({

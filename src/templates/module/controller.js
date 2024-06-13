@@ -8,8 +8,6 @@ function capitalizeFirstLetter(string) {
 const getModuleControllerModule = (name) => `import { Controller, Get, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { Roles } from '@/utils/decorators';
-import { UserRoleEnum } from '@/core/user/entity/user';
 import { ApiRequest } from '@/utils/request';
 
 import { SwagggerResponse } from './swagger';
@@ -17,7 +15,6 @@ import { SwagggerResponse } from './swagger';
 @Controller('${pluralize(name)}')
 @ApiTags('${name}')
 @ApiBearerAuth()
-@Roles(UserRoleEnum.USER)
 export class ${capitalizeFirstLetter(name)}Controller {
   @Get()
   @ApiResponse(SwagggerResponse.get[200])

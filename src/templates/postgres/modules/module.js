@@ -23,7 +23,7 @@ import { TokenLibModule } from '@/libs/token';
 import {
   I${capitalizeFirstLetter(name)}CreateAdapter,
   I${capitalizeFirstLetter(name)}DeleteAdapter,
-  I${capitalizeFirstLetter(name)}GetByIDAdapter,
+  I${capitalizeFirstLetter(name)}GetByIdAdapter,
   I${capitalizeFirstLetter(name)}ListAdapter,
   I${capitalizeFirstLetter(name)}UpdateAdapter
 } from './adapter';
@@ -52,7 +52,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
       inject: [ILoggerAdapter, I${capitalizeFirstLetter(name)}Repository]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}GetByIDAdapter,
+      provide: I${capitalizeFirstLetter(name)}GetByIdAdapter,
       useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}GetByIdUsecase(repository),
       inject: [I${capitalizeFirstLetter(name)}Repository]
     },

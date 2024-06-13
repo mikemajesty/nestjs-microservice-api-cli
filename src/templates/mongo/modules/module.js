@@ -25,7 +25,7 @@ import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
 import {
   I${capitalizeFirstLetter(name)}CreateAdapter,
   I${capitalizeFirstLetter(name)}DeleteAdapter,
-  I${capitalizeFirstLetter(name)}GetByIDAdapter,
+  I${capitalizeFirstLetter(name)}GetByIdAdapter,
   I${capitalizeFirstLetter(name)}ListAdapter,
   I${capitalizeFirstLetter(name)}UpdateAdapter
 } from './adapter';
@@ -54,7 +54,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 
         return new ${capitalizeFirstLetter(name)}Repository(repository);
       },
-      inject: [getConnectionToken(ConnectionName.USER)]
+      inject: [getConnectionToken(ConnectionName.CATS)]
     },
     {
       provide: I${capitalizeFirstLetter(name)}CreateAdapter,
@@ -85,7 +85,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
       inject: [I${capitalizeFirstLetter(name)}Repository]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}GetByIDAdapter,
+      provide: I${capitalizeFirstLetter(name)}GetByIdAdapter,
       useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
         return new ${capitalizeFirstLetter(name)}GetByIdUsecase(${name}Repository);
       },
@@ -98,7 +98,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
     I${capitalizeFirstLetter(name)}UpdateAdapter,
     I${capitalizeFirstLetter(name)}ListAdapter,
     I${capitalizeFirstLetter(name)}DeleteAdapter,
-    I${capitalizeFirstLetter(name)}GetByIDAdapter
+    I${capitalizeFirstLetter(name)}GetByIdAdapter
   ]
 })
 export class ${capitalizeFirstLetter(name)}Module implements NestModule {
