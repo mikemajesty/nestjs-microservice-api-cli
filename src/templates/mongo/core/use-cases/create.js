@@ -5,9 +5,9 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/utils/decorators';
 import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
+import { ValidateSchema } from '@/utils/decorators';
 import { IUsecase } from '@/utils/usecase';
 
 import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from '../entity/${name}';
@@ -21,25 +21,19 @@ export type ${capitalizeFirstLetter(name)}CreateInput = z.infer<typeof ${capital
 export type ${capitalizeFirstLetter(name)}CreateOutput = CreatedModel;
 
 export class ${capitalizeFirstLetter(name)}CreateUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerService: ILoggerAdapter) {}
+  constructor(
+    private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository,
+    private readonly loggerService: ILoggerAdapter
+  ) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}CreateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}CreateInput): Promise<${capitalizeFirstLetter(name)}CreateOutput> {
     const entity = new ${capitalizeFirstLetter(name)}Entity(input);
 
-    const session = await this.${name}Repository.startSession();
+    const ${name} = await this.${name}Repository.create(entity);
 
-    try {
-      const ${name} = await this.${name}Repository.create(entity, { session });
-
-      await session.commitTransaction();
-
-      this.loggerService.info({ message: '${name} created.', obj: { ${name} } });
-      return ${name};
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    }
+    this.loggerService.info({ message: '${name} created.', obj: { ${name} } });
+    return ${name};
   }
 }
 `

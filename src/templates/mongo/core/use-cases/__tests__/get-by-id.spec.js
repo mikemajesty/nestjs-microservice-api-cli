@@ -13,13 +13,7 @@ import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdOutput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
 
-const successInput: ${capitalizeFirstLetter(name)}GetByIdInput = {
-  id: getMockUUID()
-};
-
-const failureInput: ${capitalizeFirstLetter(name)}GetByIdInput = {};
-
-describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
+describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
   let usecase: I${capitalizeFirstLetter(name)}GetByIdAdapter;
   let repository: I${capitalizeFirstLetter(name)}Repository;
 
@@ -47,20 +41,24 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
 
   test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute(failureInput),
+      () => usecase.execute({}),
       (issues) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
     );
   });
 
+  const input: ${capitalizeFirstLetter(name)}GetByIdInput = {
+    id: getMockUUID()
+  };
+
   test('when ${name} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
 
-    await expect(usecase.execute(successInput)).rejects.toThrowError(ApiNotFoundException);
+    await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  test('when ${name} found, should expect a ${name} that has been found', async () => {
+  test('when ${name} found, should expect a ${name}', async () => {
     const findByIdOutput: ${capitalizeFirstLetter(name)}GetByIdOutput = new ${capitalizeFirstLetter(name)}Entity({
       id: '61cc35f3-03d9-4b7f-9c63-59f32b013ef5',
       name: 'dummy'
@@ -68,7 +66,7 @@ describe('${capitalizeFirstLetter(name)}GetByIdUsecase', () => {
 
     repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
 
-    await expect(usecase.execute(successInput)).resolves.toEqual(findByIdOutput);
+    await expect(usecase.execute(input)).resolves.toEqual(findByIdOutput);
   });
 });
 `

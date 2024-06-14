@@ -12,16 +12,9 @@ import { expectZodError, getMockUUID } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput } from '../${name}-update';
-import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
+import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput, ${capitalizeFirstLetter(name)}UpdateUsecase } from '../${name}-update';
 
-const successInput: ${capitalizeFirstLetter(name)}UpdateInput = {
-  id: getMockUUID()
-};
-
-const failureInput: ${capitalizeFirstLetter(name)}UpdateInput = {};
-
-describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
+describe(${capitalizeFirstLetter(name)}UpdateUsecase.name, () => {
   let usecase: I${capitalizeFirstLetter(name)}UpdateAdapter;
   let repository: I${capitalizeFirstLetter(name)}Repository;
 
@@ -49,20 +42,24 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
 
   test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute(failureInput),
+      () => usecase.execute({}),
       (issues) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
     );
   });
 
+  const input: ${capitalizeFirstLetter(name)}UpdateInput = {
+    id: getMockUUID()
+  };
+
   test('when ${name} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
 
-    await expect(usecase.execute(successInput)).rejects.toThrowError(ApiNotFoundException);
+    await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  test('when ${name} updated successfully, should expect an ${name} that has been updated', async () => {
+  test('when ${name} updated successfully, should expect an ${name}', async () => {
     const findByIdOutput: ${capitalizeFirstLetter(name)}UpdateOutput = new ${capitalizeFirstLetter(name)}Entity({
       id: getMockUUID(),
       name: 'dummy'
@@ -71,7 +68,7 @@ describe('${capitalizeFirstLetter(name)}UpdateUsecase', () => {
     repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
     repository.updateOne = jest.fn().mockResolvedValue(null);
 
-    await expect(usecase.execute(successInput)).resolves.toEqual(findByIdOutput);
+    await expect(usecase.execute(input)).resolves.toEqual(findByIdOutput);
   });
 });
 `

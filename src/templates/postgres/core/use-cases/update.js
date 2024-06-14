@@ -29,7 +29,7 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
     const ${name} = await this.${name}Repository.findById(input.id);
 
     if (!${name}) {
-      throw new ApiNotFoundException();
+      throw new ApiNotFoundException('${name}NotFound');
     }
 
     const ${name}Finded = new ${capitalizeFirstLetter(name)}Entity(${name});

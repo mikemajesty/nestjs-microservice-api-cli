@@ -14,17 +14,19 @@ import { ${capitalizeFirstLetter(name)}UpdateOutput } from '@/core/${name}/use-c
 import { Swagger } from '@/utils/docs/swagger';
 
 const input = new ${capitalizeFirstLetter(name)}Entity({
-  name: '<name>'
+  name: 'name'
 });
 
 const output = new ${capitalizeFirstLetter(name)}Entity({ ...input, updatedAt: new Date(), createdAt: new Date(), deletedAt: null });
+
+const BASE_URL = 'api/v1/${pluralize(name)}';
 
 export const SwaggerResponse = {
   create: {
     200: Swagger.defaultResponseJSON({
       status: 200,
-      json: { created: true, id: '<uuid>' } as ${capitalizeFirstLetter(name)}CreateOutput,
-      description: '${name} created.'
+      json: { created: true, id: 'uuid' } as ${capitalizeFirstLetter(name)}CreateOutput,
+      description: 'create ${name}.'
     })
   },
   update: {
@@ -35,9 +37,9 @@ export const SwaggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/v1/${pluralize(name)}',
+      route: BASE_URL.concat('/:id'),
       message: '${name}NotFound',
-      description: '${name} not found.'
+      description: 'update ${name}.'
     })
   },
   getById: {
@@ -48,52 +50,37 @@ export const SwaggerResponse = {
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/v1/${pluralize(name)}/:id',
+      route: BASE_URL.concat('/:id'),
       message: '${name}NotFound',
-      description: '${name} not found.'
+      description: 'get ${name}.'
     })
   },
   delete: {
     200: Swagger.defaultResponseJSON({
       status: 200,
       json: output as ${capitalizeFirstLetter(name)}DeleteOutput,
-      description: '${name} found.'
+      description: 'delete ${name}.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
-      route: 'api/v1/${pluralize(name)}/:id',
+      route: BASE_URL.concat('/:id'),
       message: '${name}NotFound',
-      description: '${name} not found.'
+      description: '${name}NotFound.'
     })
   },
   list: {
     200: Swagger.defaultResponseJSON({
       status: 200,
       json: { docs: [output], page: 1, limit: 1, total: 1 } as ${capitalizeFirstLetter(name)}ListOutput,
-      description: '${name} created.'
+      description: 'list ${pluralize(name)}.'
     })
   }
 };
 
 export const SwaggerRequest = {
   createBody: Swagger.defaultRequestJSON({ ...input, id: undefined } as ${capitalizeFirstLetter(name)}Entity),
-  updateBody: Swagger.defaultRequestJSON({ ...input, id: '<id>' } as ${capitalizeFirstLetter(name)}Entity),
-  listQuery: {
-    pagination: {
-      limit: Swagger.defaultApiQueryOptions({ example: 10, name: 'limit', required: false }),
-      page: Swagger.defaultApiQueryOptions({ example: 1, name: 'page', required: false })
-    },
-    sort: Swagger.defaultApiQueryOptions({
-      name: 'sort',
-      required: false,
-      description: '<b>createdAt:desc,name:asc'
-    }),
-    search: Swagger.defaultApiQueryOptions({
-      name: 'search',
-      required: false,
-      description: '<b>name:miau'
-    })
-  }
+  updateBody: Swagger.defaultRequestJSON(input as ${capitalizeFirstLetter(name)}Entity),
+  listQuery: Swagger.defaultRequestListJSON()
 };
 `
 
