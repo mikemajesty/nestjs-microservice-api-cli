@@ -5,7 +5,7 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/common/decorators';
+import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
@@ -27,7 +27,7 @@ export class ${capitalizeFirstLetter(name)}DeleteUsecase implements IUsecase {
     const model = await this.${name}Repository.findById(id);
 
     if (!model) {
-      throw new ApiNotFoundException();
+      throw new ApiNotFoundException('${name}NotFound');
     }
 
     const ${name} = new ${capitalizeFirstLetter(name)}Entity(model);

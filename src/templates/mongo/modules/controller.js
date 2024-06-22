@@ -7,13 +7,11 @@ function capitalizeFirstLetter(string) {
 const getModuleController = (name) => `import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { Roles } from '@/common/decorators';
 import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateOutput } from '@/core/${name}/use-cases/${name}-create';
 import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteOutput } from '@/core/${name}/use-cases/${name}-delete';
-import { ${capitalizeFirstLetter(name)}GetByIDInput, ${capitalizeFirstLetter(name)}GetByIDOutput } from '@/core/${name}/use-cases/${name}-get-by-id';
+import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdOutput } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateInput, ${capitalizeFirstLetter(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
-import { UserRole } from '@/core/user/entity/user';
 import { ApiRequest } from '@/utils/request';
 import { SearchHttpSchema } from '@/utils/search';
 import { SortHttpSchema } from '@/utils/sort';
@@ -21,7 +19,7 @@ import { SortHttpSchema } from '@/utils/sort';
 import {
   I${capitalizeFirstLetter(name)}CreateAdapter,
   I${capitalizeFirstLetter(name)}DeleteAdapter,
-  I${capitalizeFirstLetter(name)}GetByIDAdapter,
+  I${capitalizeFirstLetter(name)}GetByIdAdapter,
   I${capitalizeFirstLetter(name)}ListAdapter,
   I${capitalizeFirstLetter(name)}UpdateAdapter
 } from './adapter';
@@ -30,14 +28,13 @@ import { SwaggerRequest, SwaggerResponse } from './swagger';
 @Controller('/${pluralize(name)}')
 @ApiTags('${pluralize(name)}')
 @ApiBearerAuth()
-@Roles(UserRole.USER)
 export class ${capitalizeFirstLetter(name)}Controller {
   constructor(
     private readonly ${name}CreateUsecase: I${capitalizeFirstLetter(name)}CreateAdapter,
     private readonly ${name}UpdateUsecase: I${capitalizeFirstLetter(name)}UpdateAdapter,
     private readonly ${name}DeleteUsecase: I${capitalizeFirstLetter(name)}DeleteAdapter,
     private readonly ${name}ListUsecase: I${capitalizeFirstLetter(name)}ListAdapter,
-    private readonly ${name}GetByIDUsecase: I${capitalizeFirstLetter(name)}GetByIDAdapter
+    private readonly ${name}GetByIdUsecase: I${capitalizeFirstLetter(name)}GetByIdAdapter
   ) {}
 
   @Post()
@@ -47,12 +44,13 @@ export class ${capitalizeFirstLetter(name)}Controller {
     return this.${name}CreateUsecase.execute(body as ${capitalizeFirstLetter(name)}CreateInput);
   }
 
-  @Put()
+  @Put(':id')
   @ApiResponse(SwaggerResponse.update[200])
   @ApiResponse(SwaggerResponse.update[404])
   @ApiBody(SwaggerRequest.updateBody)
-  async update(@Req() { body }: ApiRequest): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
-    return this.${name}UpdateUsecase.execute(body as ${capitalizeFirstLetter(name)}UpdateInput);
+  @ApiParam({ name: 'id', required: true })
+  async update(@Req() { body, params }: ApiRequest): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
+    return this.${name}UpdateUsecase.execute({ ...body, id: params.id } as ${capitalizeFirstLetter(name)}UpdateInput);
   }
 
   @Get()
@@ -74,10 +72,10 @@ export class ${capitalizeFirstLetter(name)}Controller {
 
   @Get('/:id')
   @ApiParam({ name: 'id', required: true })
-  @ApiResponse(SwaggerResponse.getByID[200])
-  @ApiResponse(SwaggerResponse.getByID[404])
-  async getById(@Req() { params }: ApiRequest): Promise<${capitalizeFirstLetter(name)}GetByIDOutput> {
-    return await this.${name}GetByIDUsecase.execute(params as ${capitalizeFirstLetter(name)}GetByIDInput);
+  @ApiResponse(SwaggerResponse.getById[200])
+  @ApiResponse(SwaggerResponse.getById[404])
+  async getById(@Req() { params }: ApiRequest): Promise<${capitalizeFirstLetter(name)}GetByIdOutput> {
+    return await this.${name}GetByIdUsecase.execute(params as ${capitalizeFirstLetter(name)}GetByIdInput);
   }
 
   @Delete('/:id')

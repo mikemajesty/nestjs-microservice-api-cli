@@ -8,7 +8,7 @@ const getModuleRepository = (name) => `import { Injectable } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel } from 'mongoose';
 
-import { SearchTypeEnum, ValidateDatabaseSortAllowed, ValidateMongooseFilter } from '@/common/decorators';
+import { SearchTypeEnum, ValidateDatabaseSortAllowed, ValidateMongooseFilter } from '@/utils/decorators';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document } from '@/infra/database/mongo/schemas/${name}';

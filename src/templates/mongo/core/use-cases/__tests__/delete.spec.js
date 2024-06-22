@@ -13,13 +13,7 @@ import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteOutput, ${capitalizeFirstLetter(name)}DeleteUsecase } from '../${name}-delete';
 
-const successInput: ${capitalizeFirstLetter(name)}DeleteInput = {
-  id: getMockUUID()
-};
-
-const failureInput: ${capitalizeFirstLetter(name)}DeleteInput = {};
-
-describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
+describe(${capitalizeFirstLetter(name)}DeleteUsecase.name, () => {
   let usecase: I${capitalizeFirstLetter(name)}DeleteAdapter;
   let repository: I${capitalizeFirstLetter(name)}Repository;
 
@@ -47,20 +41,24 @@ describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
 
   test('when no input is specified, should expect an error', async () => {
     await expectZodError(
-      () => usecase.execute(failureInput),
+      () => usecase.execute({}),
       (issues) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
     );
   });
 
+  const input: ${capitalizeFirstLetter(name)}DeleteInput = {
+    id: getMockUUID()
+  };
+
   test('when ${name} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
 
-    await expect(usecase.execute(successInput)).rejects.toThrowError(ApiNotFoundException);
+    await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  test('when ${name} deleted successfully, should expect a ${name} that has been deleted', async () => {
+  test('when ${name} deleted successfully, should expect a ${name}', async () => {
     const findByIdOutput: ${capitalizeFirstLetter(name)}DeleteOutput = new ${capitalizeFirstLetter(name)}Entity({
       id: getMockUUID(),
       name: 'dummy'
@@ -69,7 +67,7 @@ describe('${capitalizeFirstLetter(name)}DeleteUsecase', () => {
     repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
     repository.updateOne = jest.fn();
 
-    await expect(usecase.execute(successInput)).resolves.toEqual({
+    await expect(usecase.execute(input)).resolves.toEqual({
       ...findByIdOutput,
       deletedAt: expect.any(Date)
     });

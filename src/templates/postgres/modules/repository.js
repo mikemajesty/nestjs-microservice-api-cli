@@ -4,43 +4,39 @@ function capitalizeFirstLetter(string) {
 }
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
-import { Transaction } from 'sequelize';
-import { ModelCtor } from 'sequelize-typescript';
+import { FindOptionsWhere, Repository } from 'typeorm';
 
-import {
-  ConvertPaginateInputToSequelizeFilter,
-  SearchTypeEnum,
-  ValidateDatabaseSortAllowed
-} from '@/common/decorators';
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
-import { SequelizeRepository } from '@/infra/repository/postgres/repository';
-import { DatabaseOptionsSchema, DatabaseOptionsType } from '@/utils/database/sequelize';
+import { TypeORMRepository } from '@/infra/repository/postgres/repository';
+import { SearchTypeEnum, ValidateDatabaseSortAllowed, ValidateMongooseFilter } from '@/utils/decorators';
+import { calculateSkip } from '@/utils/pagination';
 
-type Model = ModelCtor<${capitalizeFirstLetter(name)}Schema> & ${capitalizeFirstLetter(name)}Entity;
+type Model = ${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity;
 
 @Injectable()
-export class ${capitalizeFirstLetter(name)}Repository extends SequelizeRepository<Model> implements I${capitalizeFirstLetter(name)}Repository {
-  constructor(readonly repository: Model) {
+export class ${capitalizeFirstLetter(name)}Repository extends TypeORMRepository<Model> implements I${capitalizeFirstLetter(name)}Repository {
+  constructor(readonly repository: Repository<Model>) {
     super(repository);
   }
 
-  async startSession<TTransaction = Transaction>(): Promise<TTransaction> {
-    const transaction = await this.repository.sequelize.transaction();
+  @ValidateMongooseFilter<${capitalizeFirstLetter(name)}Entity>([
+    { name: 'name', type: SearchTypeEnum.like },
+  ])
+  @ValidateDatabaseSortAllowed<${capitalizeFirstLetter(name)}Entity>('name', 'createdAt')
+  async paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
+    const skip = calculateSkip(input);
 
-    return transaction as TTransaction;
-  }
+    const [docs, total] = await this.repository.findAndCount({
+      take: input.limit,
+      skip,
+      order: input.sort,
+      where: input.search as FindOptionsWhere<unknown>
+    });
 
-  @ValidateDatabaseSortAllowed('createdAt', 'name')
-  @ConvertPaginateInputToSequelizeFilter([{ name: 'name', type: SearchTypeEnum.like }])
-  async paginate(input: ${capitalizeFirstLetter(name)}ListInput, options: DatabaseOptionsType): Promise<${capitalizeFirstLetter(name)}ListOutput> {
-    const { schema } = DatabaseOptionsSchema.parse(options);
-
-    const list = await this.repository.schema(schema).findAndCountAll(input);
-
-    return { docs: list.rows.map((r) => new ${capitalizeFirstLetter(name)}Entity(r)), limit: input.limit, page: input.page, total: list.count };
+    return { docs, total, page: input.page, limit: input.limit };
   }
 }
 `
