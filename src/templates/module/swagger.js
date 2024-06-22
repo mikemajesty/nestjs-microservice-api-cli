@@ -1,16 +1,16 @@
 const getModuleSwaggerModule = (name) => `import { Swagger } from '@/utils/docs/swagger';
 
-export const SwagggerResponse = {
+export const SwaggerResponse = {
   get: {
     200: Swagger.defaultResponseJSON({
       status: 200,
       json: 'text',
-      description: '${name} get.'
+      description: 'get ${name}.'
     })
   }
 };
 
-export const SwagggerRequest = {};
+export const SwaggerRequest = {};
 `
 
 module.exports = {
