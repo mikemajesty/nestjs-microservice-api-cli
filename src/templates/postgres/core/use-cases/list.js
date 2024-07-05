@@ -5,8 +5,8 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseList = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/utils/decorators';
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
+import { ValidateSchema } from '@/utils/decorators';
 import { PaginationInput, PaginationOutput, PaginationSchema } from '@/utils/pagination';
 import { SearchSchema } from '@/utils/search';
 import { SortSchema } from '@/utils/sort';

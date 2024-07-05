@@ -58,12 +58,11 @@ describe(${capitalizeFirstLetter(name)}CreateUsecase.name, () => {
   };
 
   test('when ${name} created successfully, should expect a ${name}', async () => {
-    const createOutput: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: getMockUUID() };
-
+    const output: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: getMockUUID() };
     repository.findOne = jest.fn().mockResolvedValue(null);
-    repository.create = jest.fn().mockResolvedValue(createOutput);
+    repository.create = jest.fn().mockResolvedValue(output);
 
-    await expect(usecase.execute(input)).resolves.toEqual(createOutput);
+    await expect(usecase.execute(input)).resolves.toEqual(output);
   });
 });
 `

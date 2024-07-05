@@ -10,7 +10,7 @@ import { ApiNotFoundException } from '@/utils/exception';
 import { expectZodError, getMockUUID } from '@/utils/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdOutput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
+import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
 import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
 
 describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
@@ -57,14 +57,15 @@ describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  test('when ${name} found, should expect a ${name}', async () => {
-    const findByIdOutput: ${capitalizeFirstLetter(name)}GetByIdOutput = new ${capitalizeFirstLetter(name)}Entity({
-      id: getMockUUID(),
-      name: 'dummy'
-    });
-    repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
+  const ${name} = new ${capitalizeFirstLetter(name)}Entity({
+    id: getMockUUID(),
+    name: 'dummy'
+  });
 
-    await expect(usecase.execute(input)).resolves.toEqual(findByIdOutput);
+  test('when ${name} found, should expect a ${name}', async () => {
+    repository.findById = jest.fn().mockResolvedValue(${name});
+
+    await expect(usecase.execute(input)).resolves.toEqual(${name});
   });
 });
 `

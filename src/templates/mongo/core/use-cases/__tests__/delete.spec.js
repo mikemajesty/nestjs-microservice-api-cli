@@ -58,17 +58,17 @@ describe(${capitalizeFirstLetter(name)}DeleteUsecase.name, () => {
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  test('when ${name} deleted successfully, should expect a ${name}', async () => {
-    const findByIdOutput: ${capitalizeFirstLetter(name)}DeleteOutput = new ${capitalizeFirstLetter(name)}Entity({
-      id: getMockUUID(),
-      name: 'dummy'
-    });
+  const ${name} = new ${capitalizeFirstLetter(name)}Entity({
+    id: getMockUUID(),
+    name: 'dummy'
+  });
 
-    repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
+  test('when ${name} deleted successfully, should expect a ${name}', async () => {
+    repository.findById = jest.fn().mockResolvedValue(${name});
     repository.updateOne = jest.fn();
 
     await expect(usecase.execute(input)).resolves.toEqual({
-      ...findByIdOutput,
+      ...${name},
       deletedAt: expect.any(Date)
     });
   });

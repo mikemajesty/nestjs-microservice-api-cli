@@ -59,16 +59,16 @@ describe(${capitalizeFirstLetter(name)}UpdateUsecase.name, () => {
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  test('when ${name} updated successfully, should expect an ${name}', async () => {
-    const findByIdOutput: ${capitalizeFirstLetter(name)}UpdateOutput = new ${capitalizeFirstLetter(name)}Entity({
-      id: getMockUUID(),
-      name: 'dummy'
-    });
+  const ${name}: ${capitalizeFirstLetter(name)}UpdateOutput = new ${capitalizeFirstLetter(name)}Entity({
+    id: getMockUUID(),
+    name: 'dummy'
+  });
 
-    repository.findById = jest.fn().mockResolvedValue(findByIdOutput);
+  test('when ${name} updated successfully, should expect an ${name}', async () => {
+    repository.findById = jest.fn().mockResolvedValue(${name});
     repository.updateOne = jest.fn().mockResolvedValue(null);
 
-    await expect(usecase.execute(input)).resolves.toEqual(findByIdOutput);
+    await expect(usecase.execute(input)).resolves.toEqual(${name});
   });
 });
 `

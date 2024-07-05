@@ -1,4 +1,6 @@
 
+const pluralize = require('pluralize')
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -48,20 +50,21 @@ describe(${capitalizeFirstLetter(name)}ListUsecase.name, () => {
 
   const input: ${capitalizeFirstLetter(name)}ListInput = { limit: 1, page: 1, search: {}, sort: { createdAt: -1 } };
 
+  const ${name} = new ${capitalizeFirstLetter(name)}Entity({
+    id: getMockUUID(),
+    name: 'dummy',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+
+  const ${pluralize(name)} = [${name}];
+
   test('when ${name} are found, should expect an ${name} list', async () => {
-    const doc = new ${capitalizeFirstLetter(name)}Entity({
-      id: getMockUUID(),
-      name: 'dummy',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-
-    const paginateOutput: ${capitalizeFirstLetter(name)}ListOutput = { docs: [doc], page: 1, limit: 1, total: 1 };
-
-    repository.paginate = jest.fn().mockResolvedValue(paginateOutput);
+    const output: ${capitalizeFirstLetter(name)}ListOutput = { docs: ${pluralize(name)}, page: 1, limit: 1, total: 1 };
+    repository.paginate = jest.fn().mockResolvedValue(output);
 
     await expect(usecase.execute(input)).resolves.toEqual({
-      docs: [doc],
+      docs: ${pluralize(name)},
       page: 1,
       limit: 1,
       total: 1
@@ -69,11 +72,10 @@ describe(${capitalizeFirstLetter(name)}ListUsecase.name, () => {
   });
 
   test('when ${name} not found, should expect an empty list', async () => {
-    const paginateOutput: ${capitalizeFirstLetter(name)}ListOutput = { docs: [], page: 1, limit: 1, total: 1 };
+    const output: ${capitalizeFirstLetter(name)}ListOutput = { docs: [], page: 1, limit: 1, total: 1 };
+    repository.paginate = jest.fn().mockResolvedValue(output);
 
-    repository.paginate = jest.fn().mockResolvedValue(paginateOutput);
-
-    await expect(usecase.execute(input)).resolves.toEqual(paginateOutput);
+    await expect(usecase.execute(input)).resolves.toEqual(output);
   });
 });
 `

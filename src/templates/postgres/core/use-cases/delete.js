@@ -5,9 +5,8 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/utils/decorators';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-;
+import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 

@@ -5,10 +5,9 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/utils/decorators';
 import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
-;
+import { ValidateSchema } from '@/utils/decorators';
 import { IUsecase } from '@/utils/usecase';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';

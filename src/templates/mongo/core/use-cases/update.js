@@ -5,8 +5,8 @@ function capitalizeFirstLetter(string) {
 
 const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 
-import { ValidateSchema } from '@/utils/decorators';
 import { ILoggerAdapter } from '@/infra/logger';
+import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
@@ -31,9 +31,9 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
       throw new ApiNotFoundException('${name}NotFound');
     }
 
-    const ${name}Finded = new ${capitalizeFirstLetter(name)}Entity(${name});
+    const ${name}Found = new ${capitalizeFirstLetter(name)}Entity(${name});
 
-    const entity = new ${capitalizeFirstLetter(name)}Entity({ ...${name}Finded, ...input });
+    const entity = new ${capitalizeFirstLetter(name)}Entity({ ...${name}Found, ...input });
 
     await this.${name}Repository.updateOne({ id: entity.id }, entity);
 
