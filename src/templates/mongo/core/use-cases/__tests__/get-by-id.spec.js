@@ -11,7 +11,7 @@ import { expectZodError, getMockUUID } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdOutput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
+import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
 
 describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
   let usecase: I${capitalizeFirstLetter(name)}GetByIdAdapter;

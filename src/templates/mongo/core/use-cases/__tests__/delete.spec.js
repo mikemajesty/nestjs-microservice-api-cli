@@ -11,7 +11,7 @@ import { expectZodError, getMockUUID } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteOutput, ${capitalizeFirstLetter(name)}DeleteUsecase } from '../${name}-delete';
+import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteUsecase } from '../${name}-delete';
 
 describe(${capitalizeFirstLetter(name)}DeleteUsecase.name, () => {
   let usecase: I${capitalizeFirstLetter(name)}DeleteAdapter;
