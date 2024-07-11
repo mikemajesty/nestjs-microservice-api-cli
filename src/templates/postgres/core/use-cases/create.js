@@ -21,7 +21,10 @@ export type ${capitalizeFirstLetter(name)}CreateInput = z.infer<typeof ${capital
 export type ${capitalizeFirstLetter(name)}CreateOutput = CreatedModel;
 
 export class ${capitalizeFirstLetter(name)}CreateUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerService: ILoggerAdapter) {}
+  constructor(
+    private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository,
+    private readonly loggerService: ILoggerAdapter
+  ) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}CreateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}CreateInput): Promise<${capitalizeFirstLetter(name)}CreateOutput> {
