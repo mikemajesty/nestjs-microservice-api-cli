@@ -28,7 +28,7 @@ export class ${capitalizeFirstLetter(name)}Entity extends BaseEntity<${capitaliz
 
   constructor(entity: ${capitalizeFirstLetter(name)}) {
     super(${capitalizeFirstLetter(name)}EntitySchema);
-    Object.assign(this, ${capitalizeFirstLetter(name)}EntitySchema.parse(withID(entity)));
+    Object.assign(this, this.validate(entity));
   }
 }
 `
