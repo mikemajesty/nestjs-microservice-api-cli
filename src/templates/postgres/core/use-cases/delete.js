@@ -32,7 +32,7 @@ export class ${capitalizeFirstLetter(name)}DeleteUsecase implements IUsecase {
 
     const ${name} = new ${capitalizeFirstLetter(name)}Entity(model);
 
-    ${name}.setDeleted();
+    ${name}.deactivated();
 
     await this.${name}Repository.updateOne({ id: ${name}.id }, ${name});
 
