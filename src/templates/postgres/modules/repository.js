@@ -11,7 +11,7 @@ import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/reposi
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { TypeORMRepository } from '@/infra/repository/postgres/repository';
-import { SearchTypeEnum, ValidateDatabaseSortAllowed, ValidateMongooseFilter } from '@/utils/decorators';
+import { ConvertTypeOrmFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
 import { calculateSkip } from '@/utils/pagination';
 
 type Model = ${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity;
@@ -22,9 +22,7 @@ export class ${capitalizeFirstLetter(name)}Repository extends TypeORMRepository<
     super(repository);
   }
 
-  @ValidateMongooseFilter<${capitalizeFirstLetter(name)}Entity>([
-    { name: 'name', type: SearchTypeEnum.like },
-  ])
+  @ConvertTypeOrmFilter<${capitalizeFirstLetter(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
   @ValidateDatabaseSortAllowed<${capitalizeFirstLetter(name)}Entity>('name', 'createdAt')
   async paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const skip = calculateSkip(input);
