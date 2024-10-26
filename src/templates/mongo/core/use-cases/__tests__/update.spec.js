@@ -8,7 +8,7 @@ const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testin
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, getMockUUID } from '@/utils/tests';
+import { TestUtils } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -41,7 +41,7 @@ describe(${capitalizeFirstLetter(name)}UpdateUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await expectZodError(
+    await TestUtils.expectZodError(
       () => usecase.execute({}),
       (issues) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
@@ -50,7 +50,7 @@ describe(${capitalizeFirstLetter(name)}UpdateUsecase.name, () => {
   });
 
   const input: ${capitalizeFirstLetter(name)}UpdateInput = {
-    id: getMockUUID()
+    id: TestUtils.getMockUUID()
   };
 
   test('when ${name} not found, should expect an error', async () => {
@@ -60,7 +60,7 @@ describe(${capitalizeFirstLetter(name)}UpdateUsecase.name, () => {
   });
 
   const ${name}: ${capitalizeFirstLetter(name)}UpdateOutput = new ${capitalizeFirstLetter(name)}Entity({
-    id: getMockUUID(),
+    id: TestUtils.getMockUUID(),
     name: 'dummy'
   });
 

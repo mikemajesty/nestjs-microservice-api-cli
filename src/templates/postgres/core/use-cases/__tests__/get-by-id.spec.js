@@ -7,7 +7,7 @@ const getCoreUsecaseGetByIdTest = (name) => `import { Test } from '@nestjs/testi
 
 import { I${capitalizeFirstLetter(name)}GetByIdAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { expectZodError, getMockUUID } from '@/utils/tests';
+import { TestUtils } from '@/utils/tests';
 
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
 import { ${capitalizeFirstLetter(name)}GetByIdInput, ${capitalizeFirstLetter(name)}GetByIdUsecase } from '../${name}-get-by-id';
@@ -39,7 +39,7 @@ describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await expectZodError(
+    await TestUtils.expectZodError(
       () => usecase.execute({}),
       (issues) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
@@ -48,7 +48,7 @@ describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
   });
 
   const input: ${capitalizeFirstLetter(name)}GetByIdInput = {
-    id: getMockUUID()
+    id: TestUtils.getMockUUID()
   };
 
   test('when ${name} not found, should expect an error', async () => {
@@ -58,7 +58,7 @@ describe(${capitalizeFirstLetter(name)}GetByIdUsecase.name, () => {
   });
 
   const ${name} = new ${capitalizeFirstLetter(name)}Entity({
-    id: getMockUUID(),
+    id: TestUtils.getMockUUID(),
     name: 'dummy'
   });
 

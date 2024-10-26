@@ -7,7 +7,7 @@ const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testin
 
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
-import { expectZodError, getMockUUID } from '@/utils/tests';
+import { TestUtils } from '@/utils/tests';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
@@ -45,7 +45,7 @@ describe(${capitalizeFirstLetter(name)}CreateUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await expectZodError(
+    await TestUtils.expectZodError(
       () => usecase.execute({}),
       (issues) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('name') }]);
@@ -58,7 +58,7 @@ describe(${capitalizeFirstLetter(name)}CreateUsecase.name, () => {
   };
 
   test('when ${name} created successfully, should expect a ${name}', async () => {
-    const output: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: getMockUUID() };
+    const output: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
     repository.create = jest.fn().mockResolvedValue(output);
 
     await expect(usecase.execute(input)).resolves.toEqual(output);
