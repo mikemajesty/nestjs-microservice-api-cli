@@ -4,6 +4,7 @@ function capitalizeFirstLetter(string) {
 }
 
 const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
+import { ZodIssue } from 'zod';
 
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
@@ -47,7 +48,7 @@ describe(${capitalizeFirstLetter(name)}CreateUsecase.name, () => {
   test('when no input is specified, should expect an error', async () => {
     await TestUtils.expectZodError(
       () => usecase.execute({}),
-      (issues) => {
+      (issues: ZodIssue[]) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('name') }]);
       }
     );
