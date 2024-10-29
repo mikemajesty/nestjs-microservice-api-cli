@@ -12,7 +12,7 @@ import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { TypeORMRepository } from '@/infra/repository/postgres/repository';
 import { ConvertTypeOrmFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
-import { calculateSkip } from '@/utils/pagination';
+import { PaginationUtils } from '@/utils/pagination';
 
 type Model = ${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity;
 
@@ -25,7 +25,7 @@ export class ${capitalizeFirstLetter(name)}Repository extends TypeORMRepository<
   @ConvertTypeOrmFilter<${capitalizeFirstLetter(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
   @ValidateDatabaseSortAllowed<${capitalizeFirstLetter(name)}Entity>('name', 'createdAt')
   async paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
-    const skip = calculateSkip(input);
+    const skip = PaginationUtils.calculateSkip(input);
 
     const [docs, total] = await this.repository.findAndCount({
       take: input.limit,
