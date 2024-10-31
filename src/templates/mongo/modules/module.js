@@ -20,7 +20,7 @@ import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document,
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
 import { TokenLibModule } from '@/libs/token';
-import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
+import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
 
 import {
   I${capitalizeFirstLetter(name)}CreateAdapter,

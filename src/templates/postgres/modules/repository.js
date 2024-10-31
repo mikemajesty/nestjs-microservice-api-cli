@@ -23,7 +23,7 @@ export class ${capitalizeFirstLetter(name)}Repository extends TypeORMRepository<
   }
 
   @ConvertTypeOrmFilter<${capitalizeFirstLetter(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
-  @ValidateDatabaseSortAllowed<${capitalizeFirstLetter(name)}Entity>('name', 'createdAt')
+  @ValidateDatabaseSortAllowed<${capitalizeFirstLetter(name)}Entity>({ name: 'name' }, { name: 'createdAt' })
   async paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const skip = PaginationUtils.calculateSkip(input);
 

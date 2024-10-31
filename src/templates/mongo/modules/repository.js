@@ -12,7 +12,7 @@ import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/reposi
 import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}, ${capitalizeFirstLetter(name)}Document } from '@/infra/database/mongo/schemas/${name}';
 import { MongoRepository } from '@/infra/repository';
-import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
+import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
 import { ConvertMongooseFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class ${capitalizeFirstLetter(name)}Repository extends MongoRepository<${
   }
 
   @ConvertMongooseFilter([{ name: 'name', type: SearchTypeEnum.like }])
-  @ValidateDatabaseSortAllowed('name', 'createdAt')
+  @ValidateDatabaseSortAllowed({ name: 'name' }, { name: 'createdAt' })
   async paginate({ limit, page, sort, search }: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
     const ${pluralize(name)} = await this.entity.paginate(search, { page, limit, sort });
 
