@@ -11,7 +11,7 @@ const ID = z.string().uuid();
 const Name = z.string().min(1).max(200).trim();
 const CreatedAt = z.date().nullish();
 const UpdatedAt = z.date().nullish();
-const DeletedAt = z.date().default(null).nullish();
+const DeletedAt = z.date().nullish();
 
 export const ${capitalizeFirstLetter(name)}EntitySchema = z.object({
   id: ID,

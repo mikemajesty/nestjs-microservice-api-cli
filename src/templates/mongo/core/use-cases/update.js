@@ -21,11 +21,14 @@ export type ${capitalizeFirstLetter(name)}UpdateInput = Partial<z.infer<typeof $
 export type ${capitalizeFirstLetter(name)}UpdateOutput = ${capitalizeFirstLetter(name)}Entity;
 
 export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository, private readonly loggerService: ILoggerAdapter) {}
+  constructor(
+    private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository,
+    private readonly loggerService: ILoggerAdapter
+  ) {}
 
   @ValidateSchema(${capitalizeFirstLetter(name)}UpdateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}UpdateInput): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
-    const ${name} = await this.${name}Repository.findById(input.id);
+    const ${name} = await this.${name}Repository.findById(input.id as string);
 
     if (!${name}) {
       throw new ApiNotFoundException('${name}NotFound');
