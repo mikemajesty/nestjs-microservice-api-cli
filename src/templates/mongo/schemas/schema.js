@@ -20,13 +20,13 @@ export type ${capitalizeFirstLetter(name)}Document = Document & ${capitalizeFirs
 })
 export class ${capitalizeFirstLetter(name)} {
   @Prop({ type: String })
-  _id: string;
+  _id!: string;
 
   @Prop({ index: true, min: 1, max: 200, required: true, type: String })
-  name: string;
+  name!: string;
 
   @Prop({ type: Date, default: null })
-  deletedAt: Date;
+  deletedAt!: Date;
 }
 
 const ${capitalizeFirstLetter(name)}Schema = SchemaFactory.createForClass(${capitalizeFirstLetter(name)});

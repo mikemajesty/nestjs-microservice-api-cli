@@ -18,19 +18,19 @@ const getModuleSchema = (name) => `import {
 @Entity({ name: '${pluralize(name)}' })
 export class ${capitalizeFirstLetter(name)}Schema extends BaseEntity {
   @Column({ type: 'uuid', primary: true })
-  id: string;
+  id!: string;
 
   @Column('text')
-  name: string;
+  name!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
+  deletedAt!: Date;
 }
 `
 
