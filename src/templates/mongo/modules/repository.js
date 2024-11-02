@@ -25,10 +25,10 @@ export class ${capitalizeFirstLetter(name)}Repository extends MongoRepository<${
   @ConvertMongooseFilter([{ name: 'name', type: SearchTypeEnum.like }])
   @ValidateDatabaseSortAllowed({ name: 'name' }, { name: 'createdAt' })
   async paginate({ limit, page, sort, search }: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
-    const ${pluralize(name)} = await this.entity.paginate(search as FilterQuery<IEntity>, { 
+    const ${pluralize(name)} = await this.entity.paginate(search as FilterQuery<IEntity>, {
       page,
       limit,
-      sort 
+      sort: sort as object
     });
 
     return { docs: ${pluralize(name)}.docs.map((u) => u.toObject({ virtuals: true })), limit, page, total: ${name}s.totalDocs };
