@@ -12,8 +12,10 @@ import { ${capitalizeFirstLetter(name)}GetByIdOutput } from '@/core/${name}/use-
 import { ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${capitalizeFirstLetter(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
 import { Swagger } from '@/utils/docs/swagger';
+import { TestUtils } from '@/utils/tests';
 
 const input = new ${capitalizeFirstLetter(name)}Entity({
+  id: TestUtils.getMockUUID(),
   name: 'name'
 });
 
@@ -78,7 +80,7 @@ export const SwaggerResponse = {
 };
 
 export const SwaggerRequest = {
-  createBody: Swagger.defaultRequestJSON({ ...input, id: undefined } as ${capitalizeFirstLetter(name)}Entity),
+  createBody: Swagger.defaultRequestJSON(input as ${capitalizeFirstLetter(name)}Entity),
   updateBody: Swagger.defaultRequestJSON(input as ${capitalizeFirstLetter(name)}Entity),
   listQuery: Swagger.defaultRequestListJSON()
 };

@@ -4,7 +4,7 @@ function capitalizeFirstLetter(string) {
 }
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
@@ -12,6 +12,7 @@ import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}
 import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { TypeORMRepository } from '@/infra/repository/postgres/repository';
 import { ConvertTypeOrmFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
+import { IEntity } from '@/utils/entity';
 import { PaginationUtils } from '@/utils/pagination';
 
 type Model = ${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity;
@@ -30,8 +31,8 @@ export class ${capitalizeFirstLetter(name)}Repository extends TypeORMRepository<
     const [docs, total] = await this.repository.findAndCount({
       take: input.limit,
       skip,
-      order: input.sort,
-      where: input.search as FindOptionsWhere<unknown>
+      order: input.sort as FindOptionsOrder<IEntity>,
+      where: input.search as FindOptionsWhere<IEntity>
     });
 
     return { docs, total, page: input.page, limit: input.limit };
