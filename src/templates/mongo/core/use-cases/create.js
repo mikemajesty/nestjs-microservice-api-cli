@@ -9,6 +9,7 @@ import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
 import { ValidateSchema } from '@/utils/decorators';
 import { IUsecase } from '@/utils/usecase';
+import { UUIDUtils } from '@/utils/uuid';
 
 import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from '../entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
@@ -28,7 +29,7 @@ export class ${capitalizeFirstLetter(name)}CreateUsecase implements IUsecase {
 
   @ValidateSchema(${capitalizeFirstLetter(name)}CreateSchema)
   async execute(input: ${capitalizeFirstLetter(name)}CreateInput): Promise<${capitalizeFirstLetter(name)}CreateOutput> {
-    const entity = new ${capitalizeFirstLetter(name)}Entity(input);
+    const entity = new ${capitalizeFirstLetter(name)}Entity({ id: UUIDUtils.create(), ...input });
 
     const ${name} = await this.${name}Repository.create(entity);
 

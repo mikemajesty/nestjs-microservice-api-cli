@@ -44,7 +44,7 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
 
     const updated = await this.${name}Repository.findById(entity.id);
 
-    return new ${capitalizeFirstLetter(name)}Entity(updated);
+    return new ${capitalizeFirstLetter(name)}Entity(updated as ${capitalizeFirstLetter(name)});
   }
 }
 `

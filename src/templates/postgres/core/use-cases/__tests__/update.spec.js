@@ -48,7 +48,7 @@ describe(${capitalizeFirstLetter(name)}UpdateUsecase.name, () => {
 
   test('when no input is specified, should expect an error', async () => {
     await TestUtils.expectZodError(
-      () => usecase.execute({}),
+      () => usecase.execute({} as ${capitalizeFirstLetter(name)}UpdateInput),
       (issues: ZodIssue[]) => {
         expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
       }
