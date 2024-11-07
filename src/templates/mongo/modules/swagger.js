@@ -25,17 +25,17 @@ const BASE_URL = 'api/v1/${pluralize(name)}';
 
 export const SwaggerResponse = {
   create: {
-    200: Swagger.defaultResponseJSON({
+    200: Swagger.defaultResponseJSON<${capitalizeFirstLetter(name)}CreateOutput>({
       status: 200,
-      json: { created: true, id: 'uuid' } as ${capitalizeFirstLetter(name)}CreateOutput,
-      description: 'create ${name}.'
+      json: { created: true, id: 'uuid' },
+      description: '${name} created.'
     })
   },
   update: {
-    200: Swagger.defaultResponseJSON({
+    200: Swagger.defaultResponseJSON<${capitalizeFirstLetter(name)}UpdateOutput>({
       status: 200,
-      json: output as ${capitalizeFirstLetter(name)}UpdateOutput,
-      description: 'update ${name}.'
+      json: output,
+      description: '${name} updated.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
@@ -45,10 +45,10 @@ export const SwaggerResponse = {
     })
   },
   getById: {
-    200: Swagger.defaultResponseJSON({
+    200: Swagger.defaultResponseJSON<${capitalizeFirstLetter(name)}GetByIdOutput>({
       status: 200,
-      json: output as ${capitalizeFirstLetter(name)}GetByIdOutput,
-      description: 'get ${name}.'
+      json: output,
+      description: '${name} found.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
@@ -58,10 +58,10 @@ export const SwaggerResponse = {
     })
   },
   delete: {
-    200: Swagger.defaultResponseJSON({
+    200: Swagger.defaultResponseJSON<${capitalizeFirstLetter(name)}DeleteOutput>({
       status: 200,
-      json: output as ${capitalizeFirstLetter(name)}DeleteOutput,
-      description: 'delete ${name}.'
+      json: output,
+      description: '${name} deleted.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
@@ -71,17 +71,17 @@ export const SwaggerResponse = {
     })
   },
   list: {
-    200: Swagger.defaultResponseJSON({
+    200: Swagger.defaultResponseJSON<${capitalizeFirstLetter(name)}ListOutput>({
       status: 200,
-      json: { docs: [output], page: 1, limit: 1, total: 1 } as ${capitalizeFirstLetter(name)}ListOutput,
+      json: { docs: [output], page: 1, limit: 1, total: 1 },
       description: 'list ${pluralize(name)}.'
     })
   }
 };
 
 export const SwaggerRequest = {
-  createBody: Swagger.defaultRequestJSON(input as ${capitalizeFirstLetter(name)}Entity),
-  updateBody: Swagger.defaultRequestJSON(input as ${capitalizeFirstLetter(name)}Entity),
+  createBody: Swagger.defaultRequestJSON<${capitalizeFirstLetter(name)}Entity>(input),
+  updateBody: Swagger.defaultRequestJSON<${capitalizeFirstLetter(name)}Entity>(input),
   listQuery: Swagger.defaultRequestListJSON()
 };
 `
