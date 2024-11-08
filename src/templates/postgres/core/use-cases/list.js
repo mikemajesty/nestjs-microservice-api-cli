@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
 
 const getCoreUsecaseList = (name) => `import { z } from 'zod';
 
@@ -17,11 +17,11 @@ export type ${dashToPascal(name)}ListInput = PaginationInput<${dashToPascal(name
 export type ${dashToPascal(name)}ListOutput = PaginationOutput<${dashToPascal(name)}Entity>;
 
 export class ${dashToPascal(name)}ListUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${dashToPascal(name)}Repository) {}
+  constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
   @ValidateSchema(${dashToPascal(name)}ListSchema)
   async execute(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
-    return await this.${name}Repository.paginate(input);
+    return await this.${snakeToCamel(name)}Repository.paginate(input);
   }
 }
 `

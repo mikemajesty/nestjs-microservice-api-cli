@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
 
 const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
@@ -17,23 +17,23 @@ export type ${dashToPascal(name)}DeleteInput = z.infer<typeof ${dashToPascal(nam
 export type ${dashToPascal(name)}DeleteOutput = ${dashToPascal(name)}Entity;
 
 export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${dashToPascal(name)}Repository) {}
+  constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
   @ValidateSchema(${dashToPascal(name)}DeleteSchema)
   async execute({ id }: ${dashToPascal(name)}DeleteInput): Promise<${dashToPascal(name)}DeleteOutput> {
-    const model = await this.${name}Repository.findById(id);
+    const model = await this.${snakeToCamel(name)}Repository.findById(id);
 
     if (!model) {
-      throw new ApiNotFoundException('${name}NotFound');
+      throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
     }
 
-    const ${name} = new ${dashToPascal(name)}Entity(model);
+    const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity(model);
 
-    ${name}.deactivated();
+    ${snakeToCamel(name)}.deactivated();
 
-    await this.${name}Repository.updateOne({ id: ${name}.id }, ${name});
+    await this.${snakeToCamel(name)}Repository.updateOne({ id: ${snakeToCamel(name)}.id }, ${snakeToCamel(name)});
 
-    return ${name};
+    return ${snakeToCamel(name)};
   }
 }
 `

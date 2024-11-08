@@ -1,5 +1,5 @@
 const pluralize = require('pluralize')
-const { dashToPascal } = require('../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../textUtils')
 
 const getModuleController = (name) => `import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,18 +27,18 @@ import { SwaggerRequest, SwaggerResponse } from './swagger';
 @ApiBearerAuth()
 export class ${dashToPascal(name)}Controller {
   constructor(
-    private readonly ${name}Create: I${dashToPascal(name)}CreateAdapter,
-    private readonly ${name}Update: I${dashToPascal(name)}UpdateAdapter,
-    private readonly ${name}GetById: I${dashToPascal(name)}GetByIdAdapter,
-    private readonly ${name}List: I${dashToPascal(name)}ListAdapter,
-    private readonly ${name}Delete: I${dashToPascal(name)}DeleteAdapter
+    private readonly ${snakeToCamel(name)}Create: I${dashToPascal(name)}CreateAdapter,
+    private readonly ${snakeToCamel(name)}Update: I${dashToPascal(name)}UpdateAdapter,
+    private readonly ${snakeToCamel(name)}GetById: I${dashToPascal(name)}GetByIdAdapter,
+    private readonly ${snakeToCamel(name)}List: I${dashToPascal(name)}ListAdapter,
+    private readonly ${snakeToCamel(name)}Delete: I${dashToPascal(name)}DeleteAdapter
   ) {}
 
   @Post()
   @ApiResponse(SwaggerResponse.create[200])
   @ApiBody(SwaggerRequest.createBody)
   async create(@Req() { body }: ApiRequest): Promise<${dashToPascal(name)}CreateOutput> {
-    return await this.${name}Create.execute(body as ${dashToPascal(name)}CreateInput);
+    return await this.${snakeToCamel(name)}Create.execute(body as ${dashToPascal(name)}CreateInput);
   }
 
   @Put(':id')
@@ -47,7 +47,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiBody(SwaggerRequest.updateBody)
   @ApiParam({ name: 'id', required: true })
   async update(@Req() { body, params }: ApiRequest): Promise<${dashToPascal(name)}UpdateOutput> {
-    return await this.${name}Update.execute({ ...body, id: params.id } as ${dashToPascal(name)}UpdateInput);
+    return await this.${snakeToCamel(name)}Update.execute({ ...body, id: params.id } as ${dashToPascal(name)}UpdateInput);
   }
 
   @Get('/:id')
@@ -55,7 +55,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiResponse(SwaggerResponse.getById[200])
   @ApiResponse(SwaggerResponse.getById[404])
   async getById(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}GetByIdOutput> {
-    return await this.${name}GetById.execute(params as ${dashToPascal(name)}GetByIdInput);
+    return await this.${snakeToCamel(name)}GetById.execute(params as ${dashToPascal(name)}GetByIdInput);
   }
 
   @Get()
@@ -72,7 +72,7 @@ export class ${dashToPascal(name)}Controller {
       page: Number(query.page)
     };
 
-    return await this.${name}List.execute(input);
+    return await this.${snakeToCamel(name)}List.execute(input);
   }
 
   @Delete('/:id')
@@ -80,7 +80,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiResponse(SwaggerResponse.delete[200])
   @ApiResponse(SwaggerResponse.delete[404])
   async delete(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}DeleteOutput> {
-    return await this.${name}Delete.execute(params as ${dashToPascal(name)}DeleteInput);
+    return await this.${snakeToCamel(name)}Delete.execute(params as ${dashToPascal(name)}DeleteInput);
   }
 }
 `

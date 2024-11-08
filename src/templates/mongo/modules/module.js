@@ -1,5 +1,4 @@
-const { dashToPascal } = require("../../../textUtils")
-
+const { dashToPascal, snakeToCamel } = require("../../../textUtils")
 
 const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/mongoose';
@@ -56,36 +55,36 @@ import { ${dashToPascal(name)}Repository } from './repository';
     },
     {
       provide: I${dashToPascal(name)}CreateAdapter,
-      useFactory: (${name}Repository: I${dashToPascal(name)}Repository, loggerService: ILoggerAdapter) => {
-        return new ${dashToPascal(name)}CreateUsecase(${name}Repository, loggerService);
+      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, loggerService: ILoggerAdapter) => {
+        return new ${dashToPascal(name)}CreateUsecase(${snakeToCamel(name)}Repository, loggerService);
       },
       inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
     },
     {
       provide: I${dashToPascal(name)}UpdateAdapter,
-      useFactory: (${name}Repository: I${dashToPascal(name)}Repository, loggerService: ILoggerAdapter) => {
-        return new ${dashToPascal(name)}UpdateUsecase(${name}Repository, loggerService);
+      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, loggerService: ILoggerAdapter) => {
+        return new ${dashToPascal(name)}UpdateUsecase(${snakeToCamel(name)}Repository, loggerService);
       },
       inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
     },
     {
       provide: I${dashToPascal(name)}ListAdapter,
-      useFactory: (${name}Repository: I${dashToPascal(name)}Repository) => {
-        return new ${dashToPascal(name)}ListUsecase(${name}Repository);
+      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
+        return new ${dashToPascal(name)}ListUsecase(${snakeToCamel(name)}Repository);
       },
       inject: [I${dashToPascal(name)}Repository]
     },
     {
       provide: I${dashToPascal(name)}DeleteAdapter,
-      useFactory: (${name}Repository: I${dashToPascal(name)}Repository) => {
-        return new ${dashToPascal(name)}DeleteUsecase(${name}Repository);
+      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
+        return new ${dashToPascal(name)}DeleteUsecase(${snakeToCamel(name)}Repository);
       },
       inject: [I${dashToPascal(name)}Repository]
     },
     {
       provide: I${dashToPascal(name)}GetByIdAdapter,
-      useFactory: (${name}Repository: I${dashToPascal(name)}Repository) => {
-        return new ${dashToPascal(name)}GetByIdUsecase(${name}Repository);
+      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
+        return new ${dashToPascal(name)}GetByIdUsecase(${snakeToCamel(name)}Repository);
       },
       inject: [I${dashToPascal(name)}Repository]
     }

@@ -1,5 +1,5 @@
 const pluralize = require('pluralize')
-const { dashToPascal } = require('../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../textUtils')
 
 const getModuleController = (name) => `import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,18 +27,18 @@ import { SwaggerRequest, SwaggerResponse } from './swagger';
 @ApiBearerAuth()
 export class ${dashToPascal(name)}Controller {
   constructor(
-    private readonly ${name}CreateUsecase: I${dashToPascal(name)}CreateAdapter,
-    private readonly ${name}UpdateUsecase: I${dashToPascal(name)}UpdateAdapter,
-    private readonly ${name}DeleteUsecase: I${dashToPascal(name)}DeleteAdapter,
-    private readonly ${name}ListUsecase: I${dashToPascal(name)}ListAdapter,
-    private readonly ${name}GetByIdUsecase: I${dashToPascal(name)}GetByIdAdapter
+    private readonly ${snakeToCamel(name)}CreateUsecase: I${dashToPascal(name)}CreateAdapter,
+    private readonly ${snakeToCamel(name)}UpdateUsecase: I${dashToPascal(name)}UpdateAdapter,
+    private readonly ${snakeToCamel(name)}DeleteUsecase: I${dashToPascal(name)}DeleteAdapter,
+    private readonly ${snakeToCamel(name)}ListUsecase: I${dashToPascal(name)}ListAdapter,
+    private readonly ${snakeToCamel(name)}GetByIdUsecase: I${dashToPascal(name)}GetByIdAdapter
   ) {}
 
   @Post()
   @ApiResponse(SwaggerResponse.create[200])
   @ApiBody(SwaggerRequest.createBody)
   async create(@Req() { body }: ApiRequest): Promise<${dashToPascal(name)}CreateOutput> {
-    return this.${name}CreateUsecase.execute(body as ${dashToPascal(name)}CreateInput);
+    return this.${snakeToCamel(name)}CreateUsecase.execute(body as ${dashToPascal(name)}CreateInput);
   }
 
   @Put(':id')
@@ -47,7 +47,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiBody(SwaggerRequest.updateBody)
   @ApiParam({ name: 'id', required: true })
   async update(@Req() { body, params }: ApiRequest): Promise<${dashToPascal(name)}UpdateOutput> {
-    return this.${name}UpdateUsecase.execute({ ...body, id: params.id } as ${dashToPascal(name)}UpdateInput);
+    return this.${snakeToCamel(name)}UpdateUsecase.execute({ ...body, id: params.id } as ${dashToPascal(name)}UpdateInput);
   }
 
   @Get()
@@ -64,7 +64,7 @@ export class ${dashToPascal(name)}Controller {
       page: Number(query.page)
     };
 
-    return await this.${name}ListUsecase.execute(input);
+    return await this.${snakeToCamel(name)}ListUsecase.execute(input);
   }
 
   @Get('/:id')
@@ -72,7 +72,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiResponse(SwaggerResponse.getById[200])
   @ApiResponse(SwaggerResponse.getById[404])
   async getById(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}GetByIdOutput> {
-    return await this.${name}GetByIdUsecase.execute(params as ${dashToPascal(name)}GetByIdInput);
+    return await this.${snakeToCamel(name)}GetByIdUsecase.execute(params as ${dashToPascal(name)}GetByIdInput);
   }
 
   @Delete('/:id')
@@ -80,7 +80,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiResponse(SwaggerResponse.delete[200])
   @ApiResponse(SwaggerResponse.delete[404])
   async delete(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}DeleteOutput> {
-    return await this.${name}DeleteUsecase.execute(params as ${dashToPascal(name)}DeleteInput);
+    return await this.${snakeToCamel(name)}DeleteUsecase.execute(params as ${dashToPascal(name)}DeleteInput);
   }
 }
 `

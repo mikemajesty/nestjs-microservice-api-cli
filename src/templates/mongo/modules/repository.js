@@ -1,5 +1,5 @@
 const pluralize = require('pluralize')
-const { dashToPascal } = require('../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../textUtils')
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -22,13 +22,13 @@ export class ${dashToPascal(name)}Repository extends MongoRepository<${dashToPas
   @ConvertMongooseFilter([{ name: 'name', type: SearchTypeEnum.like }])
   @ValidateDatabaseSortAllowed({ name: 'name' }, { name: 'createdAt' })
   async paginate({ limit, page, sort, search }: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
-    const ${pluralize(name)} = await this.entity.paginate(search as FilterQuery<IEntity>, {
+    const ${pluralize(snakeToCamel(name))} = await this.entity.paginate(search as FilterQuery<IEntity>, {
       page,
       limit,
       sort: sort as object
     });
 
-    return { docs: ${pluralize(name)}.docs.map((u) => u.toObject({ virtuals: true })), limit, page, total: ${name}s.totalDocs };
+    return { docs: ${pluralize(snakeToCamel(name))}.docs.map((u) => u.toObject({ virtuals: true })), limit, page, total: ${snakeToCamel(name)}s.totalDocs };
   }
 }
 `

@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../../textUtils")
 
 const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';
@@ -24,8 +24,8 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
         },
         {
           provide: I${dashToPascal(name)}DeleteAdapter,
-          useFactory: (${name}Repository: I${dashToPascal(name)}Repository) => {
-            return new ${dashToPascal(name)}DeleteUsecase(${name}Repository);
+          useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
+            return new ${dashToPascal(name)}DeleteUsecase(${snakeToCamel(name)}Repository);
           },
           inject: [I${dashToPascal(name)}Repository]
         }
@@ -49,23 +49,23 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
     id: TestUtils.getMockUUID()
   };
 
-  test('when ${name} not found, should expect an error', async () => {
+  test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = jest.fn().mockResolvedValue(null);
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  const ${name} = new ${dashToPascal(name)}Entity({
+  const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity({
     id: TestUtils.getMockUUID(),
     name: 'dummy'
   });
 
-  test('when ${name} deleted successfully, should expect a ${name}', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${name});
+  test('when ${snakeToCamel(name)} deleted successfully, should expect a ${snakeToCamel(name)}', async () => {
+    repository.findById = jest.fn().mockResolvedValue(${snakeToCamel(name)});
     repository.updateOne = jest.fn();
 
     await expect(usecase.execute(input)).resolves.toEqual({
-      ...${name},
+      ...${snakeToCamel(name)},
       deletedAt: expect.any(Date)
     });
   });

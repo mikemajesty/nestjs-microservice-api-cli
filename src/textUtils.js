@@ -7,3 +7,11 @@ export const dashToPascal = (string) => {
       .join(""))
     .join("/");
 };
+
+export const snakeToCamel = str =>
+  str.toLowerCase().replace(/([-_][a-z])/g, group =>
+    group
+      .toUpperCase()
+      .replace('-', '')
+      .replace('_', '')
+  );

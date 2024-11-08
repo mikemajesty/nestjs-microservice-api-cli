@@ -1,5 +1,5 @@
 const pluralize = require('pluralize')
-const { dashToPascal } = require('../../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../../textUtils')
 
 const getCoreUsecaseList = (name) => `import { z } from 'zod';
 
@@ -18,17 +18,17 @@ export type ${dashToPascal(name)}ListInput = PaginationInput<${dashToPascal(name
 export type ${dashToPascal(name)}ListOutput = PaginationOutput<${dashToPascal(name)}Entity>;
 
 export class ${dashToPascal(name)}ListUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${dashToPascal(name)}Repository) {}
+  constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
   @ValidateSchema(${dashToPascal(name)}ListSchema)
   async execute(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
-    const ${pluralize(name)} = await this.${name}Repository.paginate(input);
+    const ${pluralize(snakeToCamel(name))} = await this.${snakeToCamel(name)}Repository.paginate(input);
 
     return {
-      docs: ${pluralize(name)}.docs.map((u) => new ${dashToPascal(name)}Entity(u)),
-      limit: ${pluralize(name)}.limit,
-      page: ${pluralize(name)}.page,
-      total: ${pluralize(name)}.total
+      docs: ${pluralize(snakeToCamel(name))}.docs.map((u) => new ${dashToPascal(name)}Entity(u)),
+      limit: ${pluralize(snakeToCamel(name))}.limit,
+      page: ${pluralize(snakeToCamel(name))}.page,
+      total: ${pluralize(snakeToCamel(name))}.total
     };
   }
 }

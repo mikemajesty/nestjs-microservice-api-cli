@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
 
 const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 
@@ -19,27 +19,27 @@ export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
 
 export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
   constructor(
-    private readonly ${name}Repository: I${dashToPascal(name)}Repository,
+    private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository,
     private readonly loggerService: ILoggerAdapter
   ) {}
 
   @ValidateSchema(${dashToPascal(name)}UpdateSchema)
   async execute(input: ${dashToPascal(name)}UpdateInput): Promise<${dashToPascal(name)}UpdateOutput> {
-    const ${name} = await this.${name}Repository.findById(input.id as string);
+    const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(input.id as string);
 
-    if (!${name}) {
-      throw new ApiNotFoundException('${name}NotFound');
+    if (!${snakeToCamel(name)}) {
+      throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
     }
 
-    const ${name}Found = new ${dashToPascal(name)}Entity(${name});
+    const ${snakeToCamel(name)}Found = new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
 
-    const entity = new ${dashToPascal(name)}Entity({ ...${name}Found, ...input });
+    const entity = new ${dashToPascal(name)}Entity({ ...${snakeToCamel(name)}Found, ...input });
 
-    await this.${name}Repository.updateOne({ id: entity.id }, entity);
+    await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity);
 
-    this.loggerService.info({ message: '${name} updated.', obj: { ${name}: input } });
+    this.loggerService.info({ message: '${snakeToCamel(name)} updated.', obj: { ${snakeToCamel(name)}: input } });
 
-    const updated = await this.${name}Repository.findById(entity.id);
+    const updated = await this.${snakeToCamel(name)}Repository.findById(entity.id);
 
     return new ${dashToPascal(name)}Entity(updated as ${dashToPascal(name)}Entity);
   }

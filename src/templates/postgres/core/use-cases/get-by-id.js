@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
 
 const getCoreUsecaseGetById = (name) => `import { z } from 'zod';
 
@@ -18,17 +18,17 @@ export type ${dashToPascal(name)}GetByIdInput = z.infer<typeof ${dashToPascal(na
 export type ${dashToPascal(name)}GetByIdOutput = ${dashToPascal(name)}Entity;
 
 export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${dashToPascal(name)}Repository) {}
+  constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
   @ValidateSchema(${dashToPascal(name)}GetByIdSchema)
   async execute({ id }: ${dashToPascal(name)}GetByIdInput): Promise<${dashToPascal(name)}GetByIdOutput> {
-    const ${name} = await this.${name}Repository.findById(id);
+    const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(id);
 
-    if (!${name}) {
-      throw new ApiNotFoundException('${name}NotFound');
+    if (!${snakeToCamel(name)}) {
+      throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
     }
 
-    return new ${dashToPascal(name)}Entity(${name});
+    return new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
   }
 }
 `

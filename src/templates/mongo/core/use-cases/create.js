@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
 
 const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
 
@@ -20,7 +20,7 @@ export type ${dashToPascal(name)}CreateOutput = CreatedModel;
 
 export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
   constructor(
-    private readonly ${name}Repository: I${dashToPascal(name)}Repository,
+    private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository,
     private readonly loggerService: ILoggerAdapter
   ) {}
 
@@ -28,10 +28,10 @@ export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
   async execute(input: ${dashToPascal(name)}CreateInput): Promise<${dashToPascal(name)}CreateOutput> {
     const entity = new ${dashToPascal(name)}Entity({ id: UUIDUtils.create(), ...input });
 
-    const ${name} = await this.${name}Repository.create(entity);
+    const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.create(entity);
 
-    this.loggerService.info({ message: '${name} created.', obj: { ${name} } });
-    return ${name};
+    this.loggerService.info({ message: '${snakeToCamel(name)} created.', obj: { ${snakeToCamel(name)} } });
+    return ${snakeToCamel(name)};
   }
 }
 `

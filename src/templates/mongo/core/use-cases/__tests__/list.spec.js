@@ -1,6 +1,6 @@
 
 const pluralize = require('pluralize')
-const { dashToPascal } = require('../../../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../../../textUtils')
 
 const getCoreUsecaseListTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';
@@ -26,8 +26,8 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
         },
         {
           provide: I${dashToPascal(name)}ListAdapter,
-          useFactory: (${name}Repository: I${dashToPascal(name)}Repository) => {
-            return new ${dashToPascal(name)}ListUsecase(${name}Repository);
+          useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
+            return new ${dashToPascal(name)}ListUsecase(${snakeToCamel(name)}Repository);
           },
           inject: [I${dashToPascal(name)}Repository]
         }
@@ -52,28 +52,28 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
 
   const input: ${dashToPascal(name)}ListInput = { limit: 1, page: 1, search: {}, sort: { createdAt: -1 } };
 
-  const ${name} = new ${dashToPascal(name)}Entity({
+  const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity({
     id: TestUtils.getMockUUID(),
     name: 'dummy',
     createdAt: new Date(),
     updatedAt: new Date()
   });
 
-  const ${pluralize(name)} = [${name}];
+  const ${pluralize(snakeToCamel(name))} = [${snakeToCamel(name)}];
 
-  test('when ${name} are found, should expect an ${name} list', async () => {
-    const output: ${dashToPascal(name)}ListOutput = { docs: ${pluralize(name)}, page: 1, limit: 1, total: 1 };
+  test('when ${snakeToCamel(name)} are found, should expect an ${snakeToCamel(name)} list', async () => {
+    const output: ${dashToPascal(name)}ListOutput = { docs: ${pluralize(snakeToCamel(name))}, page: 1, limit: 1, total: 1 };
     repository.paginate = jest.fn().mockResolvedValue(output);
 
     await expect(usecase.execute(input)).resolves.toEqual({
-      docs: ${pluralize(name)},
+      docs: ${pluralize(snakeToCamel(name))},
       page: 1,
       limit: 1,
       total: 1
     });
   });
 
-  test('when ${name} not found, should expect an empty list', async () => {
+  test('when ${snakeToCamel(name)} not found, should expect an empty list', async () => {
     const output: ${dashToPascal(name)}ListOutput = { docs: [], page: 1, limit: 1, total: 1 };
     repository.paginate = jest.fn().mockResolvedValue(output);
 

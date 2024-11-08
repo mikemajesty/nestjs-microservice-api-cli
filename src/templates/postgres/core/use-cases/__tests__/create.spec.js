@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../../textUtils")
 
 const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';
@@ -30,8 +30,8 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
         },
         {
           provide: I${dashToPascal(name)}CreateAdapter,
-          useFactory: (${name}Repository: I${dashToPascal(name)}Repository, logger: ILoggerAdapter) => {
-            return new ${dashToPascal(name)}CreateUsecase(${name}Repository, logger);
+          useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${dashToPascal(name)}CreateUsecase(${snakeToCamel(name)}Repository, logger);
           },
           inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
         }
@@ -55,7 +55,7 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
     name: 'dummy'
   };
 
-  test('when ${name} created successfully, should expect a ${name}', async () => {
+  test('when ${snakeToCamel(name)} created successfully, should expect a ${snakeToCamel(name)}', async () => {
     const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
     repository.create = jest.fn().mockResolvedValue(output);
 

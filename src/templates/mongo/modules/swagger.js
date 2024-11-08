@@ -1,5 +1,5 @@
 const pluralize = require('pluralize')
-const { dashToPascal } = require('../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../textUtils')
 
 
 const getModuleSwagger = (name) => `import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
@@ -18,60 +18,60 @@ const input = new ${dashToPascal(name)}Entity({
 
 const output = new ${dashToPascal(name)}Entity({ ...input, updatedAt: new Date(), createdAt: new Date(), deletedAt: null });
 
-const BASE_URL = 'api/v1/${pluralize(name)}';
+const BASE_URL = 'api/v1/${pluralize(snakeToCamel(name))}';
 
 export const SwaggerResponse = {
   create: {
     200: Swagger.defaultResponseJSON<${dashToPascal(name)}CreateOutput>({
       status: 200,
       json: { created: true, id: 'uuid' },
-      description: '${name} created.'
+      description: '${snakeToCamel(name)} created.'
     })
   },
   update: {
     200: Swagger.defaultResponseJSON<${dashToPascal(name)}UpdateOutput>({
       status: 200,
       json: output,
-      description: '${name} updated.'
+      description: '${snakeToCamel(name)} updated.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
       route: BASE_URL.concat('/:id'),
-      message: '${name}NotFound',
-      description: '${name} not found.'
+      message: '${snakeToCamel(name)}NotFound',
+      description: '${snakeToCamel(name)} not found.'
     })
   },
   getById: {
     200: Swagger.defaultResponseJSON<${dashToPascal(name)}GetByIdOutput>({
       status: 200,
       json: output,
-      description: '${name} found.'
+      description: '${snakeToCamel(name)} found.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
       route: BASE_URL.concat('/:id'),
-      message: '${name}NotFound',
-      description: '${name} not found.'
+      message: '${snakeToCamel(name)}NotFound',
+      description: '${snakeToCamel(name)} not found.'
     })
   },
   delete: {
     200: Swagger.defaultResponseJSON<${dashToPascal(name)}DeleteOutput>({
       status: 200,
       json: output,
-      description: '${name} deleted.'
+      description: '${snakeToCamel(name)} deleted.'
     }),
     404: Swagger.defaultResponseError({
       status: 404,
       route: BASE_URL.concat('/:id'),
-      message: '${name}NotFound',
-      description: '${name} not found.'
+      message: '${snakeToCamel(name)}NotFound',
+      description: '${snakeToCamel(name)} not found.'
     })
   },
   list: {
     200: Swagger.defaultResponseJSON<${dashToPascal(name)}ListOutput>({
       status: 200,
       json: { docs: [output], page: 1, limit: 1, total: 1 },
-      description: 'list ${pluralize(name)}.'
+      description: 'list ${pluralize(snakeToCamel(name))}.'
     })
   }
 };
