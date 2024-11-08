@@ -14,9 +14,6 @@ export const ${dashToPascal(name)}UpdateSchema = ${dashToPascal(name)}EntitySche
   id: true
 }).merge(${dashToPascal(name)}EntitySchema.omit({ id: true }).partial());
 
-export type ${dashToPascal(name)}UpdateInput = z.infer<typeof ${dashToPascal(name)}UpdateSchema>;
-export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
-
 export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
   constructor(
     private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository,
@@ -44,6 +41,9 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
     return new ${dashToPascal(name)}Entity(updated as ${dashToPascal(name)}Entity);
   }
 }
+
+export type ${dashToPascal(name)}UpdateInput = z.infer<typeof ${dashToPascal(name)}UpdateSchema>;
+export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
 `
 
 module.exports = {

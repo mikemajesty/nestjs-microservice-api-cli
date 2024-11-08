@@ -13,9 +13,6 @@ import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
 export const ${dashToPascal(name)}ListSchema = z.intersection(PaginationSchema, SortSchema.merge(SearchSchema));
 
-export type ${dashToPascal(name)}ListInput = PaginationInput<${dashToPascal(name)}Entity>;
-export type ${dashToPascal(name)}ListOutput = PaginationOutput<${dashToPascal(name)}Entity>;
-
 export class ${dashToPascal(name)}ListUsecase implements IUsecase {
   constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
@@ -24,6 +21,9 @@ export class ${dashToPascal(name)}ListUsecase implements IUsecase {
     return await this.${snakeToCamel(name)}Repository.paginate(input);
   }
 }
+
+export type ${dashToPascal(name)}ListInput = PaginationInput<${dashToPascal(name)}Entity>;
+export type ${dashToPascal(name)}ListOutput = PaginationOutput<${dashToPascal(name)}Entity>;
 `
 
 module.exports = {

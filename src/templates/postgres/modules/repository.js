@@ -12,8 +12,6 @@ import { ConvertTypeOrmFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } fro
 import { IEntity } from '@/utils/entity';
 import { PaginationUtils } from '@/utils/pagination';
 
-type Model = ${dashToPascal(name)}Schema & ${dashToPascal(name)}Entity;
-
 @Injectable()
 export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model> implements I${dashToPascal(name)}Repository {
   constructor(readonly repository: Repository<Model>) {
@@ -35,6 +33,8 @@ export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model> im
     return { docs, total, page: input.page, limit: input.limit };
   }
 }
+
+type Model = ${dashToPascal(name)}Schema & ${dashToPascal(name)}Entity;
 `
 
 module.exports = {

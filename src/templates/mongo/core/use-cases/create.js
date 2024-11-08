@@ -15,9 +15,6 @@ export const ${dashToPascal(name)}CreateSchema = ${dashToPascal(name)}EntitySche
   name: true
 });
 
-export type ${dashToPascal(name)}CreateInput = z.infer<typeof ${dashToPascal(name)}CreateSchema>;
-export type ${dashToPascal(name)}CreateOutput = CreatedModel;
-
 export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
   constructor(
     private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository,
@@ -34,6 +31,9 @@ export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
     return ${snakeToCamel(name)};
   }
 }
+
+export type ${dashToPascal(name)}CreateInput = z.infer<typeof ${dashToPascal(name)}CreateSchema>;
+export type ${dashToPascal(name)}CreateOutput = CreatedModel;
 `
 
 module.exports = {

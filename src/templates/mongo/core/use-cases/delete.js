@@ -13,9 +13,6 @@ export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySche
   id: true
 });
 
-export type ${dashToPascal(name)}DeleteInput = z.infer<typeof ${dashToPascal(name)}DeleteSchema>;
-export type ${dashToPascal(name)}DeleteOutput = ${dashToPascal(name)}Entity;
-
 export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
   constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
@@ -36,6 +33,9 @@ export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
     return ${snakeToCamel(name)};
   }
 }
+
+export type ${dashToPascal(name)}DeleteInput = z.infer<typeof ${dashToPascal(name)}DeleteSchema>;
+export type ${dashToPascal(name)}DeleteOutput = ${dashToPascal(name)}Entity;
 `
 
 module.exports = {

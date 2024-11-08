@@ -14,9 +14,6 @@ export const ${dashToPascal(name)}GetByIdSchema = ${dashToPascal(name)}EntitySch
   id: true
 });
 
-export type ${dashToPascal(name)}GetByIdInput = z.infer<typeof ${dashToPascal(name)}GetByIdSchema>;
-export type ${dashToPascal(name)}GetByIdOutput = ${dashToPascal(name)}Entity;
-
 export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
   constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
 
@@ -31,6 +28,9 @@ export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
     return new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
   }
 }
+
+export type ${dashToPascal(name)}GetByIdInput = z.infer<typeof ${dashToPascal(name)}GetByIdSchema>;
+export type ${dashToPascal(name)}GetByIdOutput = ${dashToPascal(name)}Entity;
 `
 
 module.exports = {
