@@ -1,25 +1,22 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../textUtils")
 
 const getServiceLib = (name) => `import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
 import { ValidateSchema } from '@/utils/decorators';
 
-import { I${capitalizeFirstLetter(name)}Adapter } from './adapter';
+import { I${dashToPascal(name)}Adapter } from './adapter';
 
-const ${capitalizeFirstLetter(name)}Schema = z.object({ name: z.string().trim() });
+const ${dashToPascal(name)}Schema = z.object({ name: z.string().trim() });
 
-export type ${capitalizeFirstLetter(name)}Input = z.infer<typeof ${capitalizeFirstLetter(name)}Schema>;
+export type ${dashToPascal(name)}Input = z.infer<typeof ${dashToPascal(name)}Schema>;
 
-export type ${capitalizeFirstLetter(name)}Output = string;
+export type ${dashToPascal(name)}Output = string;
 
 @Injectable()
-export class ${capitalizeFirstLetter(name)}Service implements I${capitalizeFirstLetter(name)}Adapter {
-  @ValidateSchema(${capitalizeFirstLetter(name)}Schema)
-  get({ name }: ${capitalizeFirstLetter(name)}Input): ${capitalizeFirstLetter(name)}Output {
+export class ${dashToPascal(name)}Service implements I${dashToPascal(name)}Adapter {
+  @ValidateSchema(${dashToPascal(name)}Schema)
+  get({ name }: ${dashToPascal(name)}Input): ${dashToPascal(name)}Output {
     return name;
   }
 }

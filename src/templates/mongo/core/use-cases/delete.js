@@ -1,7 +1,4 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../textUtils")
 
 const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
@@ -9,28 +6,28 @@ import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
-import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from '../entity/${name}';
-import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
+import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
-export const ${capitalizeFirstLetter(name)}DeleteSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
+export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
 });
 
-export type ${capitalizeFirstLetter(name)}DeleteInput = z.infer<typeof ${capitalizeFirstLetter(name)}DeleteSchema>;
-export type ${capitalizeFirstLetter(name)}DeleteOutput = ${capitalizeFirstLetter(name)}Entity;
+export type ${dashToPascal(name)}DeleteInput = z.infer<typeof ${dashToPascal(name)}DeleteSchema>;
+export type ${dashToPascal(name)}DeleteOutput = ${dashToPascal(name)}Entity;
 
-export class ${capitalizeFirstLetter(name)}DeleteUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}
+export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
+  constructor(private readonly ${name}Repository: I${dashToPascal(name)}Repository) {}
 
-  @ValidateSchema(${capitalizeFirstLetter(name)}DeleteSchema)
-  async execute({ id }: ${capitalizeFirstLetter(name)}DeleteInput): Promise<${capitalizeFirstLetter(name)}DeleteOutput> {
+  @ValidateSchema(${dashToPascal(name)}DeleteSchema)
+  async execute({ id }: ${dashToPascal(name)}DeleteInput): Promise<${dashToPascal(name)}DeleteOutput> {
     const model = await this.${name}Repository.findById(id);
 
     if (!model) {
       throw new ApiNotFoundException('${name}NotFound');
     }
 
-    const ${name} = new ${capitalizeFirstLetter(name)}Entity(model);
+    const ${name} = new ${dashToPascal(name)}Entity(model);
 
     ${name}.deactivated();
 

@@ -1,12 +1,9 @@
+const { dashToPascal } = require("../../textUtils")
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const getAdapterInfra = (name) => `import { ${dashToPascal(name)}GetInput, ${dashToPascal(name)}GetOutput } from './service';
 
-const getAdapterInfra = (name) => `import { ${capitalizeFirstLetter(name)}GetInput, ${capitalizeFirstLetter(name)}GetOutput } from './service';
-
-export abstract class I${capitalizeFirstLetter(name)}Adapter {
-  abstract get(input: ${capitalizeFirstLetter(name)}GetInput): ${capitalizeFirstLetter(name)}GetOutput;
+export abstract class I${dashToPascal(name)}Adapter {
+  abstract get(input: ${dashToPascal(name)}GetInput): ${dashToPascal(name)}GetOutput;
 }
 `
 

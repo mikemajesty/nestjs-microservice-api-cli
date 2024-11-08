@@ -1,54 +1,51 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../../textUtils")
 
 const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';
 
-import { ${capitalizeFirstLetter(name)}DeleteInput, ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
-import { I${capitalizeFirstLetter(name)}DeleteAdapter } from '@/modules/${name}/adapter';
+import { ${dashToPascal(name)}DeleteInput, ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
+import { I${dashToPascal(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/tests';
 
-import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}Entity } from './../../entity/${name}';
+import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
+import { ${dashToPascal(name)}Entity } from './../../entity/${name}';
 
-describe(${capitalizeFirstLetter(name)}DeleteUsecase.name, () => {
-  let usecase: I${capitalizeFirstLetter(name)}DeleteAdapter;
-  let repository: I${capitalizeFirstLetter(name)}Repository;
+describe(${dashToPascal(name)}DeleteUsecase.name, () => {
+  let usecase: I${dashToPascal(name)}DeleteAdapter;
+  let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       providers: [
         {
-          provide: I${capitalizeFirstLetter(name)}Repository,
+          provide: I${dashToPascal(name)}Repository,
           useValue: {}
         },
         {
-          provide: I${capitalizeFirstLetter(name)}DeleteAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository) => {
-            return new ${capitalizeFirstLetter(name)}DeleteUsecase(${name}Repository);
+          provide: I${dashToPascal(name)}DeleteAdapter,
+          useFactory: (${name}Repository: I${dashToPascal(name)}Repository) => {
+            return new ${dashToPascal(name)}DeleteUsecase(${name}Repository);
           },
-          inject: [I${capitalizeFirstLetter(name)}Repository]
+          inject: [I${dashToPascal(name)}Repository]
         }
       ]
     }).compile();
 
-    usecase = app.get(I${capitalizeFirstLetter(name)}DeleteAdapter);
-    repository = app.get(I${capitalizeFirstLetter(name)}Repository);
+    usecase = app.get(I${dashToPascal(name)}DeleteAdapter);
+    repository = app.get(I${dashToPascal(name)}Repository);
   });
 
   test('when no input is specified, should expect an error', async () => {
     await TestUtils.expectZodError(
-      () => usecase.execute({} as ${capitalizeFirstLetter(name)}DeleteInput),
+      () => usecase.execute({} as ${dashToPascal(name)}DeleteInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${dashToPascal(name)}Entity.nameOf('id') }]);
       }
     );
   });
 
-  const input: ${capitalizeFirstLetter(name)}DeleteInput = {
+  const input: ${dashToPascal(name)}DeleteInput = {
     id: TestUtils.getMockUUID()
   };
 
@@ -58,7 +55,7 @@ describe(${capitalizeFirstLetter(name)}DeleteUsecase.name, () => {
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
-  const ${name} = new ${capitalizeFirstLetter(name)}Entity({
+  const ${name} = new ${dashToPascal(name)}Entity({
     id: TestUtils.getMockUUID(),
     name: 'dummy'
   });

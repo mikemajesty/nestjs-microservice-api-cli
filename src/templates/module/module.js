@@ -1,16 +1,14 @@
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../textUtils")
 
 const getModuleModule = (name) => `import { Module } from '@nestjs/common';
 
-import { ${capitalizeFirstLetter(name)}Controller } from './controller';
+import { ${dashToPascal(name)}Controller } from './controller';
 
 @Module({
   imports: [],
-  controllers: [${capitalizeFirstLetter(name)}Controller]
+  controllers: [${dashToPascal(name)}Controller]
 })
-export class ${capitalizeFirstLetter(name)}Module {}
+export class ${dashToPascal(name)}Module {}
 `
 
 module.exports = {

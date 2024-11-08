@@ -1,15 +1,12 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../textUtils")
 
 const getCoreRepository = (name) => `import { IRepository } from '@/infra/repository';
 
-import { ${capitalizeFirstLetter(name)}Entity } from '../entity/${name}';
-import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '../use-cases/${name}-list';
+import { ${dashToPascal(name)}Entity } from '../entity/${name}';
+import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput } from '../use-cases/${name}-list';
 
-export abstract class I${capitalizeFirstLetter(name)}Repository extends IRepository<${capitalizeFirstLetter(name)}Entity> {
-  abstract paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput>;
+export abstract class I${dashToPascal(name)}Repository extends IRepository<${dashToPascal(name)}Entity> {
+  abstract paginate(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput>;
 }
 `
 

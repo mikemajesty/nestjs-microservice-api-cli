@@ -327,7 +327,7 @@ export async function cli(args) {
     return
   }
 
-  userInput.name = name
+  userInput.name = name.replace("_", "-").replace(" ", "-")
 
   const options = await parseArgumentsInoOptions(userInput)
 

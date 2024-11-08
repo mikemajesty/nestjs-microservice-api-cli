@@ -1,28 +1,25 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../../textUtils")
 
 const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';
 
 import { ILoggerAdapter } from '@/infra/logger';
-import { I${capitalizeFirstLetter(name)}CreateAdapter } from '@/modules/${name}/adapter';
+import { I${dashToPascal(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { TestUtils } from '@/utils/tests';
 
-import { ${capitalizeFirstLetter(name)}Entity } from '../../entity/${name}';
-import { I${capitalizeFirstLetter(name)}Repository } from '../../repository/${name}';
-import { ${capitalizeFirstLetter(name)}CreateInput, ${capitalizeFirstLetter(name)}CreateOutput, ${capitalizeFirstLetter(name)}CreateUsecase } from '../${name}-create';
+import { ${dashToPascal(name)}Entity } from '../../entity/${name}';
+import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
+import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateOutput, ${dashToPascal(name)}CreateUsecase } from '../${name}-create';
 
-describe(${capitalizeFirstLetter(name)}CreateUsecase.name, () => {
-  let usecase: I${capitalizeFirstLetter(name)}CreateAdapter;
-  let repository: I${capitalizeFirstLetter(name)}Repository;
+describe(${dashToPascal(name)}CreateUsecase.name, () => {
+  let usecase: I${dashToPascal(name)}CreateAdapter;
+  let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       providers: [
         {
-          provide: I${capitalizeFirstLetter(name)}Repository,
+          provide: I${dashToPascal(name)}Repository,
           useValue: {}
         },
         {
@@ -32,34 +29,34 @@ describe(${capitalizeFirstLetter(name)}CreateUsecase.name, () => {
           }
         },
         {
-          provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-          useFactory: (${name}Repository: I${capitalizeFirstLetter(name)}Repository, logger: ILoggerAdapter) => {
-            return new ${capitalizeFirstLetter(name)}CreateUsecase(${name}Repository, logger);
+          provide: I${dashToPascal(name)}CreateAdapter,
+          useFactory: (${name}Repository: I${dashToPascal(name)}Repository, logger: ILoggerAdapter) => {
+            return new ${dashToPascal(name)}CreateUsecase(${name}Repository, logger);
           },
-          inject: [I${capitalizeFirstLetter(name)}Repository, ILoggerAdapter]
+          inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
         }
       ]
     }).compile();
 
-    usecase = app.get(I${capitalizeFirstLetter(name)}CreateAdapter);
-    repository = app.get(I${capitalizeFirstLetter(name)}Repository);
+    usecase = app.get(I${dashToPascal(name)}CreateAdapter);
+    repository = app.get(I${dashToPascal(name)}Repository);
   });
 
   test('when no input is specified, should expect an error', async () => {
     await TestUtils.expectZodError(
-      () => usecase.execute({} as ${capitalizeFirstLetter(name)}CreateInput),
+      () => usecase.execute({} as ${dashToPascal(name)}CreateInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${capitalizeFirstLetter(name)}Entity.nameOf('name') }]);
+        expect(issues).toEqual([{ message: 'Required', path: ${dashToPascal(name)}Entity.nameOf('name') }]);
       }
     );
   });
 
-  const input: ${capitalizeFirstLetter(name)}CreateInput = {
+  const input: ${dashToPascal(name)}CreateInput = {
     name: 'name'
   };
 
   test('when ${name} created successfully, should expect a ${name}', async () => {
-    const output: ${capitalizeFirstLetter(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
+    const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
     repository.findOne = jest.fn().mockResolvedValue(null);
     repository.create = jest.fn().mockResolvedValue(output);
 

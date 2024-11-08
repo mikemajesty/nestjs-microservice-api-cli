@@ -1,42 +1,39 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../textUtils")
 
 const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 
-import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
+import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ILoggerAdapter } from '@/infra/logger';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
-import { ${capitalizeFirstLetter(name)}Entity, ${capitalizeFirstLetter(name)}EntitySchema } from './../entity/${name}';
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from './../entity/${name}';
 
-export const ${capitalizeFirstLetter(name)}UpdateSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
+export const ${dashToPascal(name)}UpdateSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
-}).merge(${capitalizeFirstLetter(name)}EntitySchema.omit({ id: true }).partial());
+}).merge(${dashToPascal(name)}EntitySchema.omit({ id: true }).partial());
 
-export type ${capitalizeFirstLetter(name)}UpdateInput = z.infer<typeof ${capitalizeFirstLetter(name)}UpdateSchema>;
-export type ${capitalizeFirstLetter(name)}UpdateOutput = ${capitalizeFirstLetter(name)}Entity;
+export type ${dashToPascal(name)}UpdateInput = z.infer<typeof ${dashToPascal(name)}UpdateSchema>;
+export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
 
-export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
+export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
   constructor(
-    private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository,
+    private readonly ${name}Repository: I${dashToPascal(name)}Repository,
     private readonly loggerService: ILoggerAdapter
   ) {}
 
-  @ValidateSchema(${capitalizeFirstLetter(name)}UpdateSchema)
-  async execute(input: ${capitalizeFirstLetter(name)}UpdateInput): Promise<${capitalizeFirstLetter(name)}UpdateOutput> {
+  @ValidateSchema(${dashToPascal(name)}UpdateSchema)
+  async execute(input: ${dashToPascal(name)}UpdateInput): Promise<${dashToPascal(name)}UpdateOutput> {
     const ${name} = await this.${name}Repository.findById(input.id);
 
     if (!${name}) {
       throw new ApiNotFoundException('${name}NotFound');
     }
 
-    const ${name}Found = new ${capitalizeFirstLetter(name)}Entity(${name});
+    const ${name}Found = new ${dashToPascal(name)}Entity(${name});
 
-    const entity = new ${capitalizeFirstLetter(name)}Entity({ ...${name}Found, ...input });
+    const entity = new ${dashToPascal(name)}Entity({ ...${name}Found, ...input });
 
     await this.${name}Repository.updateOne({ id: entity.id }, entity);
 
@@ -44,7 +41,7 @@ export class ${capitalizeFirstLetter(name)}UpdateUsecase implements IUsecase {
 
     const updated = await this.${name}Repository.findById(entity.id);
 
-    return new ${capitalizeFirstLetter(name)}Entity(updated as ${capitalizeFirstLetter(name)}Entity);
+    return new ${dashToPascal(name)}Entity(updated as ${dashToPascal(name)}Entity);
   }
 }
 `

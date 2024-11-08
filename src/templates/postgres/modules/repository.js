@@ -1,31 +1,28 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../textUtils")
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
 import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 
-import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
-import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-import { ${capitalizeFirstLetter(name)}ListInput, ${capitalizeFirstLetter(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
-import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
+import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
+import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
+import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
+import { ${dashToPascal(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { TypeORMRepository } from '@/infra/repository/postgres/repository';
 import { ConvertTypeOrmFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
 import { IEntity } from '@/utils/entity';
 import { PaginationUtils } from '@/utils/pagination';
 
-type Model = ${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity;
+type Model = ${dashToPascal(name)}Schema & ${dashToPascal(name)}Entity;
 
 @Injectable()
-export class ${capitalizeFirstLetter(name)}Repository extends TypeORMRepository<Model> implements I${capitalizeFirstLetter(name)}Repository {
+export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model> implements I${dashToPascal(name)}Repository {
   constructor(readonly repository: Repository<Model>) {
     super(repository);
   }
 
-  @ConvertTypeOrmFilter<${capitalizeFirstLetter(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
-  @ValidateDatabaseSortAllowed<${capitalizeFirstLetter(name)}Entity>({ name: 'name' }, { name: 'createdAt' })
-  async paginate(input: ${capitalizeFirstLetter(name)}ListInput): Promise<${capitalizeFirstLetter(name)}ListOutput> {
+  @ConvertTypeOrmFilter<${dashToPascal(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
+  @ValidateDatabaseSortAllowed<${dashToPascal(name)}Entity>({ name: 'name' }, { name: 'createdAt' })
+  async paginate(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
     const skip = PaginationUtils.calculateSkip(input);
 
     const [docs, total] = await this.repository.findAndCount({

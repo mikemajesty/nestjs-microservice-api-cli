@@ -1,18 +1,15 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../textUtils")
 
 const getServiceInfra = (name) => `import { Injectable } from '@nestjs/common';
 
-import { I${capitalizeFirstLetter(name)}Adapter } from './adapter';
+import { I${dashToPascal(name)}Adapter } from './adapter';
 
-export type ${capitalizeFirstLetter(name)}GetInput = {};
-export type ${capitalizeFirstLetter(name)}GetOutput = {};
+export type ${dashToPascal(name)}GetInput = {};
+export type ${dashToPascal(name)}GetOutput = {};
 
 @Injectable()
-export class ${capitalizeFirstLetter(name)}Service implements I${capitalizeFirstLetter(name)}Adapter {
-  get(input: ${capitalizeFirstLetter(name)}GetInput): ${capitalizeFirstLetter(name)}GetOutput {
+export class ${dashToPascal(name)}Service implements I${dashToPascal(name)}Adapter {
+  get(input: ${dashToPascal(name)}GetInput): ${dashToPascal(name)}GetOutput {
     return input;
   }
 }

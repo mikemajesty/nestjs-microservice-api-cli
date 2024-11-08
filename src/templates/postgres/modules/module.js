@@ -1,77 +1,74 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../textUtils")
 
 const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { AuthenticationMiddleware } from '@/observables/middlewares';
-import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
-import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
-import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
-import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
-import { ${capitalizeFirstLetter(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-get-by-id';
-import { ${capitalizeFirstLetter(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
-import { ${capitalizeFirstLetter(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
+import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
+import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
+import { ${dashToPascal(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
+import { ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
+import { ${dashToPascal(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-get-by-id';
+import { ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
+import { ${dashToPascal(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { RedisCacheModule } from '@/infra/cache/redis';
-import { ${capitalizeFirstLetter(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
+import { ${dashToPascal(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
 
 import {
-  I${capitalizeFirstLetter(name)}CreateAdapter,
-  I${capitalizeFirstLetter(name)}DeleteAdapter,
-  I${capitalizeFirstLetter(name)}GetByIdAdapter,
-  I${capitalizeFirstLetter(name)}ListAdapter,
-  I${capitalizeFirstLetter(name)}UpdateAdapter
+  I${dashToPascal(name)}CreateAdapter,
+  I${dashToPascal(name)}DeleteAdapter,
+  I${dashToPascal(name)}GetByIdAdapter,
+  I${dashToPascal(name)}ListAdapter,
+  I${dashToPascal(name)}UpdateAdapter
 } from './adapter';
-import { ${capitalizeFirstLetter(name)}Controller } from './controller';
-import { ${capitalizeFirstLetter(name)}Repository } from './repository';
+import { ${dashToPascal(name)}Controller } from './controller';
+import { ${dashToPascal(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenLibModule, LoggerModule, RedisCacheModule, TypeOrmModule.forFeature([${capitalizeFirstLetter(name)}Schema])],
-  controllers: [${capitalizeFirstLetter(name)}Controller],
+  imports: [TokenLibModule, LoggerModule, RedisCacheModule, TypeOrmModule.forFeature([${dashToPascal(name)}Schema])],
+  controllers: [${dashToPascal(name)}Controller],
   providers: [
     {
-      provide: I${capitalizeFirstLetter(name)}Repository,
-      useFactory: (repository: Repository<${capitalizeFirstLetter(name)}Schema & ${capitalizeFirstLetter(name)}Entity>) => {
-        return new ${capitalizeFirstLetter(name)}Repository(repository);
+      provide: I${dashToPascal(name)}Repository,
+      useFactory: (repository: Repository<${dashToPascal(name)}Schema & ${dashToPascal(name)}Entity>) => {
+        return new ${dashToPascal(name)}Repository(repository);
       },
-      inject: [getRepositoryToken(${capitalizeFirstLetter(name)}Schema)]
+      inject: [getRepositoryToken(${dashToPascal(name)}Schema)]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}CreateAdapter,
-      useFactory: (logger: ILoggerAdapter, repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}CreateUsecase(repository, logger),
-      inject: [ILoggerAdapter, I${capitalizeFirstLetter(name)}Repository]
+      provide: I${dashToPascal(name)}CreateAdapter,
+      useFactory: (logger: ILoggerAdapter, repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}CreateUsecase(repository, logger),
+      inject: [ILoggerAdapter, I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}UpdateAdapter,
-      useFactory: (logger: ILoggerAdapter, repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}UpdateUsecase(repository, logger),
-      inject: [ILoggerAdapter, I${capitalizeFirstLetter(name)}Repository]
+      provide: I${dashToPascal(name)}UpdateAdapter,
+      useFactory: (logger: ILoggerAdapter, repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}UpdateUsecase(repository, logger),
+      inject: [ILoggerAdapter, I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}GetByIdAdapter,
-      useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}GetByIdUsecase(repository),
-      inject: [I${capitalizeFirstLetter(name)}Repository]
+      provide: I${dashToPascal(name)}GetByIdAdapter,
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}GetByIdUsecase(repository),
+      inject: [I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}ListAdapter,
-      useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}ListUsecase(repository),
-      inject: [I${capitalizeFirstLetter(name)}Repository]
+      provide: I${dashToPascal(name)}ListAdapter,
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}ListUsecase(repository),
+      inject: [I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${capitalizeFirstLetter(name)}DeleteAdapter,
-      useFactory: (repository: I${capitalizeFirstLetter(name)}Repository) => new ${capitalizeFirstLetter(name)}DeleteUsecase(repository),
-      inject: [I${capitalizeFirstLetter(name)}Repository]
+      provide: I${dashToPascal(name)}DeleteAdapter,
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}DeleteUsecase(repository),
+      inject: [I${dashToPascal(name)}Repository]
     }
   ],
   exports: []
 })
-export class ${capitalizeFirstLetter(name)}Module implements NestModule {
+export class ${dashToPascal(name)}Module implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes(${capitalizeFirstLetter(name)}Controller);
+    consumer.apply(AuthenticationMiddleware).forRoutes(${dashToPascal(name)}Controller);
   }
 }
 `

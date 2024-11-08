@@ -1,37 +1,34 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../textUtils")
 
 const getCoreUsecaseGetById = (name) => `import { z } from 'zod';
 
-import { ${capitalizeFirstLetter(name)}EntitySchema } from '@/core/${name}/entity/${name}';
+import { ${dashToPascal(name)}EntitySchema } from '@/core/${name}/entity/${name}';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
-import { ${capitalizeFirstLetter(name)}Entity } from '../entity/${name}';
-import { I${capitalizeFirstLetter(name)}Repository } from '../repository/${name}';
+import { ${dashToPascal(name)}Entity } from '../entity/${name}';
+import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
-export const ${capitalizeFirstLetter(name)}GetByIdSchema = ${capitalizeFirstLetter(name)}EntitySchema.pick({
+export const ${dashToPascal(name)}GetByIdSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
 });
 
-export type ${capitalizeFirstLetter(name)}GetByIdInput = z.infer<typeof ${capitalizeFirstLetter(name)}GetByIdSchema>;
-export type ${capitalizeFirstLetter(name)}GetByIdOutput = ${capitalizeFirstLetter(name)}Entity;
+export type ${dashToPascal(name)}GetByIdInput = z.infer<typeof ${dashToPascal(name)}GetByIdSchema>;
+export type ${dashToPascal(name)}GetByIdOutput = ${dashToPascal(name)}Entity;
 
-export class ${capitalizeFirstLetter(name)}GetByIdUsecase implements IUsecase {
-  constructor(private readonly ${name}Repository: I${capitalizeFirstLetter(name)}Repository) {}
+export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
+  constructor(private readonly ${name}Repository: I${dashToPascal(name)}Repository) {}
 
-  @ValidateSchema(${capitalizeFirstLetter(name)}GetByIdSchema)
-  async execute({ id }: ${capitalizeFirstLetter(name)}GetByIdInput): Promise<${capitalizeFirstLetter(name)}GetByIdOutput> {
+  @ValidateSchema(${dashToPascal(name)}GetByIdSchema)
+  async execute({ id }: ${dashToPascal(name)}GetByIdInput): Promise<${dashToPascal(name)}GetByIdOutput> {
     const ${name} = await this.${name}Repository.findById(id);
 
     if (!${name}) {
       throw new ApiNotFoundException('${name}NotFound');
     }
 
-    return new ${capitalizeFirstLetter(name)}Entity(${name});
+    return new ${dashToPascal(name)}Entity(${name});
   }
 }
 `

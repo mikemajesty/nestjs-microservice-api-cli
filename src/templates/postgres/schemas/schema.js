@@ -1,9 +1,6 @@
 
 const pluralize = require('pluralize')
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require('../../../textUtils')
 
 const getModuleSchema = (name) => `import {
   BaseEntity,
@@ -16,7 +13,7 @@ const getModuleSchema = (name) => `import {
 
 
 @Entity({ name: '${pluralize(name)}' })
-export class ${capitalizeFirstLetter(name)}Schema extends BaseEntity {
+export class ${dashToPascal(name)}Schema extends BaseEntity {
   @Column({ type: 'uuid', primary: true })
   id!: string;
 

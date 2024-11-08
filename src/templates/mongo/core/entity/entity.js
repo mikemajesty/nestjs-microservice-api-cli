@@ -1,7 +1,4 @@
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const { dashToPascal } = require("../../../../textUtils")
 
 const getCoreEntity = (name) => `import { z } from 'zod';
 
@@ -13,7 +10,7 @@ const CreatedAt = z.date().nullish();
 const UpdatedAt = z.date().nullish();
 const DeletedAt = z.date().nullish();
 
-export const ${capitalizeFirstLetter(name)}EntitySchema = z.object({
+export const ${dashToPascal(name)}EntitySchema = z.object({
   id: ID,
   name: Name,
   createdAt: CreatedAt,
@@ -21,12 +18,12 @@ export const ${capitalizeFirstLetter(name)}EntitySchema = z.object({
   deletedAt: DeletedAt
 });
 
-type ${capitalizeFirstLetter(name)} = z.infer<typeof ${capitalizeFirstLetter(name)}EntitySchema>;
+type ${dashToPascal(name)} = z.infer<typeof ${dashToPascal(name)}EntitySchema>;
 
-export class ${capitalizeFirstLetter(name)}Entity extends BaseEntity<${capitalizeFirstLetter(name)}Entity>(${capitalizeFirstLetter(name)}EntitySchema) {
+export class ${dashToPascal(name)}Entity extends BaseEntity<${dashToPascal(name)}Entity>(${dashToPascal(name)}EntitySchema) {
   name!: string;
 
-  constructor(entity: ${capitalizeFirstLetter(name)}) {
+  constructor(entity: ${dashToPascal(name)}) {
     super();
     Object.assign(this, this.validate(entity));
   }
