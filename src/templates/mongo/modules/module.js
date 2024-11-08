@@ -7,7 +7,7 @@ const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } f
 import { getConnectionToken } from '@nestjs/mongoose';
 import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
 
-import { IsLoggedMiddleware } from '@/observables/middlewares';
+import { AuthenticationMiddleware } from '@/observables/middlewares';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
 import { ${capitalizeFirstLetter(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
@@ -103,7 +103,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 })
 export class ${capitalizeFirstLetter(name)}Module implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(IsLoggedMiddleware).forRoutes(${capitalizeFirstLetter(name)}Controller);
+    consumer.apply(AuthenticationMiddleware).forRoutes(${capitalizeFirstLetter(name)}Controller);
   }
 }
 `

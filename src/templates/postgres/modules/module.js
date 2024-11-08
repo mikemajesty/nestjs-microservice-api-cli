@@ -7,7 +7,7 @@ const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } f
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { IsLoggedMiddleware } from '@/observables/middlewares';
+import { AuthenticationMiddleware } from '@/observables/middlewares';
 import { ${capitalizeFirstLetter(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${capitalizeFirstLetter(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${capitalizeFirstLetter(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
@@ -71,7 +71,7 @@ import { ${capitalizeFirstLetter(name)}Repository } from './repository';
 })
 export class ${capitalizeFirstLetter(name)}Module implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(IsLoggedMiddleware).forRoutes(${capitalizeFirstLetter(name)}Controller);
+    consumer.apply(AuthenticationMiddleware).forRoutes(${capitalizeFirstLetter(name)}Controller);
   }
 }
 `
