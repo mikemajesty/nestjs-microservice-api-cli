@@ -46,7 +46,7 @@ const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/m
 
 const createModule = async (name) => {
   if (!name) throw new Error('--name is required')
-  name = name.toLowerCase()
+  name = getName(name)
   const dirRoot = `${__dirname}/scafold/module/${name}`
 
   console.log("dirRoot", dirRoot)
@@ -73,7 +73,7 @@ const createModule = async (name) => {
 
 const createInfra = async (name) => {
   if (!name) throw new Error('--name is required')
-  name = name.toLowerCase()
+  name = getName(name)
   const dirRoot = `${__dirname}/scafold/infra/${name}`
 
   console.log("dirRoot", dirRoot)
@@ -101,7 +101,7 @@ const createInfra = async (name) => {
 
 const createLib = async (name) => {
   if (!name) throw new Error('--name is required')
-  name = name.toLowerCase()
+  name = getName(name)
   const dirRoot = `${__dirname}/scafold/libs/${name}`
 
   try {
@@ -219,7 +219,7 @@ const createPostgresCrud = async (name) => {
 
 const createMongoCrud = async (name) => {
   if (!name) throw new Error('--name is required')
-  name = name.toLowerCase()
+  name = getName(name)
 
   const dirRoot = `${__dirname}/scafold/mongo/${name}`
 
