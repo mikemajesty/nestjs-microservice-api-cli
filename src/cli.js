@@ -416,7 +416,8 @@ export async function cli(args) {
           const pathDest = `${dest}/src/core/${name}`;
           const pathCore = path.resolve(src, '../../core');
 
-          fse.copySync(pathCore + `/${name}`, pathDest, { overwrite: true });
+          const namePathCore = pathCore + `/${name}`;
+          fse.copySync(namePathCore, pathDest, { overwrite: true });
 
           fse.copySync(pathSchema, destPathSchema, { overwrite: true });
 
@@ -424,12 +425,13 @@ export async function cli(args) {
             fs.rmSync(source, { recursive: true });
           }
 
-          if (fs.existsSync(pathSchema + `/${name}.ts`)) {
-            fs.rmSync(pathSchema + `/${name}.ts`, { recursive: true });
+          const namePathSchema = pathSchema + `/${name}.ts`;
+          if (fs.existsSync(namePathSchema)) {
+            fs.rmSync(namePathSchema, { recursive: true });
           }
 
-          if (fs.existsSync(pathCore + `/${name}`)) {
-            fs.rmSync(pathCore + `/${name}`, { recursive: true });
+          if (fs.existsSync(namePathCore)) {
+            fs.rmSync(namePathCore, { recursive: true });
           }
 
         }
