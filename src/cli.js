@@ -1,3 +1,6 @@
+import { getCoreSingleEntity } from './templates/core-sigle/entity/entity';
+import { getCoreSingleRepository } from './templates/core-sigle/repository/repository';
+import { getCoreSingleUsecaseCreate } from './templates/core-sigle/use-cases/usecase';
 import { getIndexInfra } from './templates/infra';
 import { getAdapterInfra } from './templates/infra/adapter';
 import { getModuleInfa } from './templates/infra/module';
@@ -174,6 +177,45 @@ const createCore = async (name) => {
   }
 }
 
+const createCoreSingle = async (name) => {
+  name = getName(name);
+  const dirRoot = `${__dirname}/scafold/core-single/${name}`
+  try {
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+
+    fs.mkdirSync(dirRoot)
+
+    const usecasePath = `${dirRoot}/use-cases`
+
+    fs.mkdirSync(usecasePath)
+
+    fs.writeFileSync(`${usecasePath}/${name}-rename.ts`, getCoreSingleUsecaseCreate(name))
+
+    const repositoryPath = `${dirRoot}/repository`
+
+    fs.mkdirSync(repositoryPath)
+
+    fs.writeFileSync(`${repositoryPath}/${name}.ts`, getCoreSingleRepository(name))
+
+    const entityPath = `${dirRoot}/entity`
+
+    fs.mkdirSync(entityPath)
+
+    fs.writeFileSync(`${entityPath}/${name}.ts`, getCoreSingleEntity(name))
+
+    return `${name}`
+
+  } catch (error) {
+    console.log('error', error)
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+    return `${name}`
+  }
+}
+
 const createPostgresCrud = async (name) => {
   name = getName(name);
 
@@ -270,6 +312,7 @@ export const parseArgumentsInoOptions = async (input) => {
     libCreate: input.type === 'lib' ? await createLib(input.name) : false,
     infraCreate: input.type === 'infra' ? await createInfra(input.name) : false,
     moduleCreate: input.type === 'module' ? await createModule(input.name) : false,
+    coreCreate: input.type === 'core' ? await createCoreSingle(input.name) : false,
   }
 }
 
@@ -277,7 +320,7 @@ export async function cli(args) {
 
   console.log(bold(green('Selecting template...')))
   const cli = await cliSelect({
-    values: [bold('POSTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB'), bold('INFRA'), bold('MODULE')],
+    values: [bold('POSTGRES:CRUD'), bold('MONGO:CRUD'), bold('LIB'), bold('INFRA'), bold('MODULE'), bold('CORE')],
     valueRenderer: (value, selected) => {
       if (selected) {
         return value;
@@ -287,7 +330,7 @@ export async function cli(args) {
     },
   })
 
-  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud', 2: "lib", 3: "infra", 4: "module" }[cli.id]
+  const mapSelectType = { 0: 'postgres:crud', 1: 'mongo:crud', 2: "lib", 3: "infra", 4: "module", 5: "core" }[cli.id]
   const userInput = { name: undefined, type: undefined }
 
   userInput.type = mapSelectType
@@ -331,6 +374,10 @@ export async function cli(args) {
       if (userInput.type === 'module') {
         paths.push(path.resolve(`${__dirname}/../src/scafold/module/`, options[key]))
       }
+
+      if (userInput.type === 'core') {
+        paths.push(path.resolve(`${__dirname}/../src/scafold/core-single/`, options[key]))
+      }
     }
   }
 
@@ -360,6 +407,9 @@ export async function cli(args) {
       }
     });
 
+    if (!src) {
+      throw new Error('project destiny not found')
+    }
 
     // CREATE CRUD
     fs.readdir(src, function (err, folders) {
@@ -386,6 +436,16 @@ export async function cli(args) {
         if (userInput.type === 'module') {
           const source = `${src}/${folder}`;
           const destination = `${dest}/src/modules/${options.moduleCreate}/${folder}`.replace('\n', '');
+          fse.copySync(source, destination, { overwrite: true });
+          if (fs.existsSync(source)) {
+            fs.rmSync(source, { recursive: true });
+          }
+          continue
+        }
+
+        if (userInput.type === 'core') {
+          const source = `${src}/${folder}`;
+          const destination = `${dest}/src/core/${options.coreCreate}/${folder}`.replace('\n', '');
           fse.copySync(source, destination, { overwrite: true });
           if (fs.existsSync(source)) {
             fs.rmSync(source, { recursive: true });
@@ -470,6 +530,6 @@ export async function cli(args) {
 
 const getName = (name) => {
   if (!name) throw new Error('--name is required');
-  name = String(name).trim().replace(" ", "").toLowerCase();
+  name = String(name).trim().replace(" ", "").replace("_", "-").toLowerCase();
   return name;
 }
