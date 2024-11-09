@@ -4,6 +4,7 @@ const { dashToPascal, snakeToCamel } = require('../../../textUtils')
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, PaginateModel } from 'mongoose';
+import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
 
 import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
@@ -28,7 +29,7 @@ export class ${dashToPascal(name)}Repository extends MongoRepository<${dashToPas
       sort: sort as object
     });
 
-    return { docs: ${pluralize(snakeToCamel(name))}.docs.map((u) => u.toObject({ virtuals: true })), limit, page, total: ${snakeToCamel(name)}s.totalDocs };
+    return { docs: ${pluralize(snakeToCamel(name))}.docs.map((u) => new ${dashToPascal(name)}Entity(u.toObject({ virtuals: true }))), limit, page, total: ${snakeToCamel(name)}s.totalDocs };
   }
 }
 `

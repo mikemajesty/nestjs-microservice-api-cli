@@ -1,13 +1,13 @@
-const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../textUtils")
 
 const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
 
+import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
-import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
 export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true

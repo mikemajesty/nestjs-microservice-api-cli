@@ -1,4 +1,4 @@
-const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../textUtils")
 
 const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
 

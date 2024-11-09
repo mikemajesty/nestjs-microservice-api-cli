@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal } = require("../../../textUtils")
 
 const getCoreRepository = (name) => `import { IRepository } from '@/infra/repository';
 

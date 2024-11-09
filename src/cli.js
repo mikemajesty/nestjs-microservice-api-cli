@@ -17,18 +17,18 @@ const path = require('path');
 const cliSelect = require('cli-select');
 const prompt = require('prompt-sync')();
 
-const { getCoreUsecaseCreateTest } = require('./templates/postgres/core/use-cases/__tests__/create.spec');
-const { getCoreUsecaseUpdateTest } = require('./templates/postgres/core/use-cases/__tests__/update.spec');
-const { getCoreUsecaseDeleteTest } = require('./templates/postgres/core/use-cases/__tests__/delete.spec');
-const { getCoreUsecaseListTest } = require('./templates/postgres/core/use-cases/__tests__/list.spec');
-const { getCoreUsecaseGetByIdTest } = require('./templates/postgres/core/use-cases/__tests__/get-by-id.spec');
-const { getCoreUsecaseGetById } = require('./templates/postgres/core/use-cases/get-by-id');
-const { getCoreUsecaseList } = require('./templates/postgres/core/use-cases/list');
-const { getCoreEntity } = require('./templates/postgres/core/entity/entity');
-const { getCoreRepository } = require('./templates/postgres/core/repository/repository');
-const { getCoreUsecaseCreate } = require('./templates/postgres/core/use-cases/create');
-const { getCoreUsecaseDelete } = require('./templates/postgres/core/use-cases/delete');
-const { getCoreUsecaseUpdate } = require('./templates/postgres/core/use-cases/update');
+const { getCoreUsecaseCreateTest } = require('./templates/core/use-cases/__tests__/create.spec');
+const { getCoreUsecaseUpdateTest } = require('./templates/core/use-cases/__tests__/update.spec');
+const { getCoreUsecaseDeleteTest } = require('./templates/core/use-cases/__tests__/delete.spec');
+const { getCoreUsecaseListTest } = require('./templates/core/use-cases/__tests__/list.spec');
+const { getCoreUsecaseGetByIdTest } = require('./templates/core/use-cases/__tests__/get-by-id.spec');
+const { getCoreUsecaseGetById } = require('./templates/core/use-cases/get-by-id');
+const { getCoreUsecaseList } = require('./templates/core/use-cases/list');
+const { getCoreEntity } = require('./templates/core/entity/entity');
+const { getCoreRepository } = require('./templates/core/repository/repository');
+const { getCoreUsecaseCreate } = require('./templates/core/use-cases/create');
+const { getCoreUsecaseDelete } = require('./templates/core/use-cases/delete');
+const { getCoreUsecaseUpdate } = require('./templates/core/use-cases/update');
 
 const { getModuleAdapter } = require('./templates/postgres/modules/adapter');
 const { getModuleController } = require('./templates/postgres/modules/controller');
@@ -36,19 +36,6 @@ const { getModule } = require('./templates/postgres/modules/module');
 const { getModuleRepository } = require('./templates/postgres/modules/repository');
 const { getModuleSchema } = require('./templates/postgres/schemas/schema');
 const { getModuleSwagger } = require('./templates/postgres/modules/swagger');
-
-const { getCoreUsecaseCreateTest: getCoreUsecaseCreateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/create.spec');
-const { getCoreUsecaseUpdateTest: getCoreUsecaseUpdateMongoTest } = require('./templates/mongo/core/use-cases/__tests__/update.spec');
-const { getCoreUsecaseDeleteTest: getCoreUsecaseDeleteMongoTest } = require('./templates/mongo/core/use-cases/__tests__/delete.spec');
-const { getCoreUsecaseListTest: getCoreUsecaseListMongoTest } = require('./templates/mongo/core/use-cases/__tests__/list.spec');
-const { getCoreUsecaseGetByIdTest: getCoreUsecaseGetByIdMongoTest } = require('./templates/mongo/core/use-cases/__tests__/get-by-id.spec');
-const { getCoreUsecaseGetById: getCoreUsecaseGetByIdMongo } = require('./templates/mongo/core/use-cases/get-by-id');
-const { getCoreUsecaseList: getCoreUsecaseListMongo } = require('./templates/mongo/core/use-cases/list');
-const { getCoreEntity: getCoreEntityMongo } = require('./templates/mongo/core/entity/entity');
-const { getCoreRepository: getCoreRepositoryMongo } = require('./templates/mongo/core/repository/repository');
-const { getCoreUsecaseCreate: getCoreUsecaseCreateMongo } = require('./templates/mongo/core/use-cases/create');
-const { getCoreUsecaseDelete: getCoreUsecaseDeleteMongo } = require('./templates/mongo/core/use-cases/delete');
-const { getCoreUsecaseUpdate: getCoreUsecaseUpdateMongo } = require('./templates/mongo/core/use-cases/update');
 
 const { getModuleAdapter: getModuleAdapterMongo } = require('./templates/mongo/modules/adapter');
 const { getModuleController: getModuleControllerMongo } = require('./templates/mongo/modules/controller');
@@ -139,23 +126,18 @@ const createLib = async (name) => {
   }
 }
 
-const createPostgresCrud = async (name) => {
+const createCore = async (name) => {
   name = getName(name);
 
-  const dirRoot = `${__dirname}/scafold/postgres/${name}`
+  const dirRoot = `${__dirname}/scafold/core/${name}`
 
   try {
+
     if (fs.existsSync(dirRoot)) {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
-
-    fs.mkdirSync(`${dirRoot}/modules`)
-
-    fs.mkdirSync(`${dirRoot}/core`)
-
-    const dirCore = `${dirRoot}/core/${name}`;
+    const dirCore = dirRoot;
     fs.mkdirSync(dirCore)
 
     const entityPath = `${dirCore}/entity`;
@@ -183,6 +165,28 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListTest(name))
     fs.writeFileSync(`${useCasesPathTest}/${name}-get-by-id.spec.ts`, getCoreUsecaseGetByIdTest(name))
+  } catch (error) {
+    console.log('error', error)
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+    return `${name}`
+  }
+}
+
+const createPostgresCrud = async (name) => {
+  name = getName(name);
+
+  const dirRoot = `${__dirname}/scafold/postgres/${name}`
+
+  try {
+    if (fs.existsSync(dirRoot)) {
+      fs.rmSync(dirRoot, { recursive: true });
+    }
+
+    fs.mkdirSync(dirRoot)
+
+    fs.mkdirSync(`${dirRoot}/modules`)
 
     const schemasPath = `${__dirname}/scafold/postgres/schemas`;
     if (fs.existsSync(schemasPath)) {
@@ -199,7 +203,10 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepository(name))
     fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwagger(name))
 
+    await createCore(name)
+
     return `${name}`
+
   } catch (error) {
     console.log('error', error)
     if (fs.existsSync(dirRoot)) {
@@ -225,38 +232,6 @@ const createMongoCrud = async (name) => {
 
     fs.mkdirSync(`${dirRoot}/modules`)
 
-    fs.mkdirSync(`${dirRoot}/core`)
-
-    const dirCore = `${dirRoot}/core/${name}`;
-    fs.mkdirSync(dirCore)
-
-    const entityPath = `${dirCore}/entity`;
-    const repositoryPath = `${dirCore}/repository`;
-    const useCasesPath = `${dirCore}/use-cases`;
-
-    fs.mkdirSync(entityPath)
-    fs.mkdirSync(repositoryPath)
-    fs.mkdirSync(useCasesPath)
-
-    fs.writeFileSync(`${entityPath}/${name}.ts`, getCoreEntityMongo(name))
-    fs.writeFileSync(`${repositoryPath}/${name}.ts`, getCoreRepositoryMongo(name))
-
-
-    fs.writeFileSync(`${useCasesPath}/${name}-create.ts`, getCoreUsecaseCreateMongo(name))
-    fs.writeFileSync(`${useCasesPath}/${name}-delete.ts`, getCoreUsecaseDeleteMongo(name))
-    fs.writeFileSync(`${useCasesPath}/${name}-get-by-id.ts`, getCoreUsecaseGetByIdMongo(name))
-    fs.writeFileSync(`${useCasesPath}/${name}-list.ts`, getCoreUsecaseListMongo(name))
-    fs.writeFileSync(`${useCasesPath}/${name}-update.ts`, getCoreUsecaseUpdateMongo(name))
-
-    const useCasesPathTest = `${useCasesPath}/__tests__`
-    fs.mkdirSync(useCasesPathTest)
-
-    fs.writeFileSync(`${useCasesPathTest}/${name}-create.spec.ts`, getCoreUsecaseCreateMongoTest(name))
-    fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateMongoTest(name))
-    fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteMongoTest(name))
-    fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListMongoTest(name))
-    fs.writeFileSync(`${useCasesPathTest}/${name}-get-by-id.spec.ts`, getCoreUsecaseGetByIdMongoTest(name))
-
     const schemasPath = `${__dirname}/scafold/mongo/schemas`;
 
     if (fs.existsSync(schemasPath)) {
@@ -274,6 +249,8 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/module.ts`, getModuleMongo(name))
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
     fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwaggerMongo(name))
+
+    await createCore(name)
 
     return `${name}`
   } catch (error) {
@@ -436,6 +413,11 @@ export async function cli(args) {
 
           const pathSchema = path.resolve(src, '../schemas');
 
+          const pathDest = `${dest}/src/core/${name}`;
+          const pathCore = path.resolve(src, '../../core');
+
+          fse.copySync(pathCore + `/${name}`, pathDest, { overwrite: true });
+
           fse.copySync(pathSchema, destPathSchema, { overwrite: true });
 
           if (fs.existsSync(source)) {
@@ -444,6 +426,10 @@ export async function cli(args) {
 
           if (fs.existsSync(pathSchema + `/${name}.ts`)) {
             fs.rmSync(pathSchema + `/${name}.ts`, { recursive: true });
+          }
+
+          if (fs.existsSync(pathCore + `/${name}`)) {
+            fs.rmSync(pathCore + `/${name}`, { recursive: true });
           }
 
         }

@@ -1,6 +1,6 @@
 
 const pluralize = require('pluralize')
-const { dashToPascal, snakeToCamel } = require('../../../../../textUtils')
+const { dashToPascal, snakeToCamel } = require('../../../../textUtils')
 
 const getCoreUsecaseListTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';

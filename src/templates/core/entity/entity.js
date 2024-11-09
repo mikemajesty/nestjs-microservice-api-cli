@@ -1,4 +1,4 @@
-const { dashToPascal } = require("../../../../textUtils")
+const { dashToPascal } = require("../../../textUtils")
 
 const getCoreEntity = (name) => `import { z } from 'zod';
 

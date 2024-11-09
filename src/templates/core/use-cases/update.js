@@ -1,14 +1,14 @@
-const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../textUtils")
 
 const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
 
+import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ILoggerAdapter } from '@/infra/logger';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
-import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
-import { I${dashToPascal(name)}Repository } from '../repository/${name}';
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from './../entity/${name}';
 
 export const ${dashToPascal(name)}UpdateSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
@@ -22,7 +22,7 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
 
   @ValidateSchema(${dashToPascal(name)}UpdateSchema)
   async execute(input: ${dashToPascal(name)}UpdateInput): Promise<${dashToPascal(name)}UpdateOutput> {
-    const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(input.id as string);
+    const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(input.id);
 
     if (!${snakeToCamel(name)}) {
       throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
@@ -42,7 +42,7 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}UpdateInput = Partial<z.infer<typeof ${dashToPascal(name)}UpdateSchema>>;
+export type ${dashToPascal(name)}UpdateInput = z.infer<typeof ${dashToPascal(name)}UpdateSchema>;
 export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
 `
 

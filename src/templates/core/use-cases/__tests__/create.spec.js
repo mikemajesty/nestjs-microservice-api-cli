@@ -1,4 +1,4 @@
-const { dashToPascal, snakeToCamel } = require("../../../../../textUtils")
+const { dashToPascal, snakeToCamel } = require("../../../../textUtils")
 
 const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
 import { ZodIssue } from 'zod';
@@ -52,12 +52,11 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
   });
 
   const input: ${dashToPascal(name)}CreateInput = {
-    name: 'name'
+    name: 'dummy'
   };
 
   test('when ${snakeToCamel(name)} created successfully, should expect a ${snakeToCamel(name)}', async () => {
     const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
-    repository.findOne = jest.fn().mockResolvedValue(null);
     repository.create = jest.fn().mockResolvedValue(output);
 
     await expect(usecase.execute(input)).resolves.toEqual(output);
