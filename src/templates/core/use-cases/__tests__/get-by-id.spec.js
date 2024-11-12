@@ -40,7 +40,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
     await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}GetByIdInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${dashToPascal(name)}Entity.nameOf('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: TestUtils.nameOf<${dashToPascal(name)}GetByIdInput>('id') }]);
       }
     );
   });
@@ -50,7 +50,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   };
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
-    repository.findById = jest.fn().mockResolvedValue(null);
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
@@ -61,7 +61,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   });
 
   test('when ${snakeToCamel(name)} found, should expect a ${snakeToCamel(name)}', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${snakeToCamel(name)});
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
 
     await expect(usecase.execute(input)).resolves.toEqual(${snakeToCamel(name)});
   });

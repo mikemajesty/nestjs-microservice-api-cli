@@ -4,6 +4,7 @@ const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testin
 import { ZodIssue } from 'zod';
 
 import { ${dashToPascal(name)}DeleteInput, ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
+import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/tests';
@@ -40,7 +41,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
     await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}DeleteInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${dashToPascal(name)}Entity.nameOf('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: TestUtils.nameOf<${dashToPascal(name)}DeleteInput>('id') }]);
       }
     );
   });
@@ -50,7 +51,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   };
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
-    repository.findById = jest.fn().mockResolvedValue(null);
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
@@ -61,8 +62,8 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   });
 
   test('when ${snakeToCamel(name)} deleted successfully, should expect a ${snakeToCamel(name)}', async () => {
-    repository.findById = jest.fn().mockResolvedValue(${snakeToCamel(name)});
-    repository.updateOne = jest.fn();
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
+    repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
     await expect(usecase.execute(input)).resolves.toEqual({
       ...${snakeToCamel(name)},

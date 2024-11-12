@@ -41,10 +41,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
     await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}ListInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([
-          { message: 'Required', path: 'sort' },
-          { message: 'Required', path: 'search' }
-        ]);
+        expect(issues).toEqual([{ message: 'Required', path: 'search' }]);
       }
     );
   });
@@ -62,7 +59,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
 
   test('when ${snakeToCamel(name)} are found, should expect an ${snakeToCamel(name)} list', async () => {
     const output: ${dashToPascal(name)}ListOutput = { docs: ${pluralize(snakeToCamel(name))}, page: 1, limit: 1, total: 1 };
-    repository.paginate = jest.fn().mockResolvedValue(output);
+    repository.paginate = TestUtils.mockResolvedValue<${dashToPascal(name)}ListOutput>(output);
 
     await expect(usecase.execute(input)).resolves.toEqual({
       docs: ${pluralize(snakeToCamel(name))},
@@ -74,7 +71,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
 
   test('when ${snakeToCamel(name)} not found, should expect an empty list', async () => {
     const output: ${dashToPascal(name)}ListOutput = { docs: [], page: 1, limit: 1, total: 1 };
-    repository.paginate = jest.fn().mockResolvedValue(output);
+    repository.paginate = TestUtils.mockResolvedValue<${dashToPascal(name)}ListOutput>(output);
 
     await expect(usecase.execute(input)).resolves.toEqual(output);
   });

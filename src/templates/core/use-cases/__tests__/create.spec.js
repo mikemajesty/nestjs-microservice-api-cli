@@ -7,7 +7,6 @@ import { ILoggerAdapter } from '@/infra/logger';
 import { I${dashToPascal(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { TestUtils } from '@/utils/tests';
 
-import { ${dashToPascal(name)}Entity } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateOutput, ${dashToPascal(name)}CreateUsecase } from '../${name}-create';
 
@@ -46,7 +45,7 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
     await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}CreateInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: ${dashToPascal(name)}Entity.nameOf('name') }]);
+        expect(issues).toEqual([{ message: 'Required', path: TestUtils.nameOf<${dashToPascal(name)}CreateInput>('name') }]);
       }
     );
   });
@@ -57,7 +56,7 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
 
   test('when ${snakeToCamel(name)} created successfully, should expect a ${snakeToCamel(name)}', async () => {
     const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
-    repository.create = jest.fn().mockResolvedValue(output);
+    repository.create = TestUtils.mockResolvedValue<${dashToPascal(name)}CreateOutput>(output);
 
     await expect(usecase.execute(input)).resolves.toEqual(output);
   });
