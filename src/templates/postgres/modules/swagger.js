@@ -71,7 +71,8 @@ export const SwaggerResponse = {
       status: 200,
       json: { docs: [output], page: 1, limit: 1, total: 1 },
       description: 'list ${pluralize(snakeToCamel(name))}.'
-    })
+    }),
+    400: Swagger.defaultPaginateExceptions({ url: BASE_URL })
   }
 };
 

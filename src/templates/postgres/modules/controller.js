@@ -64,6 +64,7 @@ export class ${dashToPascal(name)}Controller {
   @ApiQuery(SwaggerRequest.listQuery.sort)
   @ApiQuery(SwaggerRequest.listQuery.search)
   @ApiResponse(SwaggerResponse.list[200])
+  @ApiResponse(SwaggerResponse.list[400])
   async list(@Req() { query }: ApiRequest): Promise<${dashToPascal(name)}ListOutput> {
     const input: ${dashToPascal(name)}ListInput = {
       sort: SortHttpSchema.parse(query.sort),
