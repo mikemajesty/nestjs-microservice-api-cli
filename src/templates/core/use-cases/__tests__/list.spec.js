@@ -41,7 +41,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
     await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}ListInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: 'search' }]);
+        expect(issues).toEqual([{ message: 'Required', path: 'sort' }]);
       }
     );
   });
