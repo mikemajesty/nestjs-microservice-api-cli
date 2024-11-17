@@ -6,7 +6,7 @@ import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
 import { ValidateSchema } from '@/utils/decorators';
 import { IUsecase } from '@/utils/usecase';
-import { UUIDUtils } from '@/utils/uuid';
+import { UuidUtils } from '@/utils/uuid';
 
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from './../entity/${name}';
@@ -23,7 +23,7 @@ export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
 
   @ValidateSchema(${dashToPascal(name)}CreateSchema)
   async execute(input: ${dashToPascal(name)}CreateInput): Promise<${dashToPascal(name)}CreateOutput> {
-    const entity = new ${dashToPascal(name)}Entity({ id: UUIDUtils.create(), ...input });
+    const entity = new ${dashToPascal(name)}Entity({ id: UuidUtils.generate(), ...input });
 
     const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.create(entity);
 

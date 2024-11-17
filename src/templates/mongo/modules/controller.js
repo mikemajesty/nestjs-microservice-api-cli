@@ -60,7 +60,7 @@ export class ${dashToPascal(name)}Controller {
   async list(@Req() { query }: ApiRequest): Promise<${dashToPascal(name)}ListOutput> {
     const input: ${dashToPascal(name)}ListInput = {
       sort: SortHttpSchema.parse(query.sort),
-      search: SearchHttpSchema.parse(query.search),
+      search: SearchHttpSchema.parse(query.search) || {},
       limit: Number(query.limit),
       page: Number(query.page)
     };

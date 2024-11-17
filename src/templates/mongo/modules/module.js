@@ -17,7 +17,7 @@ import { ${dashToPascal(name)}, ${dashToPascal(name)}Document, ${dashToPascal(na
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
 import { TokenLibModule } from '@/libs/token';
-import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
+import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
 
 import {
   I${dashToPascal(name)}CreateAdapter,
@@ -51,7 +51,7 @@ import { ${dashToPascal(name)}Repository } from './repository';
 
         return new ${dashToPascal(name)}Repository(repository);
       },
-      inject: [getConnectionToken(ConnectionName.CATS)]
+      inject: [getConnectionToken(ConnectionName.MARKETPLACE)]
     },
     {
       provide: I${dashToPascal(name)}CreateAdapter,

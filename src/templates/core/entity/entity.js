@@ -20,11 +20,11 @@ export const ${dashToPascal(name)}EntitySchema = z.object({
 
 type ${dashToPascal(name)} = z.infer<typeof ${dashToPascal(name)}EntitySchema>;
 
-export class ${dashToPascal(name)}Entity extends BaseEntity<${dashToPascal(name)}Entity>() {
+export class ${dashToPascal(name)}Entity extends BaseEntity<${dashToPascal(name)}Entity>(${dashToPascal(name)}EntitySchema) {
   name!: string;
 
   constructor(entity: ${dashToPascal(name)}) {
-    super(${dashToPascal(name)}EntitySchema);
+    super();
     Object.assign(this, this.validate(entity));
   }
 }

@@ -10,9 +10,9 @@ import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${na
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}, ${dashToPascal(name)}Document } from '@/infra/database/mongo/schemas/${name}';
 import { MongoRepository } from '@/infra/repository';
-import { ConvertMongooseFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
+import { ValidateMongooseFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
 import { IEntity } from '@/utils/entity';
-import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
+import { MongoRepositoryModelSessionType } from '@/utils/database/mongoose';
 
 @Injectable()
 export class ${dashToPascal(name)}Repository extends MongoRepository<${dashToPascal(name)}Document> implements I${dashToPascal(name)}Repository {
