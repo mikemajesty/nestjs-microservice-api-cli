@@ -20,7 +20,7 @@ export class ${dashToPascal(name)}Repository extends MongoRepository<${dashToPas
     super(entity);
   }
 
-  @ConvertMongooseFilter([{ name: 'name', type: SearchTypeEnum.like }])
+  @ValidateMongooseFilter([{ name: 'name', type: SearchTypeEnum.like }])
   @ValidateDatabaseSortAllowed({ name: 'name' }, { name: 'createdAt' })
   async paginate({ limit, page, sort, search }: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
     const ${pluralize(snakeToCamel(name))} = await this.entity.paginate(search as FilterQuery<IEntity>, {
