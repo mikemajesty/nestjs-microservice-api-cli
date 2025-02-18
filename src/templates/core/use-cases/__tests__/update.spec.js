@@ -7,7 +7,7 @@ import { ILoggerAdapter } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/tests';
+import { TestMock } from 'test/mock';
 
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}UpdateInput, ${dashToPascal(name)}UpdateUsecase } from '../${name}-update';
@@ -45,32 +45,32 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await TestUtils.expectZodError(
+    await TestMock.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}UpdateInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: TestUtils.nameOf<${dashToPascal(name)}UpdateInput>('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: TestMock.nameOf<${dashToPascal(name)}UpdateInput>('id') }]);
       }
     );
   });
 
   const input: ${dashToPascal(name)}UpdateInput = {
-    id: TestUtils.getMockUUID()
+    id: TestMock.getMockUUID()
   };
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
+    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
   const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity({
-    id: TestUtils.getMockUUID(),
+    id: TestMock.getMockUUID(),
     name: 'dummy'
   });
 
   test('when ${snakeToCamel(name)} updated successfully, should expect an ${snakeToCamel(name)}', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
-    repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
+    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
+    repository.updateOne = TestMock.mockResolvedValue<UpdatedModel>();
 
     await expect(usecase.execute(input)).resolves.toEqual(${snakeToCamel(name)});
   });

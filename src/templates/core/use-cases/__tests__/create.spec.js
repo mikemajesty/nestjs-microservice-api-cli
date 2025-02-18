@@ -5,7 +5,7 @@ import { ZodIssue } from 'zod';
 
 import { ILoggerAdapter } from '@/infra/logger';
 import { I${dashToPascal(name)}CreateAdapter } from '@/modules/${name}/adapter';
-import { TestUtils } from '@/utils/tests';
+import { TestMock } from 'test/mock';
 
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateOutput, ${dashToPascal(name)}CreateUsecase } from '../${name}-create';
@@ -42,10 +42,10 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await TestUtils.expectZodError(
+    await TestMock.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}CreateInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: TestUtils.nameOf<${dashToPascal(name)}CreateInput>('name') }]);
+        expect(issues).toEqual([{ message: 'Required', path: TestMock.nameOf<${dashToPascal(name)}CreateInput>('name') }]);
       }
     );
   });
@@ -55,8 +55,8 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
   };
 
   test('when ${snakeToCamel(name)} created successfully, should expect a ${snakeToCamel(name)}', async () => {
-    const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestUtils.getMockUUID() };
-    repository.create = TestUtils.mockResolvedValue<${dashToPascal(name)}CreateOutput>(output);
+    const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestMock.getMockUUID() };
+    repository.create = TestMock.mockResolvedValue<${dashToPascal(name)}CreateOutput>(output);
 
     await expect(usecase.execute(input)).resolves.toEqual(output);
   });

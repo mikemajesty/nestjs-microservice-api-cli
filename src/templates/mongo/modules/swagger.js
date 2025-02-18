@@ -9,10 +9,10 @@ import { ${dashToPascal(name)}GetByIdOutput } from '@/core/${name}/use-cases/${n
 import { ${dashToPascal(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
 import { Swagger } from '@/utils/docs/swagger';
-import { TestUtils } from '@/utils/tests';
+import { TestMock } from 'test/mock';
 
 const input = new ${dashToPascal(name)}Entity({
-  id: TestUtils.getMockUUID(),
+  id: TestMock.getMockUUID(),
   name: 'name'
 });
 

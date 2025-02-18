@@ -5,7 +5,7 @@ import { ZodIssue } from 'zod';
 
 import { I${dashToPascal(name)}GetByIdAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/tests';
+import { TestMock } from 'test/mock';
 
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}GetByIdInput, ${dashToPascal(name)}GetByIdUsecase } from '../${name}-get-by-id';
@@ -37,31 +37,31 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await TestUtils.expectZodError(
+    await TestMock.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}GetByIdInput),
       (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: TestUtils.nameOf<${dashToPascal(name)}GetByIdInput>('id') }]);
+        expect(issues).toEqual([{ message: 'Required', path: TestMock.nameOf<${dashToPascal(name)}GetByIdInput>('id') }]);
       }
     );
   });
 
   const input: ${dashToPascal(name)}GetByIdInput = {
-    id: TestUtils.getMockUUID()
+    id: TestMock.getMockUUID()
   };
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
+    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
     await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
   });
 
   const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity({
-    id: TestUtils.getMockUUID(),
+    id: TestMock.getMockUUID(),
     name: 'dummy'
   });
 
   test('when ${snakeToCamel(name)} found, should expect a ${snakeToCamel(name)}', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
+    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
 
     await expect(usecase.execute(input)).resolves.toEqual(${snakeToCamel(name)});
   });
