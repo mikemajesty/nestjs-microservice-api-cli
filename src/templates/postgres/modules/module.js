@@ -4,7 +4,6 @@ const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } f
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { AuthenticationMiddleware } from '@/observables/middlewares';
 import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${dashToPascal(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
@@ -16,6 +15,7 @@ import { RedisCacheModule } from '@/infra/cache/redis';
 import { ${dashToPascal(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
+import { AuthenticationMiddleware } from '@/middlewares/middlewares';
 
 import {
   I${dashToPascal(name)}CreateAdapter,

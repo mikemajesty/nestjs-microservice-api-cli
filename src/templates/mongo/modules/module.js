@@ -4,7 +4,6 @@ const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } f
 import { getConnectionToken } from '@nestjs/mongoose';
 import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
 
-import { AuthenticationMiddleware } from '@/observables/middlewares';
 import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${dashToPascal(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
 import { ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
@@ -18,6 +17,7 @@ import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { SecretsModule } from '@/infra/secrets';
 import { TokenLibModule } from '@/libs/token';
 import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
+import { AuthenticationMiddleware } from '@/middlewares/middlewares';
 
 import {
   I${dashToPascal(name)}CreateAdapter,
