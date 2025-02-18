@@ -1,8 +1,7 @@
 const pluralize = require('pluralize')
 const { dashToPascal, snakeToCamel } = require('../../../textUtils')
 
-const getModuleController = (name) => `import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+const getModuleController = (name) => `import { Controller, Delete, Get, HttpCode, Post, Put, Req, Version } from '@nestjs/common';
 
 import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateOutput } from '@/core/${name}/use-cases/${name}-create';
 import { ${dashToPascal(name)}DeleteInput, ${dashToPascal(name)}DeleteOutput } from '@/core/${name}/use-cases/${name}-delete';
@@ -20,11 +19,8 @@ import {
   I${dashToPascal(name)}ListAdapter,
   I${dashToPascal(name)}UpdateAdapter
 } from './adapter';
-import { SwaggerRequest, SwaggerResponse } from './swagger';
 
 @Controller('${pluralize(name)}')
-@ApiTags('${pluralize(name)}')
-@ApiBearerAuth()
 export class ${dashToPascal(name)}Controller {
   constructor(
     private readonly ${snakeToCamel(name)}Create: I${dashToPascal(name)}CreateAdapter,
@@ -35,36 +31,26 @@ export class ${dashToPascal(name)}Controller {
   ) {}
 
   @Post()
-  @ApiResponse(SwaggerResponse.create[200])
-  @ApiBody(SwaggerRequest.createBody)
+  @Version('1')
+  @HttpCode(201)
   async create(@Req() { body }: ApiRequest): Promise<${dashToPascal(name)}CreateOutput> {
     return await this.${snakeToCamel(name)}Create.execute(body as ${dashToPascal(name)}CreateInput);
   }
 
   @Put(':id')
-  @ApiResponse(SwaggerResponse.update[200])
-  @ApiResponse(SwaggerResponse.update[404])
-  @ApiBody(SwaggerRequest.updateBody)
-  @ApiParam({ name: 'id', required: true })
+  @Version('1')
   async update(@Req() { body, params }: ApiRequest): Promise<${dashToPascal(name)}UpdateOutput> {
     return await this.${snakeToCamel(name)}Update.execute({ ...body, id: params.id } as ${dashToPascal(name)}UpdateInput);
   }
 
   @Get('/:id')
-  @ApiParam({ name: 'id', required: true })
-  @ApiResponse(SwaggerResponse.getById[200])
-  @ApiResponse(SwaggerResponse.getById[404])
+  @Version('1')
   async getById(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}GetByIdOutput> {
     return await this.${snakeToCamel(name)}GetById.execute(params as ${dashToPascal(name)}GetByIdInput);
   }
 
   @Get()
-  @ApiQuery(SwaggerRequest.listQuery.pagination.limit)
-  @ApiQuery(SwaggerRequest.listQuery.pagination.page)
-  @ApiQuery(SwaggerRequest.listQuery.sort)
-  @ApiQuery(SwaggerRequest.listQuery.search)
-  @ApiResponse(SwaggerResponse.list[200])
-  @ApiResponse(SwaggerResponse.list[400])
+  @Version('1')
   async list(@Req() { query }: ApiRequest): Promise<${dashToPascal(name)}ListOutput> {
     const input: ${dashToPascal(name)}ListInput = {
       sort: SortHttpSchema.parse(query.sort),
@@ -77,9 +63,7 @@ export class ${dashToPascal(name)}Controller {
   }
 
   @Delete('/:id')
-  @ApiParam({ name: 'id', required: true })
-  @ApiResponse(SwaggerResponse.delete[200])
-  @ApiResponse(SwaggerResponse.delete[404])
+  @Version('1')
   async delete(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}DeleteOutput> {
     return await this.${snakeToCamel(name)}Delete.execute(params as ${dashToPascal(name)}DeleteInput);
   }

@@ -11,7 +11,6 @@ import { getModuleLib } from './templates/libs/module';
 import { getServiceLib } from './templates/libs/service';
 import { getModuleControllerModule } from './templates/module/controller';
 import { getModuleModule } from './templates/module/module';
-import { getModuleSwaggerModule } from './templates/module/swagger';
 
 const fs = require('fs');
 const { bold, green, red } = require('colorette');
@@ -38,14 +37,12 @@ const { getModuleController } = require('./templates/postgres/modules/controller
 const { getModule } = require('./templates/postgres/modules/module');
 const { getModuleRepository } = require('./templates/postgres/modules/repository');
 const { getModuleSchema } = require('./templates/postgres/schemas/schema');
-const { getModuleSwagger } = require('./templates/postgres/modules/swagger');
 
 const { getModuleAdapter: getModuleAdapterMongo } = require('./templates/mongo/modules/adapter');
 const { getModuleController: getModuleControllerMongo } = require('./templates/mongo/modules/controller');
 const { getModule: getModuleMongo } = require('./templates/mongo/modules/module');
 const { getModuleRepository: getModuleRepositoryMongo } = require('./templates/mongo/modules/repository');
 const { getModuleSchema: getModuleSchemaMongo } = require('./templates/mongo/schemas/schema');
-const { getModuleSwagger: getModuleSwaggerMongo } = require('./templates/mongo/modules/swagger');
 
 const createModule = async (name) => {
   if (!name) throw new Error('--name is required')
@@ -62,7 +59,6 @@ const createModule = async (name) => {
 
     fs.writeFileSync(`${dirRoot}/controller.ts`, getModuleControllerModule(name))
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleModule(name))
-    fs.writeFileSync(`${dirRoot}/swagger.ts`, getModuleSwaggerModule(name))
 
     return `${name}`
   } catch (error) {
@@ -243,7 +239,6 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleController(name))
     fs.writeFileSync(`${modulesPath}/module.ts`, getModule(name))
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepository(name))
-    fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwagger(name))
 
     await createCore(name)
 
@@ -290,7 +285,6 @@ const createMongoCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleControllerMongo(name))
     fs.writeFileSync(`${modulesPath}/module.ts`, getModuleMongo(name))
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
-    fs.writeFileSync(`${modulesPath}/swagger.ts`, getModuleSwaggerMongo(name))
 
     await createCore(name)
 
@@ -383,7 +377,8 @@ export async function cli(args) {
 
   try {
 
-    const dest = path.resolve(`${__dirname}/../../../../`)
+    // const dest = path.resolve(`${__dirname}/../../../../`)
+    const dest = "/home/mike/Documents/Mike/nestjs-microservice-boilerplate-api"
 
     const src = paths[0]
 
