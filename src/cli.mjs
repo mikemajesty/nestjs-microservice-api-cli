@@ -384,8 +384,7 @@ export async function cli(args) {
 
   try {
 
-    // const dest = path.resolve(`${__dirname}/../../../../`)
-    const dest = "/home/mike/Documents/@nestjs/nestjs-microservice-boilerplate-api"
+    const dest = path.resolve(`${__dirname}/../../../../`)
     const src = paths[0]
 
     // VALIDATE 

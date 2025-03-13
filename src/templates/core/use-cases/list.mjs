@@ -11,7 +11,7 @@ import { IUsecase } from '@/utils/usecase';
 import { InputValidator } from '@/utils/validator';
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
-export const ${dashToPascal(name)}ListSchema = intersection(PaginationSchema, SortSchema.merge(SearchSchema));
+export const ${dashToPascal(name)}ListSchema = InputValidator.intersection(PaginationSchema, SortSchema.merge(SearchSchema));
 
 export class ${dashToPascal(name)}ListUsecase implements IUsecase {
   constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}
