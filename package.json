@@ -10,6 +10,7 @@
     "check-newest:deps": "npx npm-check-updates"
   },
   "bin": {
+    "@mikemajesty/microservice-crud": "bin/microservice-crud",
     "microservice-crud": "bin/microservice-crud"
   },
   "publishConfig": {
