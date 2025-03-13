@@ -3,13 +3,13 @@
   "version": "6.1.20",
   "description": "Monorepo CLI",
   "main": "src/cli.js",
+  "type": "module",
   "scripts": {
     "permission": "chmod -R 777 ./bin/*",
     "crud": "ENV=local node ./bin/microservice-crud",
     "check-newest:deps": "npx npm-check-updates"
   },
   "bin": {
-    "@mikemajesty/microservice-crud": "bin/microservice-crud",
     "microservice-crud": "bin/microservice-crud"
   },
   "publishConfig": {
@@ -26,7 +26,6 @@
     "cli-select": "^1.1.2",
     "colorette": "^2.0.20",
     "esm": "^3.2.25",
-    "fs": "^0.0.1-security",
     "fs-extra": "^11.3.0",
     "pluralize": "^8.0.0",
     "prompt-sync": "^4.2.0",
