@@ -5,7 +5,8 @@
   "main": "src/cli.js",
   "scripts": {
     "permission": "chmod -R 777 ./bin/*",
-    "crud": "ENV=local node ./bin/microservice-crud"
+    "crud": "ENV=local node ./bin/microservice-crud",
+    "check-newest:deps": "npx npm-check-updates"
   },
   "bin": {
     "@mikemajesty/microservice-crud": "bin/microservice-crud",
@@ -26,9 +27,12 @@
     "colorette": "^2.0.20",
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
-    "fs-extra": "^11.2.0",
+    "fs-extra": "^11.3.0",
     "pluralize": "^8.0.0",
     "prompt-sync": "^4.2.0",
-    "rimraf": "^5.0.10"
+    "rimraf": "^6.0.1"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^17.1.15"
   }
 }
