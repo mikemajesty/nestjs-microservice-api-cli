@@ -1,12 +1,12 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getCoreUsecaseDelete = (name) => `import { z } from 'zod';
+const getCoreUsecaseDelete = (name) => `import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 
-import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
+import { Infer } from '@/utils/validator';
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
 export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySchema.pick({
@@ -34,7 +34,7 @@ export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}DeleteInput = z.infer<typeof ${dashToPascal(name)}DeleteSchema>;
+export type ${dashToPascal(name)}DeleteInput = Infer<typeof ${dashToPascal(name)}DeleteSchema>;
 export type ${dashToPascal(name)}DeleteOutput = ${dashToPascal(name)}Entity;
 `
 

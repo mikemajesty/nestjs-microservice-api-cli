@@ -1,13 +1,13 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getCoreUsecaseUpdate = (name) => `import { z } from 'zod';
+const getCoreUsecaseUpdate = (name) => `import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';;
 
-import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ILoggerAdapter } from '@/infra/logger';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
+import { Infer } from '@/utils/validator';
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from './../entity/${name}';
 
 export const ${dashToPascal(name)}UpdateSchema = ${dashToPascal(name)}EntitySchema.pick({
@@ -42,7 +42,7 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}UpdateInput = z.infer<typeof ${dashToPascal(name)}UpdateSchema>;
+export type ${dashToPascal(name)}UpdateInput = Infer<typeof ${dashToPascal(name)}UpdateSchema>;
 export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
 `
 

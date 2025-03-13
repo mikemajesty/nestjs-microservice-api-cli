@@ -1,16 +1,16 @@
 import { dashToPascal } from "../../../textUtils.mjs"
 
-const getCoreEntity = (name) => `import { z } from 'zod';
+const getCoreEntity = (name) => `import { BaseEntity } from '@/utils/entity';;
 
-import { BaseEntity } from '@/utils/entity';
+import { Infer, InputValidator } from '@/utils/validator';
 
-const ID = z.string().uuid();
-const Name = z.string().min(1).max(200).trim();
-const CreatedAt = z.date().nullish();
-const UpdatedAt = z.date().nullish();
-const DeletedAt = z.date().nullish();
+const ID = InputValidator.string().uuid();
+const Name = InputValidator.string().min(1).max(200).trim();
+const CreatedAt = InputValidator.date().nullish();
+const UpdatedAt = InputValidator.date().nullish();
+const DeletedAt = InputValidator.date().nullish();
 
-export const ${dashToPascal(name)}EntitySchema = z.object({
+export const ${dashToPascal(name)}EntitySchema = InputValidator.object({
   id: ID,
   name: Name,
   createdAt: CreatedAt,
@@ -18,7 +18,7 @@ export const ${dashToPascal(name)}EntitySchema = z.object({
   deletedAt: DeletedAt
 });
 
-type ${dashToPascal(name)} = z.infer<typeof ${dashToPascal(name)}EntitySchema>;
+type ${dashToPascal(name)} = Infer<typeof ${dashToPascal(name)}EntitySchema>;
 
 export class ${dashToPascal(name)}Entity extends BaseEntity<${dashToPascal(name)}Entity>() {
   name!: string;

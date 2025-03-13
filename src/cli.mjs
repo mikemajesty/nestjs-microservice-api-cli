@@ -18,6 +18,11 @@ import fse from 'fs-extra';
 import path from 'path';
 import cliSelect from 'cli-select';
 import promptSync from 'prompt-sync';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const prompt = promptSync();
 
@@ -379,8 +384,8 @@ export async function cli(args) {
 
   try {
 
-    const dest = path.resolve(`${__dirname}/../../../../`)
-
+    // const dest = path.resolve(`${__dirname}/../../../../`)
+    const dest = "/home/mike/Documents/@nestjs/nestjs-microservice-boilerplate-api"
     const src = paths[0]
 
     // VALIDATE 

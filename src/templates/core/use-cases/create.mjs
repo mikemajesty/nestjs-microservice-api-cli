@@ -1,13 +1,13 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getCoreUsecaseCreate = (name) => `import { z } from 'zod';
+const getCoreUsecaseCreate = (name) => `import { ILoggerAdapter } from '@/infra/logger';
 
-import { ILoggerAdapter } from '@/infra/logger';
 import { CreatedModel } from '@/infra/repository';
 import { ValidateSchema } from '@/utils/decorators';
 import { IUsecase } from '@/utils/usecase';
 import { UUIDUtils } from '@/utils/uuid';
 
+import { Infer } from '@/utils/validator';
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from './../entity/${name}';
 
@@ -33,7 +33,7 @@ export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}CreateInput = z.infer<typeof ${dashToPascal(name)}CreateSchema>;
+export type ${dashToPascal(name)}CreateInput = Infer<typeof ${dashToPascal(name)}CreateSchema>;
 export type ${dashToPascal(name)}CreateOutput = CreatedModel;
 `
 

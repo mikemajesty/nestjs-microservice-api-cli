@@ -1,11 +1,11 @@
 import { dashToPascal } from "../../../textUtils.mjs"
 
-const getCoreSingleUsecaseCreate = (name) => `import { z } from 'zod';
+const getCoreSingleUsecaseCreate = (name) => `import { ValidateSchema } from '@/utils/decorators';;
 
-import { ValidateSchema } from '@/utils/decorators';
+import { Infer, InputValidator } from '@/utils/validator';
 import { IUsecase } from '@/utils/usecase';
 
-export const ${dashToPascal(name)}RenameSchema = z.object({ id: z.string() });
+export const ${dashToPascal(name)}RenameSchema = InputValidator.object({ id: InputValidator.string() });
 
 export class ${dashToPascal(name)}RenameUsecase implements IUsecase {
   @ValidateSchema(${dashToPascal(name)}RenameSchema)
@@ -14,7 +14,7 @@ export class ${dashToPascal(name)}RenameUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}RenameUseCaseInput = z.infer<typeof ${dashToPascal(name)}RenameSchema>;
+export type ${dashToPascal(name)}RenameUseCaseInput = Infer<typeof ${dashToPascal(name)}RenameSchema>;
 export type ${dashToPascal(name)}RenameUseCaseOutput = ${dashToPascal(name)}RenameUseCaseInput;
 `
 

@@ -1,12 +1,12 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getCoreUsecaseGetById = (name) => `import { z } from 'zod';
+const getCoreUsecaseGetById = (name) => `import { ${dashToPascal(name)}EntitySchema } from '@/core/${name}/entity/${name}';
 
-import { ${dashToPascal(name)}EntitySchema } from '@/core/${name}/entity/${name}';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 
+import { Infer } from '@/utils/validator';
 import { ${dashToPascal(name)}Entity } from '../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
@@ -29,7 +29,7 @@ export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}GetByIdInput = z.infer<typeof ${dashToPascal(name)}GetByIdSchema>;
+export type ${dashToPascal(name)}GetByIdInput = Infer<typeof ${dashToPascal(name)}GetByIdSchema>;
 export type ${dashToPascal(name)}GetByIdOutput = ${dashToPascal(name)}Entity;
 `
 
