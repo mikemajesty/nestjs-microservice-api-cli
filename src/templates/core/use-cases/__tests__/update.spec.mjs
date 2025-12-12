@@ -1,17 +1,18 @@
 import { dashToPascal, snakeToCamel } from "../../../../textUtils.mjs"
 
-const getCoreUsecaseUpdateTest = (name) => `import { Test } from '@nestjs/testing';
-import { ZodIssue } from 'zod';
+const getCoreUsecaseUpdateTest = (name) => `import { ZodMockSchema } from '@mikemajesty/zod-mock-schema';
+import { Test } from '@nestjs/testing';
 
-import { ILoggerAdapter } from '@/infra/logger';
+import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}UpdateAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestMock } from 'test/mock';
+import { TestUtils } from '@/utils/test/util';
+import { ZodExceptionIssue } from '@/utils/validator';
 
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}UpdateInput, ${dashToPascal(name)}UpdateUsecase } from '../${name}-update';
-import { ${dashToPascal(name)}Entity } from './../../entity/${name}';
 
 describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   let usecase: I${dashToPascal(name)}UpdateAdapter;
@@ -19,16 +20,11 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         {
           provide: I${dashToPascal(name)}Repository,
           useValue: {}
-        },
-        {
-          provide: ILoggerAdapter,
-          useValue: {
-            info: jest.fn()
-          }
         },
         {
           provide: I${dashToPascal(name)}UpdateAdapter,
@@ -45,34 +41,39 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await TestMock.expectZodError(
+    await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}UpdateInput),
-      (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: TestMock.nameOf<${dashToPascal(name)}UpdateInput>('id') }]);
+      (issues: ZodExceptionIssue[]) => {
+        expect(issues).toEqual([
+          {
+            message: 'Invalid input: expected string, received undefined',
+            path: TestUtils.nameOf<${dashToPascal(name)}UpdateInput>('id')
+          }
+        ]);
       }
     );
   });
 
-  const input: ${dashToPascal(name)}UpdateInput = {
-    id: TestMock.getMockUUID()
-  };
+  const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
+  const input = mock.generate<${dashToPascal(name)}Entity>({
+    overrides: {
+      updatedAt: null,
+      createdAt: null,
+      deletedAt: null
+    }
+  });
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
-    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(null);
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: TestUtils.getMockUUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
-  const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity({
-    id: TestMock.getMockUUID(),
-    name: 'dummy'
-  });
+  test('when ${snakeToCamel(name)} updated successfully, should expect a ${snakeToCamel(name)} updated', async () => {
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(input);
+    repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
-  test('when ${snakeToCamel(name)} updated successfully, should expect an ${snakeToCamel(name)}', async () => {
-    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
-    repository.updateOne = TestMock.mockResolvedValue<UpdatedModel>();
-
-    await expect(usecase.execute(input)).resolves.toEqual(${snakeToCamel(name)});
+    await expect(usecase.execute({ id: TestUtils.getMockUUID() })).resolves.toEqual(input);
   });
 });
 `

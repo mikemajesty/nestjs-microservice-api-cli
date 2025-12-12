@@ -1,12 +1,11 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
 const getCoreUsecaseDelete = (name) => `import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
-
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
-
 import { Infer } from '@/utils/validator';
+
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
 export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySchema.pick({
@@ -18,19 +17,19 @@ export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
 
   @ValidateSchema(${dashToPascal(name)}DeleteSchema)
   async execute({ id }: ${dashToPascal(name)}DeleteInput): Promise<${dashToPascal(name)}DeleteOutput> {
-    const model = await this.${snakeToCamel(name)}Repository.findById(id);
+    const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(id);
 
-    if (!model) {
-      throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
+    if (!${snakeToCamel(name)}) {
+      throw new ApiNotFoundException();
     }
 
-    const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity(model);
+    const entity = new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
 
-    ${snakeToCamel(name)}.deactivated();
+    entity.deactivate();
 
-    await this.${snakeToCamel(name)}Repository.updateOne({ id: ${snakeToCamel(name)}.id }, ${snakeToCamel(name)});
+    await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity.toObject());
 
-    return ${snakeToCamel(name)};
+    return entity.toObject();
   }
 }
 

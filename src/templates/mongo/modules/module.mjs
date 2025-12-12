@@ -14,7 +14,6 @@ import { RedisCacheModule } from '@/infra/cache/redis';
 import { ConnectionName } from '@/infra/database/enum';
 import { ${dashToPascal(name)}, ${dashToPascal(name)}Document, ${dashToPascal(name)}Schema } from '@/infra/database/mongo/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
-import { SecretsModule } from '@/infra/secrets';
 import { TokenLibModule } from '@/libs/token';
 import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
 import { AuthenticationMiddleware } from '@/middlewares/middlewares';
@@ -30,7 +29,7 @@ import { ${dashToPascal(name)}Controller } from './controller';
 import { ${dashToPascal(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenLibModule, SecretsModule, LoggerModule, RedisCacheModule],
+  imports: [TokenLibModule, LoggerModule, RedisCacheModule],
   controllers: [${dashToPascal(name)}Controller],
   providers: [
     {
@@ -38,7 +37,7 @@ import { ${dashToPascal(name)}Repository } from './repository';
       useFactory: async (connection: Connection) => {
         type Model = mongoose.PaginateModel<${dashToPascal(name)}Document>;
 
-        // use if you want transaction
+        //  use if you want transaction
         const repository: MongoRepositoryModelSessionType<PaginateModel<${dashToPascal(name)}Document>> = connection.model<
           ${dashToPascal(name)}Document,
           Model
@@ -47,7 +46,10 @@ import { ${dashToPascal(name)}Repository } from './repository';
         repository.connection = connection;
 
         // use if you not want transaction
-        // const repository: PaginateModel<${dashToPascal(name)}Document> = connection.model<${dashToPascal(name)}Document, Model>(${dashToPascal(name)}.name, ${dashToPascal(name)}Schema as Schema);
+        // const repository: PaginateModel<UserDocument> = connection.model<UserDocument, Model>(
+        //   User.name,
+        //   UserSchema as Schema
+        // );
 
         return new ${dashToPascal(name)}Repository(repository);
       },
@@ -55,37 +57,27 @@ import { ${dashToPascal(name)}Repository } from './repository';
     },
     {
       provide: I${dashToPascal(name)}CreateAdapter,
-      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, loggerService: ILoggerAdapter) => {
-        return new ${dashToPascal(name)}CreateUsecase(${snakeToCamel(name)}Repository, loggerService);
-      },
-      inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}CreateUsecase(repository),
+      inject: [I${dashToPascal(name)}Repository]
     },
     {
       provide: I${dashToPascal(name)}UpdateAdapter,
-      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, loggerService: ILoggerAdapter) => {
-        return new ${dashToPascal(name)}UpdateUsecase(${snakeToCamel(name)}Repository, loggerService);
-      },
-      inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
+      useFactory: (logger: ILoggerAdapter, repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}UpdateUsecase(repository, logger),
+      inject: [ILoggerAdapter, I${dashToPascal(name)}Repository]
+    },
+    {
+      provide: I${dashToPascal(name)}GetByIdAdapter,
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}GetByIdUsecase(repository),
+      inject: [I${dashToPascal(name)}Repository]
     },
     {
       provide: I${dashToPascal(name)}ListAdapter,
-      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
-        return new ${dashToPascal(name)}ListUsecase(${snakeToCamel(name)}Repository);
-      },
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}ListUsecase(repository),
       inject: [I${dashToPascal(name)}Repository]
     },
     {
       provide: I${dashToPascal(name)}DeleteAdapter,
-      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
-        return new ${dashToPascal(name)}DeleteUsecase(${snakeToCamel(name)}Repository);
-      },
-      inject: [I${dashToPascal(name)}Repository]
-    },
-    {
-      provide: I${dashToPascal(name)}GetByIdAdapter,
-      useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
-        return new ${dashToPascal(name)}GetByIdUsecase(${snakeToCamel(name)}Repository);
-      },
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}DeleteUsecase(repository),
       inject: [I${dashToPascal(name)}Repository]
     }
   ],
@@ -93,9 +85,9 @@ import { ${dashToPascal(name)}Repository } from './repository';
     I${dashToPascal(name)}Repository,
     I${dashToPascal(name)}CreateAdapter,
     I${dashToPascal(name)}UpdateAdapter,
+    I${dashToPascal(name)}GetByIdAdapter,
     I${dashToPascal(name)}ListAdapter,
-    I${dashToPascal(name)}DeleteAdapter,
-    I${dashToPascal(name)}GetByIdAdapter
+    I${dashToPascal(name)}DeleteAdapter
   ]
 })
 export class ${dashToPascal(name)}Module implements NestModule {

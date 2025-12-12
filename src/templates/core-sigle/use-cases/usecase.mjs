@@ -1,7 +1,6 @@
 import { dashToPascal } from "../../../textUtils.mjs"
 
-const getCoreSingleUsecaseCreate = (name) => `import { ValidateSchema } from '@/utils/decorators';;
-
+const getCoreSingleUsecaseCreate = (name) => `import { ValidateSchema } from '@/utils/decorators';
 import { Infer, InputValidator } from '@/utils/validator';
 import { IUsecase } from '@/utils/usecase';
 

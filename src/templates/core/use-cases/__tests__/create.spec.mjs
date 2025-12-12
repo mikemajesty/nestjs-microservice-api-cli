@@ -1,14 +1,17 @@
 import { dashToPascal, snakeToCamel } from "../../../../textUtils.mjs"
 
-const getCoreUsecaseCreateTest = (name) => `import { Test } from '@nestjs/testing';
-import { ZodIssue } from 'zod';
+const getCoreUsecaseCreateTest = (name) => `import { ZodMockSchema } from '@mikemajesty/zod-mock-schema';
+import { Test } from '@nestjs/testing';
 
-import { ILoggerAdapter } from '@/infra/logger';
+import { CreatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}CreateAdapter } from '@/modules/${name}/adapter';
-import { TestMock } from 'test/mock';
+import { ApiInternalServerException } from '@/utils/exception';
+import { TestUtils } from '@/utils/test/util';
+import { ZodExceptionIssue } from '@/utils/validator';
 
+import { ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
-import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateOutput, ${dashToPascal(name)}CreateUsecase } from '../${name}-create';
+import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateUsecase } from '../${name}-create';
 
 describe(${dashToPascal(name)}CreateUsecase.name, () => {
   let usecase: I${dashToPascal(name)}CreateAdapter;
@@ -16,23 +19,18 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
+      imports: [],
       providers: [
         {
           provide: I${dashToPascal(name)}Repository,
           useValue: {}
         },
         {
-          provide: ILoggerAdapter,
-          useValue: {
-            info: jest.fn()
-          }
-        },
-        {
           provide: I${dashToPascal(name)}CreateAdapter,
-          useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, logger: ILoggerAdapter) => {
-            return new ${dashToPascal(name)}CreateUsecase(${snakeToCamel(name)}Repository, logger);
+          useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
+            return new ${dashToPascal(name)}CreateUsecase(${snakeToCamel(name)}Repository);
           },
-          inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
+          inject: [I${dashToPascal(name)}Repository]
         }
       ]
     }).compile();
@@ -42,23 +40,32 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await TestMock.expectZodError(
+    await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}CreateInput),
-      (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: TestMock.nameOf<${dashToPascal(name)}CreateInput>('name') }]);
+      (issues: ZodExceptionIssue[]) => {
+        expect(issues).toEqual([
+          {
+            message: 'Invalid input: expected string, received undefined',
+            path: TestUtils.nameOf<${dashToPascal(name)}CreateInput>('name')
+          }
+        ]);
       }
     );
   });
 
-  const input: ${dashToPascal(name)}CreateInput = {
-    name: 'dummy'
-  };
+  const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
+  const input = mock.generate();
 
-  test('when ${snakeToCamel(name)} created successfully, should expect a ${snakeToCamel(name)}', async () => {
-    const output: ${dashToPascal(name)}CreateOutput = { created: true, id: TestMock.getMockUUID() };
-    repository.create = TestMock.mockResolvedValue<${dashToPascal(name)}CreateOutput>(output);
+  test('when ${snakeToCamel(name)} created successfully, should expect a ${snakeToCamel(name)} created', async () => {
+    repository.create = TestUtils.mockResolvedValue<CreatedModel>(input);
 
-    await expect(usecase.execute(input)).resolves.toEqual(output);
+    await expect(usecase.execute(input)).resolves.toEqual(input);
+  });
+
+  test('when transaction throw an error, should expect an error', async () => {
+    repository.create = TestUtils.mockRejectedValue(new ApiInternalServerException());
+
+    await expect(usecase.execute(input)).rejects.toThrow(ApiInternalServerException);
   });
 });
 `

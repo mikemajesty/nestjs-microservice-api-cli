@@ -1,16 +1,18 @@
 import { dashToPascal, snakeToCamel } from "../../../../textUtils.mjs"
 
-const getCoreUsecaseDeleteTest = (name) => `import { Test } from '@nestjs/testing';
-import { ZodIssue } from 'zod';
+const getCoreUsecaseDeleteTest = (name) => `import { ZodMockSchema } from '@mikemajesty/zod-mock-schema';
+import { Test } from '@nestjs/testing';
 
 import { ${dashToPascal(name)}DeleteInput, ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
+import { LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestMock } from 'test/mock';
+import { TestUtils } from '@/utils/test/util';
+import { ZodExceptionIssue } from '@/utils/validator';
 
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
-import { ${dashToPascal(name)}Entity } from './../../entity/${name}';
 
 describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   let usecase: I${dashToPascal(name)}DeleteAdapter;
@@ -18,6 +20,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         {
           provide: I${dashToPascal(name)}Repository,
@@ -38,34 +41,33 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   });
 
   test('when no input is specified, should expect an error', async () => {
-    await TestMock.expectZodError(
+    await TestUtils.expectZodError(
       () => usecase.execute({} as ${dashToPascal(name)}DeleteInput),
-      (issues: ZodIssue[]) => {
-        expect(issues).toEqual([{ message: 'Required', path: TestMock.nameOf<${dashToPascal(name)}DeleteInput>('id') }]);
+      (issues: ZodExceptionIssue[]) => {
+        expect(issues).toEqual([
+          {
+            message: 'Invalid input: expected string, received undefined',
+            path: TestUtils.nameOf<${dashToPascal(name)}DeleteInput>('id')
+          }
+        ]);
       }
     );
   });
 
-  const input: ${dashToPascal(name)}DeleteInput = {
-    id: TestMock.getMockUUID()
-  };
+  const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
+  const ${snakeToCamel(name)} = mock.generate<${dashToPascal(name)}Entity>();
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
-    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(null);
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute(input)).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: TestUtils.getMockUUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
-  const ${snakeToCamel(name)} = new ${dashToPascal(name)}Entity({
-    id: TestMock.getMockUUID(),
-    name: 'dummy'
-  });
+  test('when ${snakeToCamel(name)} deleted successfully, should expect a ${snakeToCamel(name)} deleted', async () => {
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
+    repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
-  test('when ${snakeToCamel(name)} deleted successfully, should expect a ${snakeToCamel(name)}', async () => {
-    repository.findById = TestMock.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
-    repository.updateOne = TestMock.mockResolvedValue<UpdatedModel>();
-
-    await expect(usecase.execute(input)).resolves.toEqual({
+    await expect(usecase.execute({ id: ${snakeToCamel(name)}.id })).resolves.toEqual({
       ...${snakeToCamel(name)},
       deletedAt: expect.any(Date)
     });

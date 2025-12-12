@@ -1,14 +1,13 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getCoreUsecaseUpdate = (name) => `import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';;
-
+const getCoreUsecaseUpdate = (name) => `import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ILoggerAdapter } from '@/infra/logger';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
-
 import { Infer } from '@/utils/validator';
-import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from './../entity/${name}';
+
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
 export const ${dashToPascal(name)}UpdateSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
@@ -25,20 +24,18 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
     const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(input.id);
 
     if (!${snakeToCamel(name)}) {
-      throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
+      throw new ApiNotFoundException();
     }
 
-    const ${snakeToCamel(name)}Found = new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
+    const entity = new ${dashToPascal(name)}Entity({ ...${snakeToCamel(name)}, ...input });
 
-    const entity = new ${dashToPascal(name)}Entity({ ...${snakeToCamel(name)}Found, ...input });
-
-    await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity);
+    await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity.toObject());
 
     this.loggerService.info({ message: '${snakeToCamel(name)} updated.', obj: { ${snakeToCamel(name)}: input } });
 
     const updated = await this.${snakeToCamel(name)}Repository.findById(entity.id);
 
-    return new ${dashToPascal(name)}Entity(updated as ${dashToPascal(name)}Entity);
+    return new ${dashToPascal(name)}Entity(updated as ${dashToPascal(name)}Entity).toObject();
   }
 }
 

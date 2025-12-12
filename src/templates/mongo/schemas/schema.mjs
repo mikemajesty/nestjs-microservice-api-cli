@@ -13,13 +13,15 @@ export type ${dashToPascal(name)}Document = Document & ${dashToPascal(name)}Enti
 @Schema({
   collection: '${pluralize(name)}',
   autoIndex: true,
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 })
 export class ${dashToPascal(name)} {
   @Prop({ type: String })
   _id!: string;
 
-  @Prop({ index: true, min: 1, max: 200, required: true, type: String })
+  @Prop({ min: 0, max: 200, required: true, type: String })
   name!: string;
 
   @Prop({ type: Date, default: null })
@@ -28,7 +30,7 @@ export class ${dashToPascal(name)} {
 
 const ${dashToPascal(name)}Schema = SchemaFactory.createForClass(${dashToPascal(name)});
 
-${dashToPascal(name)}Schema.index({ name: 1 });
+${dashToPascal(name)}Schema.index({ name: 1 }, { partialFilterExpression: { deletedAt: { \$eq: null } } });
 
 ${dashToPascal(name)}Schema.plugin(paginate);
 

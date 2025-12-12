@@ -18,8 +18,8 @@ export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model> im
     super(repository);
   }
 
-  @ConvertTypeOrmFilter<${dashToPascal(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
   @ValidateDatabaseSortAllowed<${dashToPascal(name)}Entity>({ name: 'name' }, { name: 'createdAt' })
+  @ConvertTypeOrmFilter<${dashToPascal(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
   async paginate(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
     const skip = PaginationUtils.calculateSkip(input);
 
@@ -30,7 +30,7 @@ export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model> im
       where: input.search as FindOptionsWhere<IEntity>
     });
 
-    return { docs, total, page: input.page, limit: input.limit };
+    return { docs: docs.map((doc) => new ${dashToPascal(name)}Entity(doc).toObject()), total, page: input.page, limit: input.limit };
   }
 }
 

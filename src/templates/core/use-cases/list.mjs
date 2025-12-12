@@ -1,17 +1,16 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getCoreUsecaseList = (name) => `import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';;
-
+const getCoreUsecaseList = (name) => `import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
 import { ValidateSchema } from '@/utils/decorators';
 import { PaginationInput, PaginationOutput, PaginationSchema } from '@/utils/pagination';
 import { SearchSchema } from '@/utils/search';
 import { SortSchema } from '@/utils/sort';
 import { IUsecase } from '@/utils/usecase';
-
 import { InputValidator } from '@/utils/validator';
+
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
-export const ${dashToPascal(name)}ListSchema = InputValidator.intersection(PaginationSchema, SortSchema.merge(SearchSchema));
+export const ${dashToPascal(name)}ListSchema = InputValidator.intersection(PaginationSchema, SortSchema).and(SearchSchema);
 
 export class ${dashToPascal(name)}ListUsecase implements IUsecase {
   constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}

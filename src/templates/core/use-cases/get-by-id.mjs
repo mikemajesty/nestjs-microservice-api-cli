@@ -1,12 +1,11 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
 const getCoreUsecaseGetById = (name) => `import { ${dashToPascal(name)}EntitySchema } from '@/core/${name}/entity/${name}';
-
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
-
 import { Infer } from '@/utils/validator';
+
 import { ${dashToPascal(name)}Entity } from '../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
@@ -22,10 +21,10 @@ export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
     const ${snakeToCamel(name)} = await this.${snakeToCamel(name)}Repository.findById(id);
 
     if (!${snakeToCamel(name)}) {
-      throw new ApiNotFoundException('${snakeToCamel(name)}NotFound');
+      throw new ApiNotFoundException();
     }
 
-    return new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
+    return new ${dashToPascal(name)}Entity(${snakeToCamel(name)}).toObject();
   }
 }
 

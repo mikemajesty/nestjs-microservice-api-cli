@@ -15,16 +15,16 @@ export abstract class I${dashToPascal(name)}UpdateAdapter implements IUsecase {
   abstract execute(input: ${dashToPascal(name)}UpdateInput): Promise<${dashToPascal(name)}UpdateOutput>;
 }
 
+export abstract class I${dashToPascal(name)}GetByIdAdapter implements IUsecase {
+  abstract execute(input: ${dashToPascal(name)}GetByIdInput): Promise<${dashToPascal(name)}GetByIdOutput>;
+}
+
 export abstract class I${dashToPascal(name)}ListAdapter implements IUsecase {
   abstract execute(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput>;
 }
 
 export abstract class I${dashToPascal(name)}DeleteAdapter implements IUsecase {
   abstract execute(input: ${dashToPascal(name)}DeleteInput): Promise<${dashToPascal(name)}DeleteOutput>;
-}
-
-export abstract class I${dashToPascal(name)}GetByIdAdapter implements IUsecase {
-  abstract execute(input: ${dashToPascal(name)}GetByIdInput): Promise<${dashToPascal(name)}GetByIdOutput>;
 }
 `
 

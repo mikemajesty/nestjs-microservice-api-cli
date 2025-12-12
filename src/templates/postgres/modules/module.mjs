@@ -40,8 +40,8 @@ import { ${dashToPascal(name)}Repository } from './repository';
     },
     {
       provide: I${dashToPascal(name)}CreateAdapter,
-      useFactory: (logger: ILoggerAdapter, repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}CreateUsecase(repository, logger),
-      inject: [ILoggerAdapter, I${dashToPascal(name)}Repository]
+      useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}CreateUsecase(repository),
+      inject: [I${dashToPascal(name)}Repository]
     },
     {
       provide: I${dashToPascal(name)}UpdateAdapter,
@@ -64,7 +64,14 @@ import { ${dashToPascal(name)}Repository } from './repository';
       inject: [I${dashToPascal(name)}Repository]
     }
   ],
-  exports: []
+  exports: [
+    I${dashToPascal(name)}Repository,
+    I${dashToPascal(name)}CreateAdapter,
+    I${dashToPascal(name)}UpdateAdapter,
+    I${dashToPascal(name)}GetByIdAdapter,
+    I${dashToPascal(name)}ListAdapter,
+    I${dashToPascal(name)}DeleteAdapter
+  ]
 })
 export class ${dashToPascal(name)}Module implements NestModule {
   configure(consumer: MiddlewareConsumer) {

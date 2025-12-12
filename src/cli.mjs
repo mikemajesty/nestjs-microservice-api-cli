@@ -2,7 +2,8 @@ import { getCoreSingleUsecaseCreate } from './templates/core-sigle/use-cases/use
 import { getCoreSingleRepository } from './templates/core-sigle/repository/repository.mjs';
 import { getCoreSingleEntity } from './templates/core-sigle/entity/entity.mjs';
 import { getIndexInfra } from './templates/infra/index.mjs';
-import getAdapterInfra from './templates/infra/adapter.mjs';
+import infraAdapter from './templates/infra/adapter.mjs';
+const { getAdapterInfra } = infraAdapter;
 import { getModuleInfa } from './templates/infra/module.mjs';
 import { getServiceInfra } from './templates/infra/service.mjs';
 import { getIndexLib } from './templates/libs/index.mjs';
@@ -25,6 +26,71 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const prompt = promptSync();
+
+// Function to add module to app.module.ts, libs/module.ts or infra/module.ts
+const addModuleToAppModule = (dest, moduleName, importPath, targetFile = 'app.module.ts', moduleSuffix = 'Module') => {
+  try {
+    const moduleFilePath = `${dest}/src/${targetFile}`;
+    let content = fs.readFileSync(moduleFilePath, 'utf-8');
+    
+    const pascalName = moduleName.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+    const moduleClassName = `${pascalName}${moduleSuffix}`;
+    const importStatement = `import { ${moduleClassName} } from '${importPath}'`;
+    
+    // Check if import already exists
+    if (content.includes(importStatement)) {
+      console.log(bold(green(`${moduleClassName} already imported`)));
+      return;
+    }
+    
+    // Find the last import from @/modules/
+    const lastModuleImportRegex = /import\s+{[^}]+}\s+from\s+'@\/modules\/[^']+'/g;
+    const matches = [...content.matchAll(lastModuleImportRegex)];
+    
+    if (matches.length > 0) {
+      const lastMatch = matches[matches.length - 1];
+      const insertPosition = lastMatch.index + lastMatch[0].length;
+      content = content.slice(0, insertPosition) + '\n' + importStatement + content.slice(insertPosition);
+    } else {
+      // If no module imports found, add after the first import block
+      const firstImportEnd = content.indexOf('\n\n');
+      if (firstImportEnd !== -1) {
+        content = content.slice(0, firstImportEnd) + '\n' + importStatement + content.slice(firstImportEnd);
+      }
+    }
+    
+    // Add module to imports array
+    const importsArrayRegex = /imports:\s*\[([^\]]*)\]/s;
+    const match = content.match(importsArrayRegex);
+    
+    if (match) {
+      const importsContent = match[1];
+      
+      // Check if module already in imports
+      if (importsContent.includes(moduleClassName)) {
+        console.log(bold(green(`${moduleClassName} already in imports array`)));
+        return;
+      }
+      
+      // Find the position before the closing bracket, after the last module
+      const modules = importsContent.trim().split(',').map(m => m.trim()).filter(m => m);
+      const lastModule = modules[modules.length - 1];
+      
+      // Add the new module
+      const updatedImports = importsContent.replace(
+        lastModule,
+        `${lastModule},\n    ${moduleClassName}`
+      );
+      
+      content = content.replace(importsArrayRegex, `imports: [${updatedImports}]`);
+    }
+    
+    fs.writeFileSync(moduleFilePath, content, 'utf-8');
+    console.log(bold(green(`✓ ${moduleClassName} added to ${targetFile}`)));
+  } catch (error) {
+    console.log(bold(red(`Error adding module to ${targetFile}: ${error.message}`)));
+  }
+};
 
 import { getCoreUsecaseCreateTest } from './templates/core/use-cases/__tests__/create.spec.mjs';
 import { getCoreUsecaseUpdateTest } from './templates/core/use-cases/__tests__/update.spec.mjs';
@@ -497,27 +563,18 @@ export async function cli(args) {
         }
       }
 
-      console.log(bold(green('===done===')))
-
-      if (userInput.type === 'postgres:crud') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/postgres.README.md')))
+      // Add module to the appropriate module file
+      if (userInput.type === 'postgres:crud' || userInput.type === 'mongo:crud') {
+        addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
+      } else if (userInput.type === 'module') {
+        addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
+      } else if (userInput.type === 'lib') {
+        addModuleToAppModule(dest, name, `./${name}`, 'libs/module.ts', 'LibModule');
+      } else if (userInput.type === 'infra') {
+        addModuleToAppModule(dest, name, `./${name}`, 'infra/module.ts', 'Module');
       }
 
-      if (userInput.type === 'mongo:crud') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/mongo.README.md')))
-      }
-
-      if (userInput.type === 'lib') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/lib.README.md')))
-      }
-
-      if (userInput.type === 'infra') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/infra.README.md')))
-      }
-
-      if (userInput.type === 'module') {
-        console.log(red('!!!!!!!!!!REAMDE!!!!!!!'), green(bold('https://github.com/mikemajesty/nestjs-microservice-api-cli/blob/main/module.README.md')))
-      }
+      console.log(bold(green('✓ Module created successfully!')))
     });
 
   } catch (error) {
@@ -530,6 +587,23 @@ export async function cli(args) {
 
 const getName = (name) => {
   if (!name) throw new Error('--name is required');
-  name = String(name).trim().replace(" ", "").replace("_", "-").toLowerCase();
+  
+  name = String(name)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/_+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  
+  if (!name) {
+    throw new Error('Invalid name: contains only special characters');
+  }
+  
+  if (/^\d/.test(name)) {
+    throw new Error('Invalid name: cannot start with a number');
+  }
+  
   return name;
 }

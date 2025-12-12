@@ -10,7 +10,7 @@ import { ${dashToPascal(name)}Service } from './service';
   providers: [
     {
       provide: I${dashToPascal(name)}Adapter,
-      useFactory: () => new ${dashToPascal(name)}Service()
+      useClass: ${dashToPascal(name)}Service
     }
   ],
   exports: [I${dashToPascal(name)}Adapter]
