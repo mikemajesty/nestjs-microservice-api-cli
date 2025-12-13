@@ -1,5 +1,5 @@
 import pluralize from 'pluralize'
-import { dashToPascal, snakeToCamel } from '../../../textUtils.mjs'
+import { dashToPascal } from '../../../textUtils.mjs'
 
 const getModuleController = (name) => `import { Controller, Delete, Get, HttpCode, Post, Put, Req, Version } from '@nestjs/common';
 
@@ -8,7 +8,6 @@ import { ${dashToPascal(name)}DeleteInput, ${dashToPascal(name)}DeleteOutput } f
 import { ${dashToPascal(name)}GetByIdInput, ${dashToPascal(name)}GetByIdOutput } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}UpdateInput, ${dashToPascal(name)}UpdateOutput } from '@/core/${name}/use-cases/${name}-update';
-import { Permission } from '@/utils/decorators';
 import { ApiRequest } from '@/utils/request';
 import { SearchHttpSchema } from '@/utils/search';
 import { SortHttpSchema } from '@/utils/sort';
@@ -27,7 +26,6 @@ export class ${dashToPascal(name)}Controller {
 
   @Post()
   @Version('1')
-  @Permission('${snakeToCamel(name)}:create')
   @HttpCode(201)
   async create(@Req() { body }: ApiRequest): Promise<${dashToPascal(name)}CreateOutput> {
     return await this.createUsecase.execute(body as ${dashToPascal(name)}CreateInput);
@@ -35,21 +33,18 @@ export class ${dashToPascal(name)}Controller {
 
   @Put(':id')
   @Version('1')
-  @Permission('${snakeToCamel(name)}:update')
   async update(@Req() { body, params }: ApiRequest): Promise<${dashToPascal(name)}UpdateOutput> {
     return await this.updateUsecase.execute({ ...body, id: params.id } as ${dashToPascal(name)}UpdateInput);
   }
 
   @Get(':id')
   @Version('1')
-  @Permission('${snakeToCamel(name)}:getbyid')
   async getById(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}GetByIdOutput> {
     return await this.getByIdUsecase.execute(params as ${dashToPascal(name)}GetByIdInput);
   }
 
   @Get()
   @Version('1')
-  @Permission('${snakeToCamel(name)}:list')
   async list(@Req() { query }: ApiRequest): Promise<${dashToPascal(name)}ListOutput> {
     const input: ${dashToPascal(name)}ListInput = {
       sort: SortHttpSchema.parse(query.sort),
@@ -63,7 +58,6 @@ export class ${dashToPascal(name)}Controller {
 
   @Delete(':id')
   @Version('1')
-  @Permission('${snakeToCamel(name)}:delete')
   async delete(@Req() { params }: ApiRequest): Promise<${dashToPascal(name)}DeleteOutput> {
     return await this.deleteUsecase.execute(params as ${dashToPascal(name)}DeleteInput);
   }

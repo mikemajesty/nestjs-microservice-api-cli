@@ -12,9 +12,12 @@ import { getModuleLib } from './templates/libs/module.mjs';
 import { getServiceLib } from './templates/libs/service.mjs';
 import { getModuleControllerModule } from './templates/module/controller.mjs';
 import { getModuleModule } from './templates/module/module.mjs';
+import { getTypeSpecController } from './templates/typespec/controller.mjs';
+import { getTypeSpecModel } from './templates/typespec/model.mjs';
+import { getTypeSpecException } from './templates/typespec/exception.mjs';
 
 import fs from 'fs';
-import { bold, green, red } from 'colorette';
+import { bold, green, red, cyan, yellow, magenta, gray, blue, white } from 'colorette';
 import fse from 'fs-extra';
 import path from 'path';
 import cliSelect from 'cli-select';
@@ -26,6 +29,99 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const prompt = promptSync();
+
+// Created files tracker
+const createdFiles = [];
+
+const trackFile = (filePath, category) => {
+  createdFiles.push({ path: filePath, category });
+};
+
+const getFileIcon = (fileName) => {
+  if (fileName.endsWith('.spec.ts')) return '🧪';
+  if (fileName.includes('entity')) return '📦';
+  if (fileName.includes('repository')) return '🗄️';
+  if (fileName.includes('use-cases') || fileName.includes('usecase')) return '⚡';
+  if (fileName.includes('controller')) return '🎮';
+  if (fileName.includes('module')) return '📦';
+  if (fileName.includes('adapter')) return '🔌';
+  if (fileName.includes('schema')) return '📋';
+  if (fileName.includes('service')) return '⚙️';
+  if (fileName.includes('.tsp')) return '📝';
+  if (fileName.includes('index')) return '📤';
+  return '📄';
+};
+
+const printCreatedFiles = (moduleName, moduleType) => {
+  console.log('');
+  console.log('');
+  console.log(bold(cyan('  ╭───────────────────────────────────────────────────────────╮')));
+  console.log(bold(cyan('  │                                                           │')));
+  console.log(bold(cyan('  │')) + bold(green('       🚀 ')) + bold(white(moduleType.toUpperCase() + ' CREATED SUCCESSFULLY!'))  + bold(cyan('              │')));
+  console.log(bold(cyan('  │                                                           │')));
+  console.log(bold(cyan('  ╰───────────────────────────────────────────────────────────╯')));
+  console.log('');
+  console.log(bold(white('  📋 Module: ')) + bold(yellow(moduleName)));
+  console.log('');
+  
+  const categories = {};
+  createdFiles.forEach(file => {
+    if (!categories[file.category]) categories[file.category] = [];
+    categories[file.category].push(file.path);
+  });
+  
+  const categoryConfig = {
+    'core/entity': { icon: '📦', label: 'Entity', color: magenta },
+    'core/repository': { icon: '🗄️ ', label: 'Repository', color: blue },
+    'core/use-cases': { icon: '⚡', label: 'Use Cases', color: yellow },
+    'core/tests': { icon: '🧪', label: 'Tests', color: green },
+    'modules': { icon: '🎮', label: 'Module Files', color: cyan },
+    'schemas': { icon: '📋', label: 'Database Schema', color: magenta },
+    'typespec': { icon: '📝', label: 'TypeSpec Docs', color: blue },
+    'libs': { icon: '📚', label: 'Library Files', color: yellow },
+    'infra': { icon: '🔧', label: 'Infrastructure', color: cyan },
+  };
+  
+  // Define display order
+  const categoryOrder = [
+    'core/entity', 'core/repository', 'core/use-cases', 'core/tests',
+    'modules', 'schemas', 'typespec', 'libs', 'infra'
+  ];
+  
+  const sortedCategories = categoryOrder.filter(cat => categories[cat]);
+  
+  sortedCategories.forEach((category, catIndex) => {
+    const config = categoryConfig[category] || { icon: '📁', label: category, color: white };
+    const isLastCategory = catIndex === sortedCategories.length - 1;
+    const catPrefix = isLastCategory ? '  └─' : '  ├─';
+    
+    console.log(gray(catPrefix) + ' ' + bold(config.color(`${config.icon} ${config.label}`)));
+    
+    categories[category].forEach((file, index) => {
+      const isLast = index === categories[category].length - 1;
+      const linePrefix = isLastCategory ? '     ' : '  │  ';
+      const filePrefix = isLast ? '└──' : '├──';
+      const fileName = file.split('/').pop();
+      const icon = getFileIcon(fileName);
+      console.log(gray(`${linePrefix}${filePrefix}`) + ` ${icon} ` + white(fileName));
+    });
+  });
+  
+  const totalFiles = createdFiles.length;
+  console.log('');
+  console.log(bold(cyan('  ─────────────────────────────────────────────────────────────')));
+  console.log('');
+  console.log(bold(green(`  ✨ ${totalFiles} file${totalFiles > 1 ? 's' : ''} created successfully!`)));
+  console.log('');
+  console.log(gray('  💡 Next steps:'));
+  console.log(gray('     1. ') + cyan('npm run build') + gray(' - Compile the project'));
+  console.log(gray('     2. ') + cyan('npm run lint') + gray('  - Check code style'));
+  console.log(gray('     3. ') + cyan('npm test') + gray('       - Run tests'));
+  console.log('');
+  
+  // Clear for next run
+  createdFiles.length = 0;
+};
 
 // Function to add module to app.module.ts, libs/module.ts or infra/module.ts
 const addModuleToAppModule = (dest, moduleName, importPath, targetFile = 'app.module.ts', moduleSuffix = 'Module') => {
@@ -92,6 +188,50 @@ const addModuleToAppModule = (dest, moduleName, importPath, targetFile = 'app.mo
   }
 };
 
+const createTypeSpecDocs = (dest, moduleName) => {
+  try {
+    const docsPath = `${dest}/docs/src/modules/${moduleName}`;
+    const mainTspPath = `${dest}/docs/src/main.tsp`;
+    
+    if (!fs.existsSync(`${dest}/docs/src`)) {
+      console.log(bold(green(`TypeSpec docs folder not found, skipping...`)));
+      return;
+    }
+    
+    if (!fs.existsSync(docsPath)) {
+      fs.mkdirSync(docsPath, { recursive: true });
+    }
+    
+    fs.writeFileSync(`${docsPath}/controller.tsp`, getTypeSpecController(moduleName));
+    trackFile(`docs/src/modules/${moduleName}/controller.tsp`, 'typespec');
+    fs.writeFileSync(`${docsPath}/model.tsp`, getTypeSpecModel(moduleName));
+    trackFile(`docs/src/modules/${moduleName}/model.tsp`, 'typespec');
+    fs.writeFileSync(`${docsPath}/exception.tsp`, getTypeSpecException(moduleName));
+    trackFile(`docs/src/modules/${moduleName}/exception.tsp`, 'typespec');
+    
+    if (fs.existsSync(mainTspPath)) {
+      let mainContent = fs.readFileSync(mainTspPath, 'utf-8');
+      const importStatement = `import "./modules/${moduleName}/controller.tsp";`;
+      
+      if (!mainContent.includes(importStatement)) {
+        const lastImportRegex = /import "\.\/modules\/[^"]+\/controller\.tsp";/g;
+        const matches = [...mainContent.matchAll(lastImportRegex)];
+        
+        if (matches.length > 0) {
+          const lastMatch = matches[matches.length - 1];
+          const insertPosition = lastMatch.index + lastMatch[0].length;
+          mainContent = mainContent.slice(0, insertPosition) + '\n' + importStatement + mainContent.slice(insertPosition);
+          fs.writeFileSync(mainTspPath, mainContent, 'utf-8');
+        }
+      }
+    }
+    
+    console.log(bold(green(`✓ TypeSpec documentation created at docs/src/modules/${moduleName}/`)));
+  } catch (error) {
+    console.log(bold(red(`Error creating TypeSpec docs: ${error.message}`)));
+  }
+};
+
 import { getCoreUsecaseCreateTest } from './templates/core/use-cases/__tests__/create.spec.mjs';
 import { getCoreUsecaseUpdateTest } from './templates/core/use-cases/__tests__/update.spec.mjs';
 import { getCoreUsecaseDeleteTest } from './templates/core/use-cases/__tests__/delete.spec.mjs';
@@ -122,7 +262,6 @@ const createModule = async (name) => {
   name = getName(name)
   const dirRoot = `${__dirname}/scafold/module/${name}`
 
-  console.log("dirRoot", dirRoot)
   try {
     if (fs.existsSync(dirRoot)) {
       fs.rmSync(dirRoot, { recursive: true });
@@ -131,7 +270,9 @@ const createModule = async (name) => {
     fs.mkdirSync(dirRoot)
 
     fs.writeFileSync(`${dirRoot}/controller.ts`, getModuleControllerModule(name))
+    trackFile(`modules/${name}/controller.ts`, 'modules');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleModule(name))
+    trackFile(`modules/${name}/module.ts`, 'modules');
 
     return `${name}`
   } catch (error) {
@@ -148,7 +289,6 @@ const createInfra = async (name) => {
   name = getName(name)
   const dirRoot = `${__dirname}/scafold/infra/${name}`
 
-  console.log("dirRoot", dirRoot)
   try {
     if (fs.existsSync(dirRoot)) {
       fs.rmSync(dirRoot, { recursive: true });
@@ -157,9 +297,13 @@ const createInfra = async (name) => {
     fs.mkdirSync(dirRoot)
 
     fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterInfra(name))
+    trackFile(`infra/${name}/adapter.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/index.ts`, getIndexInfra(name))
+    trackFile(`infra/${name}/index.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleInfa(name))
+    trackFile(`infra/${name}/module.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/service.ts`, getServiceInfra(name))
+    trackFile(`infra/${name}/service.ts`, 'infra');
 
     return `${name}`
   } catch (error) {
@@ -184,9 +328,13 @@ const createLib = async (name) => {
     fs.mkdirSync(dirRoot)
 
     fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterLib(name))
+    trackFile(`libs/${name}/adapter.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/index.ts`, getIndexLib(name))
+    trackFile(`libs/${name}/index.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleLib(name))
+    trackFile(`libs/${name}/module.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/service.ts`, getServiceLib(name))
+    trackFile(`libs/${name}/service.ts`, 'libs');
 
     return `${name}`
   } catch (error) {
@@ -221,22 +369,34 @@ const createCore = async (name) => {
     fs.mkdirSync(useCasesPath)
 
     fs.writeFileSync(`${entityPath}/${name}.ts`, getCoreEntity(name))
+    trackFile(`${entityPath}/${name}.ts`, 'core/entity');
+    
     fs.writeFileSync(`${repositoryPath}/${name}.ts`, getCoreRepository(name))
-
+    trackFile(`${repositoryPath}/${name}.ts`, 'core/repository');
 
     fs.writeFileSync(`${useCasesPath}/${name}-create.ts`, getCoreUsecaseCreate(name))
+    trackFile(`${useCasesPath}/${name}-create.ts`, 'core/use-cases');
     fs.writeFileSync(`${useCasesPath}/${name}-delete.ts`, getCoreUsecaseDelete(name))
+    trackFile(`${useCasesPath}/${name}-delete.ts`, 'core/use-cases');
     fs.writeFileSync(`${useCasesPath}/${name}-get-by-id.ts`, getCoreUsecaseGetById(name))
+    trackFile(`${useCasesPath}/${name}-get-by-id.ts`, 'core/use-cases');
     fs.writeFileSync(`${useCasesPath}/${name}-list.ts`, getCoreUsecaseList(name))
+    trackFile(`${useCasesPath}/${name}-list.ts`, 'core/use-cases');
     fs.writeFileSync(`${useCasesPath}/${name}-update.ts`, getCoreUsecaseUpdate(name))
+    trackFile(`${useCasesPath}/${name}-update.ts`, 'core/use-cases');
 
     const useCasesPathTest = `${useCasesPath}/__tests__`
     fs.mkdirSync(useCasesPathTest)
     fs.writeFileSync(`${useCasesPathTest}/${name}-create.spec.ts`, getCoreUsecaseCreateTest(name))
+    trackFile(`${useCasesPathTest}/${name}-create.spec.ts`, 'core/tests');
     fs.writeFileSync(`${useCasesPathTest}/${name}-update.spec.ts`, getCoreUsecaseUpdateTest(name))
+    trackFile(`${useCasesPathTest}/${name}-update.spec.ts`, 'core/tests');
     fs.writeFileSync(`${useCasesPathTest}/${name}-delete.spec.ts`, getCoreUsecaseDeleteTest(name))
+    trackFile(`${useCasesPathTest}/${name}-delete.spec.ts`, 'core/tests');
     fs.writeFileSync(`${useCasesPathTest}/${name}-list.spec.ts`, getCoreUsecaseListTest(name))
+    trackFile(`${useCasesPathTest}/${name}-list.spec.ts`, 'core/tests');
     fs.writeFileSync(`${useCasesPathTest}/${name}-get-by-id.spec.ts`, getCoreUsecaseGetByIdTest(name))
+    trackFile(`${useCasesPathTest}/${name}-get-by-id.spec.ts`, 'core/tests');
   } catch (error) {
     console.log('error', error)
     if (fs.existsSync(dirRoot)) {
@@ -305,13 +465,18 @@ const createPostgresCrud = async (name) => {
     }
     fs.mkdirSync(schemasPath)
     fs.writeFileSync(`${schemasPath}/${name}.ts`, getModuleSchema(name))
+    trackFile(`schemas/${name}.ts`, 'schemas');
 
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
     fs.writeFileSync(`${modulesPath}/adapter.ts`, getModuleAdapter(name))
+    trackFile(`modules/${name}/adapter.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleController(name))
+    trackFile(`modules/${name}/controller.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/module.ts`, getModule(name))
+    trackFile(`modules/${name}/module.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepository(name))
+    trackFile(`modules/${name}/repository.ts`, 'modules');
 
     await createCore(name)
 
@@ -350,14 +515,19 @@ const createMongoCrud = async (name) => {
 
     fs.mkdirSync(schemasPath)
     fs.writeFileSync(`${schemasPath}/${name}.ts`, getModuleSchemaMongo(name))
+    trackFile(`schemas/${name}.ts`, 'schemas');
 
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
 
     fs.writeFileSync(`${modulesPath}/adapter.ts`, getModuleAdapterMongo(name))
+    trackFile(`modules/${name}/adapter.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleControllerMongo(name))
+    trackFile(`modules/${name}/controller.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/module.ts`, getModuleMongo(name))
+    trackFile(`modules/${name}/module.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
+    trackFile(`modules/${name}/repository.ts`, 'modules');
 
     await createCore(name)
 
@@ -450,6 +620,7 @@ export async function cli(args) {
 
   try {
 
+    // DESTINATION PATH
     const dest = path.resolve(`${__dirname}/../../../../`)
     const src = paths[0]
 
@@ -566,6 +737,7 @@ export async function cli(args) {
       // Add module to the appropriate module file
       if (userInput.type === 'postgres:crud' || userInput.type === 'mongo:crud') {
         addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
+        createTypeSpecDocs(dest, name);
       } else if (userInput.type === 'module') {
         addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
       } else if (userInput.type === 'lib') {
@@ -574,7 +746,7 @@ export async function cli(args) {
         addModuleToAppModule(dest, name, `./${name}`, 'infra/module.ts', 'Module');
       }
 
-      console.log(bold(green('✓ Module created successfully!')))
+      printCreatedFiles(name, userInput.type);
     });
 
   } catch (error) {

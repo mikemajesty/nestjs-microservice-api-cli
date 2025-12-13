@@ -81,11 +81,18 @@ src/
 │       ├── controller.ts           # REST controller with decorators
 │       ├── module.ts               # NestJS module
 │       └── repository.ts           # Repository implementation
-└── infra/
-    └── database/
-        └── [postgres|mongo]/
-            └── schemas/
-                └── [name].ts       # Database schema
+├── infra/
+│   └── database/
+│       └── [postgres|mongo]/
+│           └── schemas/
+│               └── [name].ts       # Database schema
+└── docs/
+    └── src/
+        └── modules/
+            └── [name]/
+                ├── controller.tsp  # TypeSpec API routes
+                ├── model.tsp       # TypeSpec models/DTOs
+                └── exception.tsp   # TypeSpec error definitions
 ```
 
 **Features:**
@@ -97,6 +104,7 @@ src/
 - ✅ Permission-based access control
 - ✅ Swagger documentation ready
 - ✅ Full test coverage
+- ✅ **TypeSpec API documentation** (auto-generated!)
 
 ### LIB (Library Module)
 
@@ -161,8 +169,35 @@ The CLI automatically registers generated modules:
 - **CRUD/MODULE**: Registered in `src/app.module.ts`
 - **LIB**: Registered in `src/libs/module.ts` with `LibModule` suffix
 - **INFRA**: Registered in `src/infra/module.ts`
+- **TypeSpec**: Auto-imports in `docs/src/main.tsp` (for CRUD templates)
 
 No manual imports needed! 🎉
+
+## TypeSpec Documentation
+
+When generating CRUD modules (Postgres or Mongo), the CLI automatically creates TypeSpec documentation:
+
+```
+docs/src/modules/[name]/
+├── controller.tsp  # API routes with all endpoints
+├── model.tsp       # Entity models and DTOs
+└── exception.tsp   # Error definitions (400, 404)
+```
+
+The import is automatically added to `docs/src/main.tsp`:
+
+```typespec
+import "./modules/[name]/controller.tsp";
+```
+
+**Generated TypeSpec includes:**
+- ✅ All CRUD endpoints (POST, PUT, GET, DELETE)
+- ✅ Input/Output models
+- ✅ Pagination models
+- ✅ Validation error definitions
+- ✅ Not found error definitions
+- ✅ Bearer authentication
+- ✅ API versioning support
 
 ## Name Validation
 
