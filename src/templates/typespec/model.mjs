@@ -26,13 +26,13 @@ model ${pascalName}Entity {
   deletedAt: string | null = null;
 }
 
-// ## CREATE ## //
+// CREATE //
 @doc("${name} create input")
 model CreateInput extends PickProperties<${pascalName}Entity, "name"> {}
 @doc("${name} create output")
 model CreateOutput extends ${pascalName}Entity {}
 
-// ## UPDATE ## //
+// UPDATE //
 model UpdateParamInput {
   @doc("${name} id")
   @path
@@ -43,7 +43,7 @@ model UpdateInput extends PickProperties<${pascalName}Entity, "name"> {}
 @doc("${name} update output")
 model UpdateOutput extends ${pascalName}Entity {}
 
-// ## GET BY ID ## //
+// GET BY ID //
 model GetByIdParamInput {
   @doc("${name} id")
   @path
@@ -52,12 +52,12 @@ model GetByIdParamInput {
 @doc("${name} get by id input")
 model GetByIdOutput extends ${pascalName}Entity {}
 
-// ## LIST ## //
+// LIST //
 model ListQueryInput extends ApiPaginationInput {}
 @doc("${name} list output")
 model ListOutput extends ApiPaginationOutput<${pascalName}Entity> {}
 
-// ## DELETE ## //
+// DELETE //
 model DeleteParamInput {
   @doc("${name} id")
   @path

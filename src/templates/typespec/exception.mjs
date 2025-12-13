@@ -21,7 +21,7 @@ using Utils.Versioning;
 
 namespace api.${pascalName};
 
-// ## CREATE ## //
+// CREATE //
 @doc("When input is invalid")
 @error
 model CreateValidationError extends ApiBadRequestException<"name: Required"> {
@@ -30,7 +30,7 @@ model CreateValidationError extends ApiBadRequestException<"name: Required"> {
 
 alias CreateValidationException = CreateValidationError;
 
-// ## UPDATE ## //
+// UPDATE //
 @doc("When input is invalid")
 @error
 model UpdateValidationError extends ApiBadRequestException<"id: Required"> {
@@ -47,7 +47,7 @@ model Update${pascalName}NotFoundError extends ApiNotFoundException<"${camelName
 
 alias UpdateNotFoundException = Update${pascalName}NotFoundError;
 
-// ## GET BY ID ## //
+// GET BY ID //
 @doc("When input is invalid")
 @error
 model GetByIdValidationError extends ApiBadRequestException<"id: Required"> {
@@ -64,7 +64,7 @@ model GetById${pascalName}NotFoundError extends ApiNotFoundException<"${camelNam
 
 alias GetByIdNotFoundException = GetById${pascalName}NotFoundError;
 
-// ## DELETE ## //
+// DELETE //
 @doc("When input is invalid")
 @error
 model DeleteValidationError extends ApiBadRequestException<"id: Required"> {

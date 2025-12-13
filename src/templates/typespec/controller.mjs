@@ -23,7 +23,7 @@ using OpenAPI;
 using Utils.Model;
 using Utils.Versioning;
 
-@service({
+@service(#{
   title: "${pascalName}",
 })
 namespace api.${pascalName};
