@@ -12,15 +12,11 @@ export const getTypeSpecController = (name) => {
   return `import "@typespec/http";
 import "@typespec/rest";
 import "@typespec/openapi3";
-import "@typespec/versioning";
 import "../../utils/model.tsp";
 import "./model.tsp";
 import "./exception.tsp";
 
 using TypeSpec.Http;
-using TypeSpec.Versioning;
-using OpenAPI;
-using Utils.Model;
 using Utils.Versioning;
 
 @service(#{

@@ -11,13 +11,9 @@ export const getTypeSpecException = (name) => {
   return `import "../../utils/model.tsp";
 import "../../utils/exceptions.tsp";
 import "@typespec/http";
-import "@typespec/versioning";
 
 using TypeSpec.Http;
-using TypeSpec.Versioning;
-using Utils.Model;
 using Utils.Exception;
-using Utils.Versioning;
 
 namespace api.${pascalName};
 
