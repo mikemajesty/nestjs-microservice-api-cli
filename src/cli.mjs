@@ -77,7 +77,7 @@ const printCreatedFiles = (moduleName, moduleType) => {
     'core/tests': { icon: '🧪', label: 'Tests', color: green },
     'modules': { icon: '🎮', label: 'Module Files', color: cyan },
     'schemas': { icon: '📋', label: 'Database Schema', color: magenta },
-    'typespec': { icon: '📝', label: 'TypeSpec Docs', color: blue },
+    'typespec': { icon: '📝', label: 'TypeSpec API Spec', color: blue },
     'libs': { icon: '📚', label: 'Library Files', color: yellow },
     'infra': { icon: '🔧', label: 'Infrastructure', color: cyan },
   };
@@ -190,11 +190,11 @@ const addModuleToAppModule = (dest, moduleName, importPath, targetFile = 'app.mo
 
 const createTypeSpecDocs = (dest, moduleName) => {
   try {
-    const docsPath = `${dest}/docs/src/modules/${moduleName}`;
-    const mainTspPath = `${dest}/docs/src/main.tsp`;
+    const docsPath = `${dest}/api-spec/src/modules/${moduleName}`;
+    const mainTspPath = `${dest}/api-spec/src/main.tsp`;
     
-    if (!fs.existsSync(`${dest}/docs/src`)) {
-      console.log(bold(green(`TypeSpec docs folder not found, skipping...`)));
+    if (!fs.existsSync(`${dest}/api-spec/src`)) {
+      console.log(bold(green(`TypeSpec api-spec folder not found, skipping...`)));
       return;
     }
     
@@ -203,11 +203,11 @@ const createTypeSpecDocs = (dest, moduleName) => {
     }
     
     fs.writeFileSync(`${docsPath}/controller.tsp`, getTypeSpecController(moduleName));
-    trackFile(`docs/src/modules/${moduleName}/controller.tsp`, 'typespec');
+    trackFile(`api-spec/src/modules/${moduleName}/controller.tsp`, 'typespec');
     fs.writeFileSync(`${docsPath}/model.tsp`, getTypeSpecModel(moduleName));
-    trackFile(`docs/src/modules/${moduleName}/model.tsp`, 'typespec');
+    trackFile(`api-spec/src/modules/${moduleName}/model.tsp`, 'typespec');
     fs.writeFileSync(`${docsPath}/exception.tsp`, getTypeSpecException(moduleName));
-    trackFile(`docs/src/modules/${moduleName}/exception.tsp`, 'typespec');
+    trackFile(`api-spec/src/modules/${moduleName}/exception.tsp`, 'typespec');
     
     if (fs.existsSync(mainTspPath)) {
       let mainContent = fs.readFileSync(mainTspPath, 'utf-8');
@@ -226,7 +226,7 @@ const createTypeSpecDocs = (dest, moduleName) => {
       }
     }
     
-    console.log(bold(green(`✓ TypeSpec documentation created at docs/src/modules/${moduleName}/`)));
+    console.log(bold(green(`✓ TypeSpec documentation created at api-spec/src/modules/${moduleName}/`)));
   } catch (error) {
     console.log(bold(red(`Error creating TypeSpec docs: ${error.message}`)));
   }
