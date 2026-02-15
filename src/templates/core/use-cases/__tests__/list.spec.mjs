@@ -8,7 +8,7 @@ import { Test } from '@nestjs/testing';
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput, ${dashToPascal(name)}ListSchema, ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { I${dashToPascal(name)}ListAdapter } from '@/modules/${name}/adapter';
-import { TestUtils } from '@/utils/test/util';
+import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';

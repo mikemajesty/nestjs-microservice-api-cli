@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 
 import { I${dashToPascal(name)}GetByIdAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/test/util';
+import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';

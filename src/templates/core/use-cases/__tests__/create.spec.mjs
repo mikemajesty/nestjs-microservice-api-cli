@@ -6,7 +6,7 @@ import { Test } from '@nestjs/testing';
 import { CreatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}CreateAdapter } from '@/modules/${name}/adapter';
 import { ApiInternalServerException } from '@/utils/exception';
-import { TestUtils } from '@/utils/test/util';
+import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';

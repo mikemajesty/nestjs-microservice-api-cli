@@ -8,7 +8,7 @@ import { LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}DeleteAdapter } from '@/modules/${name}/adapter';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/test/util';
+import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
