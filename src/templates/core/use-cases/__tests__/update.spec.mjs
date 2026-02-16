@@ -66,14 +66,14 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute({ id: TestUtils.getMockUUID() })).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: TestUtils.mockUUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
   test('when ${snakeToCamel(name)} updated successfully, should expect a ${snakeToCamel(name)} updated', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(input);
     repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
-    await expect(usecase.execute({ id: TestUtils.getMockUUID() })).resolves.toEqual(input);
+    await expect(usecase.execute({ id: TestUtils.mockUUID() })).resolves.toEqual(input);
   });
 });
 `

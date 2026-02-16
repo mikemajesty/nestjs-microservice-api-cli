@@ -54,7 +54,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute({ id: TestUtils.getMockUUID() })).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: TestUtils.mockUUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
   const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
