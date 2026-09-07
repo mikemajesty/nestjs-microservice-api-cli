@@ -1,6 +1,6 @@
 import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
-const getModule = (name) => `import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+const getModule = (name) => `import { Module } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/mongoose';
 import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
 
@@ -16,7 +16,6 @@ import { ${dashToPascal(name)}, ${dashToPascal(name)}Document, ${dashToPascal(na
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
 import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
-import { AuthenticationMiddleware } from '@/middlewares/middlewares';
 
 import {
   I${dashToPascal(name)}CreateAdapter,
@@ -90,11 +89,7 @@ import { ${dashToPascal(name)}Repository } from './repository';
     I${dashToPascal(name)}DeleteAdapter
   ]
 })
-export class ${dashToPascal(name)}Module implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes(${dashToPascal(name)}Controller);
-  }
-}
+export class ${dashToPascal(name)}Module {}
 `
 
 export {

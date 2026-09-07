@@ -31,7 +31,7 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
 
     await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity.toObject());
 
-    this.loggerService.info({ message: '${snakeToCamel(name)} updated.', obj: { ${snakeToCamel(name)}: input } });
+    this.loggerService.info({ message: '${snakeToCamel(name)} updated.', metadata: { ${snakeToCamel(name)}: input } });
 
     const updated = await this.${snakeToCamel(name)}Repository.findById(entity.id);
 
