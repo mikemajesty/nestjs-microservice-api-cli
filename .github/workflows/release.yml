@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write   # necessário para OIDC / Trusted Publishing
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -86,8 +86,7 @@ jobs:
           git push origin "v${{ steps.bump-version.outputs.new_version }}"
 
       - name: Publish to npm (Trusted Publishing)
-        run: npm publish --provenance --access public
-        # Sem NODE_AUTH_TOKEN — OIDC cuida da autenticação
+        run: npm publish --access public
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
