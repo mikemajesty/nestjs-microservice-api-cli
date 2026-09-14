@@ -1,7 +1,7 @@
 import { dashToPascal } from "../../textUtils.mjs"
 
 const getServiceInfra = (name) => `import { Injectable } from '@nestjs/common';
-import { Infer, InputValidator } from '@/utils/validator';
+import { SchemaInfer, InputValidator } from '@/utils/validator';
 
 import { ValidateSchema } from '@/utils/decorators';
 
@@ -17,7 +17,7 @@ export class ${dashToPascal(name)}Service implements I${dashToPascal(name)}Adapt
   }
 }
 
-export type ${dashToPascal(name)}GetInput = Infer<typeof ${dashToPascal(name)}Schema>;
+export type ${dashToPascal(name)}GetInput = SchemaInfer<typeof ${dashToPascal(name)}Schema>;
 export type ${dashToPascal(name)}GetOutput = ${dashToPascal(name)}GetInput;
 `
 

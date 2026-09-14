@@ -5,7 +5,7 @@ import { ILoggerAdapter } from '@/infra/logger';
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
-import { Infer } from '@/utils/validator';
+import { SchemaInfer } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
@@ -39,7 +39,7 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}UpdateInput = Infer<typeof ${dashToPascal(name)}UpdateSchema>;
+export type ${dashToPascal(name)}UpdateInput = SchemaInfer<typeof ${dashToPascal(name)}UpdateSchema>;
 export type ${dashToPascal(name)}UpdateOutput = ${dashToPascal(name)}Entity;
 `
 

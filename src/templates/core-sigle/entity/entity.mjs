@@ -1,7 +1,7 @@
 import { dashToPascal } from "../../../textUtils.mjs"
 
 const getCoreSingleEntity = (name) => `import { BaseEntity } from '@/utils/entity';
-import { Infer, InputValidator } from '@/utils/validator';
+import { SchemaInfer, InputValidator } from '@/utils/validator';
 
 const ID = InputValidator.uuid();
 const Name = InputValidator.string().trim().min(1).max(200);
@@ -17,7 +17,7 @@ export const ${dashToPascal(name)}EntitySchema = InputValidator.object({
   deletedAt: DeletedAt
 });
 
-type ${dashToPascal(name)} = Infer<typeof ${dashToPascal(name)}EntitySchema>;
+type ${dashToPascal(name)} = SchemaInfer<typeof ${dashToPascal(name)}EntitySchema>;
 
 export class ${dashToPascal(name)}Entity extends BaseEntity<${dashToPascal(name)}Entity>() {
   name!: ${dashToPascal(name)}['name'];

@@ -4,7 +4,7 @@ const getCoreUsecaseGetById = (name) => `import { ${dashToPascal(name)}EntitySch
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
-import { Infer } from '@/utils/validator';
+import { SchemaInfer } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity } from '../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
@@ -28,7 +28,7 @@ export class ${dashToPascal(name)}GetByIdUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}GetByIdInput = Infer<typeof ${dashToPascal(name)}GetByIdSchema>;
+export type ${dashToPascal(name)}GetByIdInput = SchemaInfer<typeof ${dashToPascal(name)}GetByIdSchema>;
 export type ${dashToPascal(name)}GetByIdOutput = ${dashToPascal(name)}Entity;
 `
 
