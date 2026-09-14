@@ -4,6 +4,10 @@
   "description": "Monorepo CLI",
   "main": "src/cli.js",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikemajesty/nestjs-microservice-api-cli.git"
+  },
   "scripts": {
     "permission": "chmod -R 777 ./bin/*",
     "crud": "ENV=local node ./bin/microservice-crud",
