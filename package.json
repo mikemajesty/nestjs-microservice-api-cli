@@ -7,6 +7,7 @@
   "scripts": {
     "permission": "chmod -R 777 ./bin/*",
     "crud": "ENV=local node ./bin/microservice-crud",
+    "build": "echo \"Error: no build specified\"",
     "test": "echo \"Error: no test specified\"",
     "check-newest:deps": "npx npm-check-updates"
   },
