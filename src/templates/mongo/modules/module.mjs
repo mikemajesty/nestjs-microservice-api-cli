@@ -10,7 +10,7 @@ import { ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${n
 import { ${dashToPascal(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
-import { RedisCacheModule } from '@/infra/cache/redis';
+import { CacheRedisModule } from '@/infra/cache/redis';
 import { ConnectionName } from '@/infra/database/enum';
 import { ${dashToPascal(name)}, ${dashToPascal(name)}Document, ${dashToPascal(name)}Schema } from '@/infra/database/mongo/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
@@ -28,7 +28,7 @@ import { ${dashToPascal(name)}Controller } from './controller';
 import { ${dashToPascal(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenLibModule, LoggerModule, RedisCacheModule],
+  imports: [TokenLibModule, LoggerModule, CacheRedisModule],
   controllers: [${dashToPascal(name)}Controller],
   providers: [
     {

@@ -69,7 +69,8 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
 
     await expect(usecase.execute({ id: ${snakeToCamel(name)}.id })).resolves.toEqual({
       ...${snakeToCamel(name)},
-      deletedAt: expect.any(Date)
+      deletedAt: expect.any(Date),
+      updatedAt: expect.any(Date)
     });
   });
 });

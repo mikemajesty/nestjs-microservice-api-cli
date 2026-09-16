@@ -11,7 +11,7 @@ import { ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${n
 import { ${dashToPascal(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${name}-get-by-id';
 import { ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
-import { RedisCacheModule } from '@/infra/cache/redis';
+import { CacheRedisModule } from '@/infra/cache/redis';
 import { ${dashToPascal(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
@@ -27,7 +27,7 @@ import { ${dashToPascal(name)}Controller } from './controller';
 import { ${dashToPascal(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenLibModule, LoggerModule, RedisCacheModule, TypeOrmModule.forFeature([${dashToPascal(name)}Schema])],
+  imports: [TokenLibModule, LoggerModule, CacheRedisModule, TypeOrmModule.forFeature([${dashToPascal(name)}Schema])],
   controllers: [${dashToPascal(name)}Controller],
   providers: [
     {
