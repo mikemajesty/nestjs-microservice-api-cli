@@ -7,7 +7,7 @@ import { Test } from '@nestjs/testing';
 
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput, ${dashToPascal(name)}ListSchema, ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
-import { I${dashToPascal(name)}ListAdapter } from '@/modules/${name}/adapter';
+import { I${dashToPascal(name)}List } from '@/modules/${name}/interfaces';
 import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
 
@@ -15,7 +15,7 @@ import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 
 describe(${dashToPascal(name)}ListUsecase.name, () => {
-  let usecase: I${dashToPascal(name)}ListAdapter;
+  let usecase: I${dashToPascal(name)}List;
   let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
           useValue: {}
         },
         {
-          provide: I${dashToPascal(name)}ListAdapter,
+          provide: I${dashToPascal(name)}List,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
             return new ${dashToPascal(name)}ListUsecase(${snakeToCamel(name)}Repository);
           },
@@ -36,7 +36,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
       ]
     }).compile();
 
-    usecase = app.get(I${dashToPascal(name)}ListAdapter);
+    usecase = app.get(I${dashToPascal(name)}List);
     repository = app.get(I${dashToPascal(name)}Repository);
   });
 

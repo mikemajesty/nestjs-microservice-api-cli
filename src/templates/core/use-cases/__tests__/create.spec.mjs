@@ -4,7 +4,7 @@ const getCoreUsecaseCreateTest = (name) => `import { ZodMockSchema } from '@mike
 import { Test } from '@nestjs/testing';
 
 import { CreatedModel } from '@/infra/repository';
-import { I${dashToPascal(name)}CreateAdapter } from '@/modules/${name}/adapter';
+import { I${dashToPascal(name)}Create } from '@/modules/${name}/interfaces';
 import { ApiInternalServerException } from '@/utils/exception';
 import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
@@ -14,7 +14,7 @@ import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}CreateInput, ${dashToPascal(name)}CreateUsecase } from '../${name}-create';
 
 describe(${dashToPascal(name)}CreateUsecase.name, () => {
-  let usecase: I${dashToPascal(name)}CreateAdapter;
+  let usecase: I${dashToPascal(name)}Create;
   let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
@@ -26,7 +26,7 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
           useValue: {}
         },
         {
-          provide: I${dashToPascal(name)}CreateAdapter,
+          provide: I${dashToPascal(name)}Create,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
             return new ${dashToPascal(name)}CreateUsecase(${snakeToCamel(name)}Repository);
           },
@@ -35,7 +35,7 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
       ]
     }).compile();
 
-    usecase = app.get(I${dashToPascal(name)}CreateAdapter);
+    usecase = app.get(I${dashToPascal(name)}Create);
     repository = app.get(I${dashToPascal(name)}Repository);
   });
 

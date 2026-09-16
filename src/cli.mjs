@@ -45,6 +45,7 @@ const getFileIcon = (fileName) => {
   if (fileName.includes('controller')) return '🎮';
   if (fileName.includes('module')) return '📦';
   if (fileName.includes('adapter')) return '🔌';
+   if (fileName.includes('interfaces')) return '🔌';
   if (fileName.includes('schema')) return '📋';
   if (fileName.includes('service')) return '⚙️';
   if (fileName.includes('.tsp')) return '📝';
@@ -296,8 +297,8 @@ const createInfra = async (name) => {
 
     fs.mkdirSync(dirRoot)
 
-    fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterInfra(name))
-    trackFile(`infra/${name}/adapter.ts`, 'infra');
+    fs.writeFileSync(`${dirRoot}/interfaces.ts`, getAdapterInfra(name))
+    trackFile(`infra/${name}/interfaces.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/index.ts`, getIndexInfra(name))
     trackFile(`infra/${name}/index.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleInfa(name))
@@ -327,8 +328,8 @@ const createLib = async (name) => {
 
     fs.mkdirSync(dirRoot)
 
-    fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterLib(name))
-    trackFile(`libs/${name}/adapter.ts`, 'libs');
+    fs.writeFileSync(`${dirRoot}/interfaces.ts`, getAdapterLib(name))
+    trackFile(`libs/${name}/interfaces.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/index.ts`, getIndexLib(name))
     trackFile(`libs/${name}/index.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleLib(name))
@@ -469,8 +470,8 @@ const createPostgresCrud = async (name) => {
 
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
-    fs.writeFileSync(`${modulesPath}/adapter.ts`, getModuleAdapter(name))
-    trackFile(`modules/${name}/adapter.ts`, 'modules');
+    fs.writeFileSync(`${modulesPath}/interfaces.ts`, getModuleAdapter(name))
+    trackFile(`modules/${name}/interfaces.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleController(name))
     trackFile(`modules/${name}/controller.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/module.ts`, getModule(name))
@@ -520,8 +521,8 @@ const createMongoCrud = async (name) => {
     const modulesPath = `${dirRoot}/modules/${name}`;
     fs.mkdirSync(modulesPath)
 
-    fs.writeFileSync(`${modulesPath}/adapter.ts`, getModuleAdapterMongo(name))
-    trackFile(`modules/${name}/adapter.ts`, 'modules');
+    fs.writeFileSync(`${modulesPath}/interfaces.ts`, getModuleAdapterMongo(name))
+    trackFile(`modules/${name}/interfaces.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/controller.ts`, getModuleControllerMongo(name))
     trackFile(`modules/${name}/controller.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/module.ts`, getModuleMongo(name))

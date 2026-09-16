@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
-import { I${dashToPascal(name)}UpdateAdapter } from '@/modules/${name}/adapter';
+import { I${dashToPascal(name)}Update } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
@@ -15,7 +15,7 @@ import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}UpdateInput, ${dashToPascal(name)}UpdateUsecase } from '../${name}-update';
 
 describe(${dashToPascal(name)}UpdateUsecase.name, () => {
-  let usecase: I${dashToPascal(name)}UpdateAdapter;
+  let usecase: I${dashToPascal(name)}Update;
   let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
           useValue: {}
         },
         {
-          provide: I${dashToPascal(name)}UpdateAdapter,
+          provide: I${dashToPascal(name)}Update,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, logger: ILoggerAdapter) => {
             return new ${dashToPascal(name)}UpdateUsecase(${snakeToCamel(name)}Repository, logger);
           },
@@ -36,7 +36,7 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
       ]
     }).compile();
 
-    usecase = app.get(I${dashToPascal(name)}UpdateAdapter);
+    usecase = app.get(I${dashToPascal(name)}Update);
     repository = app.get(I${dashToPascal(name)}Repository);
   });
 

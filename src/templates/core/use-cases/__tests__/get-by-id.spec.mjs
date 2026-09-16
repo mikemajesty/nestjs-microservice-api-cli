@@ -3,7 +3,7 @@ import { dashToPascal, snakeToCamel } from "../../../../textUtils.mjs"
 const getCoreUsecaseGetByIdTest = (name) => `import { ZodMockSchema } from '@mikemajesty/zod-mock-schema';
 import { Test } from '@nestjs/testing';
 
-import { I${dashToPascal(name)}GetByIdAdapter } from '@/modules/${name}/adapter';
+import { I${dashToPascal(name)}GetById } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
@@ -13,7 +13,7 @@ import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 import { ${dashToPascal(name)}GetByIdInput, ${dashToPascal(name)}GetByIdUsecase } from '../${name}-get-by-id';
 
 describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
-  let usecase: I${dashToPascal(name)}GetByIdAdapter;
+  let usecase: I${dashToPascal(name)}GetById;
   let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
@@ -24,7 +24,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
           useValue: {}
         },
         {
-          provide: I${dashToPascal(name)}GetByIdAdapter,
+          provide: I${dashToPascal(name)}GetById,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
             return new ${dashToPascal(name)}GetByIdUsecase(${snakeToCamel(name)}Repository);
           },
@@ -33,7 +33,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
       ]
     }).compile();
 
-    usecase = app.get(I${dashToPascal(name)}GetByIdAdapter);
+    usecase = app.get(I${dashToPascal(name)}GetById);
     repository = app.get(I${dashToPascal(name)}Repository);
   });
 

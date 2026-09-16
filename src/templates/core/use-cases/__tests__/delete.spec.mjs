@@ -6,7 +6,7 @@ import { Test } from '@nestjs/testing';
 import { ${dashToPascal(name)}DeleteInput, ${dashToPascal(name)}DeleteUsecase } from '@/core/${name}/use-cases/${name}-delete';
 import { LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
-import { I${dashToPascal(name)}DeleteAdapter } from '@/modules/${name}/adapter';
+import { I${dashToPascal(name)}Delete } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
 import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
@@ -15,7 +15,7 @@ import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
 
 describe(${dashToPascal(name)}DeleteUsecase.name, () => {
-  let usecase: I${dashToPascal(name)}DeleteAdapter;
+  let usecase: I${dashToPascal(name)}Delete;
   let repository: I${dashToPascal(name)}Repository;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
           useValue: {}
         },
         {
-          provide: I${dashToPascal(name)}DeleteAdapter,
+          provide: I${dashToPascal(name)}Delete,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
             return new ${dashToPascal(name)}DeleteUsecase(${snakeToCamel(name)}Repository);
           },
@@ -36,7 +36,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
       ]
     }).compile();
 
-    usecase = app.get(I${dashToPascal(name)}DeleteAdapter);
+    usecase = app.get(I${dashToPascal(name)}Delete);
     repository = app.get(I${dashToPascal(name)}Repository);
   });
 
