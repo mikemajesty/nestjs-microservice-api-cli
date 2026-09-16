@@ -18,12 +18,12 @@ import { TokenLibModule } from '@/libs/token';
 import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
 
 import {
-  I${dashToPascal(name)}CreateAdapter,
-  I${dashToPascal(name)}DeleteAdapter,
-  I${dashToPascal(name)}GetByIdAdapter,
-  I${dashToPascal(name)}ListAdapter,
-  I${dashToPascal(name)}UpdateAdapter
-} from './adapter';
+  I${dashToPascal(name)}Create,
+  I${dashToPascal(name)}Delete,
+  I${dashToPascal(name)}GetById,
+  I${dashToPascal(name)}List,
+  I${dashToPascal(name)}Update
+} from './interfaces';
 import { ${dashToPascal(name)}Controller } from './controller';
 import { ${dashToPascal(name)}Repository } from './repository';
 
@@ -55,38 +55,38 @@ import { ${dashToPascal(name)}Repository } from './repository';
       inject: [getConnectionToken(ConnectionName.CATS)]
     },
     {
-      provide: I${dashToPascal(name)}CreateAdapter,
+      provide: I${dashToPascal(name)}Create,
       useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}CreateUsecase(repository),
       inject: [I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${dashToPascal(name)}UpdateAdapter,
+      provide: I${dashToPascal(name)}Update,
       useFactory: (logger: ILoggerAdapter, repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}UpdateUsecase(repository, logger),
       inject: [ILoggerAdapter, I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${dashToPascal(name)}GetByIdAdapter,
+      provide: I${dashToPascal(name)}GetById,
       useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}GetByIdUsecase(repository),
       inject: [I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${dashToPascal(name)}ListAdapter,
+      provide: I${dashToPascal(name)}List,
       useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}ListUsecase(repository),
       inject: [I${dashToPascal(name)}Repository]
     },
     {
-      provide: I${dashToPascal(name)}DeleteAdapter,
+      provide: I${dashToPascal(name)}Delete,
       useFactory: (repository: I${dashToPascal(name)}Repository) => new ${dashToPascal(name)}DeleteUsecase(repository),
       inject: [I${dashToPascal(name)}Repository]
     }
   ],
   exports: [
     I${dashToPascal(name)}Repository,
-    I${dashToPascal(name)}CreateAdapter,
-    I${dashToPascal(name)}UpdateAdapter,
-    I${dashToPascal(name)}GetByIdAdapter,
-    I${dashToPascal(name)}ListAdapter,
-    I${dashToPascal(name)}DeleteAdapter
+    I${dashToPascal(name)}Create,
+    I${dashToPascal(name)}Update,
+    I${dashToPascal(name)}GetById,
+    I${dashToPascal(name)}List,
+    I${dashToPascal(name)}Delete
   ]
 })
 export class ${dashToPascal(name)}Module {}

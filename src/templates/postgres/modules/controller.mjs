@@ -12,16 +12,16 @@ import { ApiRequest } from '@/utils/request';
 import { SearchHttpSchema } from '@/utils/search';
 import { SortHttpSchema } from '@/utils/sort';
 
-import { I${dashToPascal(name)}CreateAdapter, I${dashToPascal(name)}DeleteAdapter, I${dashToPascal(name)}GetByIdAdapter, I${dashToPascal(name)}ListAdapter, I${dashToPascal(name)}UpdateAdapter } from './adapter';
+import { I${dashToPascal(name)}Create, I${dashToPascal(name)}Delete, I${dashToPascal(name)}GetById, I${dashToPascal(name)}List, I${dashToPascal(name)}Update } from './interfaces';
 
 @Controller('${pluralize(name)}')
 export class ${dashToPascal(name)}Controller {
   constructor(
-    private readonly createUsecase: I${dashToPascal(name)}CreateAdapter,
-    private readonly updateUsecase: I${dashToPascal(name)}UpdateAdapter,
-    private readonly getByIdUsecase: I${dashToPascal(name)}GetByIdAdapter,
-    private readonly listUsecase: I${dashToPascal(name)}ListAdapter,
-    private readonly deleteUsecase: I${dashToPascal(name)}DeleteAdapter
+    private readonly createUsecase: I${dashToPascal(name)}Create,
+    private readonly updateUsecase: I${dashToPascal(name)}Update,
+    private readonly getByIdUsecase: I${dashToPascal(name)}GetById,
+    private readonly listUsecase: I${dashToPascal(name)}List,
+    private readonly deleteUsecase: I${dashToPascal(name)}Delete
   ) {}
 
   @Post()
