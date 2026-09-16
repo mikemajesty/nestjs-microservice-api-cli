@@ -297,8 +297,8 @@ const createInfra = async (name) => {
 
     fs.mkdirSync(dirRoot)
 
-    fs.writeFileSync(`${dirRoot}/interfaces.ts`, getAdapterInfra(name))
-    trackFile(`infra/${name}/interfaces.ts`, 'infra');
+    fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterInfra(name))
+    trackFile(`infra/${name}/adapter.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/index.ts`, getIndexInfra(name))
     trackFile(`infra/${name}/index.ts`, 'infra');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleInfa(name))
@@ -328,8 +328,8 @@ const createLib = async (name) => {
 
     fs.mkdirSync(dirRoot)
 
-    fs.writeFileSync(`${dirRoot}/interfaces.ts`, getAdapterLib(name))
-    trackFile(`libs/${name}/interfaces.ts`, 'libs');
+    fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterLib(name))
+    trackFile(`libs/${name}/adapter.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/index.ts`, getIndexLib(name))
     trackFile(`libs/${name}/index.ts`, 'libs');
     fs.writeFileSync(`${dirRoot}/module.ts`, getModuleLib(name))
