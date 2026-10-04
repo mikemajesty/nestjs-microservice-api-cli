@@ -27,6 +27,7 @@ import cliSelect from 'cli-select';
 import promptSync from 'prompt-sync';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -48,7 +49,7 @@ const getFileIcon = (fileName) => {
   if (fileName.includes('controller')) return '🎮';
   if (fileName.includes('module')) return '📦';
   if (fileName.includes('adapter')) return '🔌';
-   if (fileName.includes('interfaces')) return '🔌';
+  if (fileName.includes('interfaces')) return '🔌';
   if (fileName.includes('schema')) return '📋';
   if (fileName.includes('service')) return '⚙️';
   if (fileName.includes('.tsp')) return '📝';
@@ -61,19 +62,19 @@ const printCreatedFiles = (moduleName, moduleType) => {
   console.log('');
   console.log(bold(cyan('  ╭───────────────────────────────────────────────────────────╮')));
   console.log(bold(cyan('  │                                                           │')));
-  console.log(bold(cyan('  │')) + bold(green('       🚀 ')) + bold(white(moduleType.toUpperCase() + ' CREATED SUCCESSFULLY!'))  + bold(cyan('              │')));
+  console.log(bold(cyan('  │')) + bold(green('       🚀 ')) + bold(white(moduleType.toUpperCase() + ' CREATED SUCCESSFULLY!')) + bold(cyan('              │')));
   console.log(bold(cyan('  │                                                           │')));
   console.log(bold(cyan('  ╰───────────────────────────────────────────────────────────╯')));
   console.log('');
   console.log(bold(white('  📋 Module: ')) + bold(yellow(moduleName)));
   console.log('');
-  
+
   const categories = {};
   createdFiles.forEach(file => {
     if (!categories[file.category]) categories[file.category] = [];
     categories[file.category].push(file.path);
   });
-  
+
   const categoryConfig = {
     'core/entity': { icon: '📦', label: 'Entity', color: magenta },
     'core/repository': { icon: '🗄️ ', label: 'Repository', color: blue },
@@ -87,22 +88,22 @@ const printCreatedFiles = (moduleName, moduleType) => {
     'infra': { icon: '🔧', label: 'Infrastructure', color: cyan },
     'migration': { icon: '🔑', label: 'Permissions Migration', color: magenta },
   };
-  
+
   // Define display order
   const categoryOrder = [
     'core/entity', 'core/repository', 'core/use-cases', 'core/tests',
     'modules', 'modules/e2e', 'schemas', 'typespec', 'libs', 'infra', 'migration'
   ];
-  
+
   const sortedCategories = categoryOrder.filter(cat => categories[cat]);
-  
+
   sortedCategories.forEach((category, catIndex) => {
     const config = categoryConfig[category] || { icon: '📁', label: category, color: white };
     const isLastCategory = catIndex === sortedCategories.length - 1;
     const catPrefix = isLastCategory ? '  └─' : '  ├─';
-    
+
     console.log(gray(catPrefix) + ' ' + bold(config.color(`${config.icon} ${config.label}`)));
-    
+
     categories[category].forEach((file, index) => {
       const isLast = index === categories[category].length - 1;
       const linePrefix = isLastCategory ? '     ' : '  │  ';
@@ -112,7 +113,7 @@ const printCreatedFiles = (moduleName, moduleType) => {
       console.log(gray(`${linePrefix}${filePrefix}`) + ` ${icon} ` + white(fileName));
     });
   });
-  
+
   const totalFiles = createdFiles.length;
   console.log('');
   console.log(bold(cyan('  ─────────────────────────────────────────────────────────────')));
@@ -124,7 +125,33 @@ const printCreatedFiles = (moduleName, moduleType) => {
   console.log(gray('     2. ') + cyan('npm run lint') + gray('  - Check code style'));
   console.log(gray('     3. ') + cyan('npm test') + gray('       - Run tests'));
   console.log('');
-  
+
+  if (moduleType === 'postgres:crud') {
+    const migrationFile = (categories['migration'] || []).find((file) => file.includes('-create-'));
+
+    console.log(bold(yellow('  ⚠️  ATTENTION: the create-table migration only has "id" and "name" columns!')));
+    if (migrationFile) {
+      console.log(bold(yellow(`     Edit ${migrationFile} and src/core/${moduleName}/entity/${moduleName}.ts`)));
+    } else {
+      console.log(bold(yellow(`     Edit the create-table migration and src/core/${moduleName}/entity/${moduleName}.ts`)));
+    }
+    console.log(bold(yellow('     with your own fields/properties before running it.')));
+    console.log('');
+    console.log(bold(yellow('     Then run ') + cyan('npm run migration:run') + yellow(', or stop and restart the app')));
+    console.log(bold(yellow('     (start:dev/start:debug already run migrations automatically on boot).')));
+    console.log('');
+  }
+
+  const hasPermissionsMigration = (categories['migration'] || []).some((file) => file.includes('-insert-') && file.includes('-permissions'));
+
+  if (hasPermissionsMigration) {
+    console.log(bold(yellow('  ⚠️  Role permissions are cached in Redis (TTL up to 600s).')));
+    console.log(bold(yellow('     After running the permissions migration, clear the role cache')));
+    console.log(bold(yellow('     (e.g. ') + cyan('redis-cli KEYS "role:id:*" | xargs redis-cli DEL') + yellow(', or FLUSHALL/restart Redis)')));
+    console.log(bold(yellow('     otherwise the new permissions may 403 until the cache expires.')));
+    console.log('');
+  }
+
   // Clear for next run
   createdFiles.length = 0;
 };
@@ -134,21 +161,21 @@ const addModuleToAppModule = (dest, moduleName, importPath, targetFile = 'app.mo
   try {
     const moduleFilePath = `${dest}/src/${targetFile}`;
     let content = fs.readFileSync(moduleFilePath, 'utf-8');
-    
+
     const pascalName = moduleName.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
     const moduleClassName = `${pascalName}${moduleSuffix}`;
     const importStatement = `import { ${moduleClassName} } from '${importPath}'`;
-    
+
     // Check if import already exists
     if (content.includes(importStatement)) {
       console.log(bold(green(`${moduleClassName} already imported`)));
       return;
     }
-    
+
     // Find the last import from @/modules/
     const lastModuleImportRegex = /import\s+{[^}]+}\s+from\s+'@\/modules\/[^']+'/g;
     const matches = [...content.matchAll(lastModuleImportRegex)];
-    
+
     if (matches.length > 0) {
       const lastMatch = matches[matches.length - 1];
       const insertPosition = lastMatch.index + lastMatch[0].length;
@@ -160,33 +187,33 @@ const addModuleToAppModule = (dest, moduleName, importPath, targetFile = 'app.mo
         content = content.slice(0, firstImportEnd) + '\n' + importStatement + content.slice(firstImportEnd);
       }
     }
-    
+
     // Add module to imports array
     const importsArrayRegex = /imports:\s*\[([^\]]*)\]/s;
     const match = content.match(importsArrayRegex);
-    
+
     if (match) {
       const importsContent = match[1];
-      
+
       // Check if module already in imports
       if (importsContent.includes(moduleClassName)) {
         console.log(bold(green(`${moduleClassName} already in imports array`)));
         return;
       }
-      
+
       // Find the position before the closing bracket, after the last module
       const modules = importsContent.trim().split(',').map(m => m.trim()).filter(m => m);
       const lastModule = modules[modules.length - 1];
-      
+
       // Add the new module
       const updatedImports = importsContent.replace(
         lastModule,
         `${lastModule},\n    ${moduleClassName}`
       );
-      
+
       content = content.replace(importsArrayRegex, `imports: [${updatedImports}]`);
     }
-    
+
     fs.writeFileSync(moduleFilePath, content, 'utf-8');
     console.log(bold(green(`✓ ${moduleClassName} added to ${targetFile}`)));
   } catch (error) {
@@ -198,31 +225,31 @@ const createTypeSpecDocs = (dest, moduleName) => {
   try {
     const docsPath = `${dest}/api-spec/src/modules/${moduleName}`;
     const mainTspPath = `${dest}/api-spec/src/main.tsp`;
-    
+
     if (!fs.existsSync(`${dest}/api-spec/src`)) {
       console.log(bold(green(`TypeSpec api-spec folder not found, skipping...`)));
       return;
     }
-    
+
     if (!fs.existsSync(docsPath)) {
       fs.mkdirSync(docsPath, { recursive: true });
     }
-    
+
     fs.writeFileSync(`${docsPath}/controller.tsp`, getTypeSpecController(moduleName));
     trackFile(`api-spec/src/modules/${moduleName}/controller.tsp`, 'typespec');
     fs.writeFileSync(`${docsPath}/model.tsp`, getTypeSpecModel(moduleName));
     trackFile(`api-spec/src/modules/${moduleName}/model.tsp`, 'typespec');
     fs.writeFileSync(`${docsPath}/exception.tsp`, getTypeSpecException(moduleName));
     trackFile(`api-spec/src/modules/${moduleName}/exception.tsp`, 'typespec');
-    
+
     if (fs.existsSync(mainTspPath)) {
       let mainContent = fs.readFileSync(mainTspPath, 'utf-8');
       const importStatement = `import "./modules/${moduleName}/controller.tsp";`;
-      
+
       if (!mainContent.includes(importStatement)) {
         const lastImportRegex = /import "\.\/modules\/[^"]+\/controller\.tsp";/g;
         const matches = [...mainContent.matchAll(lastImportRegex)];
-        
+
         if (matches.length > 0) {
           const lastMatch = matches[matches.length - 1];
           const insertPosition = lastMatch.index + lastMatch[0].length;
@@ -231,15 +258,30 @@ const createTypeSpecDocs = (dest, moduleName) => {
         }
       }
     }
-    
+
     console.log(bold(green(`✓ TypeSpec documentation created at api-spec/src/modules/${moduleName}/`)));
+
+    compileTypeSpecDocs(dest);
   } catch (error) {
     console.log(bold(red(`Error creating TypeSpec docs: ${error.message}`)));
   }
 };
 
-// reads `export enum RoleEnum { KEY = 'VALUE', ... }` from the target project's role entity,
-// so the CLI never hardcodes role names and stays in sync when roles are added/removed there.
+const compileTypeSpecDocs = (dest) => {
+  const apiSpecPath = `${dest}/api-spec`;
+
+  if (!fs.existsSync(`${apiSpecPath}/package.json`)) return;
+
+  try {
+    console.log(bold(cyan(`Compiling TypeSpec docs...`)));
+    execSync('npm run compile', { cwd: apiSpecPath, stdio: 'pipe' });
+    console.log(bold(green(`✓ TypeSpec docs compiled, restart the server to see it at /api-docs`)));
+  } catch (error) {
+    console.log(bold(yellow(`Could not compile TypeSpec docs automatically: ${error.message}`)));
+    console.log(bold(yellow(`Run "npm run compile" inside api-spec/ manually.`)));
+  }
+};
+
 const readRoleEnumMembers = (dest) => {
   try {
     const roleEntityPath = `${dest}/src/core/role/entity/role.ts`;
@@ -264,8 +306,6 @@ const readRoleEnumMembers = (dest) => {
   }
 };
 
-// cli-select only supports single-select, so a checkbox-style multi-select is built by
-// looping it: each pick toggles a role, and a final "done" option confirms the selection.
 const selectRoles = async (roleNames) => {
   if (roleNames.length === 0) {
     return [];
@@ -549,7 +589,7 @@ const createCore = async (name) => {
 
     fs.writeFileSync(`${entityPath}/${name}.ts`, getCoreEntity(name))
     trackFile(`${entityPath}/${name}.ts`, 'core/entity');
-    
+
     fs.writeFileSync(`${repositoryPath}/${name}.ts`, getCoreRepository(name))
     trackFile(`${repositoryPath}/${name}.ts`, 'core/repository');
 
@@ -926,7 +966,6 @@ export async function cli(args) {
         }
       }
 
-      // Add module to the appropriate module file
       if (userInput.type === 'postgres:crud' || userInput.type === 'mongo:crud') {
         addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
         createTypeSpecDocs(dest, name);
@@ -956,7 +995,7 @@ export async function cli(args) {
 
 const getName = (name) => {
   if (!name) throw new Error('--name is required');
-  
+
   name = String(name)
     .trim()
     .toLowerCase()
@@ -965,14 +1004,14 @@ const getName = (name) => {
     .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
-  
+
   if (!name) {
     throw new Error('Invalid name: contains only special characters');
   }
-  
+
   if (/^\d/.test(name)) {
     throw new Error('Invalid name: cannot start with a number');
   }
-  
+
   return name;
 }
