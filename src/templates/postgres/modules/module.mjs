@@ -12,6 +12,7 @@ import { ${dashToPascal(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${
 import { ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { CacheRedisModule } from '@/infra/cache/redis';
+import { PostgresConnectionName } from '@/infra/database';
 import { ${dashToPascal(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
@@ -27,7 +28,7 @@ import { ${dashToPascal(name)}Controller } from './controller';
 import { ${dashToPascal(name)}Repository } from './repository';
 
 @Module({
-  imports: [TokenLibModule, LoggerModule, CacheRedisModule, TypeOrmModule.forFeature([${dashToPascal(name)}Schema])],
+  imports: [TokenLibModule, LoggerModule, CacheRedisModule, TypeOrmModule.forFeature([${dashToPascal(name)}Schema], PostgresConnectionName.POSTGRES)],
   controllers: [${dashToPascal(name)}Controller],
   providers: [
     {
@@ -35,7 +36,7 @@ import { ${dashToPascal(name)}Repository } from './repository';
       useFactory: (repository: Repository<${dashToPascal(name)}Schema & ${dashToPascal(name)}Entity>) => {
         return new ${dashToPascal(name)}Repository(repository);
       },
-      inject: [getRepositoryToken(${dashToPascal(name)}Schema)]
+      inject: [getRepositoryToken(${dashToPascal(name)}Schema, PostgresConnectionName.POSTGRES)]
     },
     {
       provide: I${dashToPascal(name)}Create,
