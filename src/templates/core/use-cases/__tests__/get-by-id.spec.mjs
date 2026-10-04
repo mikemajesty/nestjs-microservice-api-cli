@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 
 import { I${dashToPascal(name)}GetById } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/test/utils';
+import { MockUtils, TestUtils } from '@/utils/test';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
@@ -19,10 +19,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       providers: [
-        {
-          provide: I${dashToPascal(name)}Repository,
-          useValue: {}
-        },
+        TestUtils.mockProvider(I${dashToPascal(name)}Repository),
         {
           provide: I${dashToPascal(name)}GetById,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
@@ -54,7 +51,7 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute({ id: TestUtils.mockUUID() })).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: MockUtils.UUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
   const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);

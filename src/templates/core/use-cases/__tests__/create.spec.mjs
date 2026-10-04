@@ -21,10 +21,7 @@ describe(${dashToPascal(name)}CreateUsecase.name, () => {
     const app = await Test.createTestingModule({
       imports: [],
       providers: [
-        {
-          provide: I${dashToPascal(name)}Repository,
-          useValue: {}
-        },
+        TestUtils.mockProvider(I${dashToPascal(name)}Repository),
         {
           provide: I${dashToPascal(name)}Create,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {

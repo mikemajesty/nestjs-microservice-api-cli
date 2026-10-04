@@ -2,7 +2,7 @@ import { dashToPascal, snakeToCamel } from "../../../textUtils.mjs"
 
 const getModule = (name) => `import { Module } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/mongoose';
-import mongoose, { Connection, PaginateModel, Schema } from 'mongoose';
+import { Connection, PaginateModel } from 'mongoose';
 
 import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${dashToPascal(name)}CreateUsecase } from '@/core/${name}/use-cases/${name}-create';
@@ -12,7 +12,7 @@ import { ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${nam
 import { ${dashToPascal(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { CacheRedisModule } from '@/infra/cache/redis';
 import { ConnectionName } from '@/infra/database/enum';
-import { ${dashToPascal(name)}, ${dashToPascal(name)}Document, ${dashToPascal(name)}Schema } from '@/infra/database/mongo/schemas/${name}';
+import { ${dashToPascal(name)}, ${dashToPascal(name)}Document } from '@/infra/database/mongo/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
 import { MongoRepositoryModelSessionType } from '@/utils/mongoose';
@@ -34,21 +34,12 @@ import { ${dashToPascal(name)}Repository } from './repository';
     {
       provide: I${dashToPascal(name)}Repository,
       useFactory: async (connection: Connection) => {
-        type Model = mongoose.PaginateModel<${dashToPascal(name)}Document>;
-
-        //  use if you want transaction
-        const repository: MongoRepositoryModelSessionType<PaginateModel<${dashToPascal(name)}Document>> = connection.model<
-          ${dashToPascal(name)}Document,
-          Model
-        >(${dashToPascal(name)}.name, ${dashToPascal(name)}Schema as Schema);
+        const repository: MongoRepositoryModelSessionType<PaginateModel<${dashToPascal(name)}Document>> = new ${dashToPascal(name)}().repository(connection);
 
         repository.connection = connection;
 
         // use if you not want transaction
-        // const repository: PaginateModel<UserDocument> = connection.model<UserDocument, Model>(
-        //   User.name,
-        //   UserSchema as Schema
-        // );
+        // const repository = new ${dashToPascal(name)}().repository(connection);
 
         return new ${dashToPascal(name)}Repository(repository);
       },

@@ -15,6 +15,9 @@ import { getModuleModule } from './templates/module/module.mjs';
 import { getTypeSpecController } from './templates/typespec/controller.mjs';
 import { getTypeSpecModel } from './templates/typespec/model.mjs';
 import { getTypeSpecException } from './templates/typespec/exception.mjs';
+import { getCreateTableMigration } from './templates/postgres/migrations/create-table.mjs';
+import { getInsertPermissionsMigration } from './templates/postgres/migrations/insert-permissions.mjs';
+import { dashToPascal } from './textUtils.mjs';
 
 import fs from 'fs';
 import { bold, green, red, cyan, yellow, magenta, gray, blue, white } from 'colorette';
@@ -77,16 +80,18 @@ const printCreatedFiles = (moduleName, moduleType) => {
     'core/use-cases': { icon: '⚡', label: 'Use Cases', color: yellow },
     'core/tests': { icon: '🧪', label: 'Tests', color: green },
     'modules': { icon: '🎮', label: 'Module Files', color: cyan },
+    'modules/e2e': { icon: '🧪', label: 'E2E Tests', color: green },
     'schemas': { icon: '📋', label: 'Database Schema', color: magenta },
     'typespec': { icon: '📝', label: 'TypeSpec API Spec', color: blue },
     'libs': { icon: '📚', label: 'Library Files', color: yellow },
     'infra': { icon: '🔧', label: 'Infrastructure', color: cyan },
+    'migration': { icon: '🔑', label: 'Permissions Migration', color: magenta },
   };
   
   // Define display order
   const categoryOrder = [
     'core/entity', 'core/repository', 'core/use-cases', 'core/tests',
-    'modules', 'schemas', 'typespec', 'libs', 'infra'
+    'modules', 'modules/e2e', 'schemas', 'typespec', 'libs', 'infra', 'migration'
   ];
   
   const sortedCategories = categoryOrder.filter(cat => categories[cat]);
@@ -233,6 +238,177 @@ const createTypeSpecDocs = (dest, moduleName) => {
   }
 };
 
+// reads `export enum RoleEnum { KEY = 'VALUE', ... }` from the target project's role entity,
+// so the CLI never hardcodes role names and stays in sync when roles are added/removed there.
+const readRoleEnumMembers = (dest) => {
+  try {
+    const roleEntityPath = `${dest}/src/core/role/entity/role.ts`;
+
+    if (!fs.existsSync(roleEntityPath)) {
+      console.log(bold(yellow('RoleEnum file not found, skipping permission/role linking...')));
+      return [];
+    }
+
+    const content = fs.readFileSync(roleEntityPath, 'utf-8');
+    const enumMatch = content.match(/export enum RoleEnum\s*{([^}]*)}/s);
+
+    if (!enumMatch) {
+      console.log(bold(yellow('RoleEnum not found in role entity, skipping permission/role linking...')));
+      return [];
+    }
+
+    return [...enumMatch[1].matchAll(/(\w+)\s*=\s*['"]([^'"]+)['"]/g)].map(match => match[1]);
+  } catch (error) {
+    console.log(bold(red(`Error reading RoleEnum: ${error.message}`)));
+    return [];
+  }
+};
+
+// cli-select only supports single-select, so a checkbox-style multi-select is built by
+// looping it: each pick toggles a role, and a final "done" option confirms the selection.
+const selectRoles = async (roleNames) => {
+  if (roleNames.length === 0) {
+    return [];
+  }
+
+  const selected = new Set();
+
+  while (true) {
+    console.log(bold(cyan('Select role(s) to grant the new permissions to (pick "done" to confirm):')));
+
+    const values = roleNames.map(role => selected.has(role) ? `[x] ${role}` : `[ ] ${role}`);
+    values.push(selected.size > 0 ? bold(green(`✓ done (${[...selected].join(', ')})`)) : 'done');
+
+    const result = await cliSelect({ values });
+
+    if (result.id === roleNames.length) {
+      break;
+    }
+
+    const roleName = roleNames[result.id];
+    if (selected.has(roleName)) {
+      selected.delete(roleName);
+    } else {
+      selected.add(roleName);
+    }
+  }
+
+  return [...selected];
+};
+
+// only postgres/mongo CRUD scaffolds carry permissions, so role selection is skipped
+// (returns no roles) for every other scaffold type.
+const getSelectedRoleNamesForCrud = async (dest, type) => {
+  if (type !== 'postgres:crud' && type !== 'mongo:crud') {
+    return [];
+  }
+
+  const roleEnumMembers = readRoleEnumMembers(dest);
+  return await selectRoles(roleEnumMembers);
+};
+
+// writes a new postgres migration creating the scaffolded module's table. Only
+// postgres:crud needs this: mongo collections are created implicitly on first insert.
+const createTableMigration = (dest, name) => {
+  try {
+    const migrationsPath = `${dest}/src/infra/database/postgres/migrations`;
+
+    if (!fs.existsSync(migrationsPath)) {
+      console.log(bold(yellow('Postgres migrations folder not found, skipping create-table migration...')));
+      return;
+    }
+
+    const timestamp = Date.now();
+    const fileName = `${timestamp}-create-${name}-table.ts`;
+    const content = getCreateTableMigration(name, timestamp);
+
+    fs.writeFileSync(`${migrationsPath}/${fileName}`, content);
+    trackFile(`src/infra/database/postgres/migrations/${fileName}`, 'migration');
+    console.log(bold(green(`✓ create-table migration created for ${name}`)));
+  } catch (error) {
+    console.log(bold(red(`Error creating table migration: ${error.message}`)));
+  }
+};
+
+// writes a new postgres migration inserting the module's permissions and linking them,
+// by role name (never by hardcoded uuid), to whichever roles were selected in the prompt.
+const createPermissionsMigration = (dest, name, roleNames) => {
+  try {
+    if (roleNames.length === 0) {
+      console.log(bold(yellow(`No role selected, skipping permissions migration. Remember to create one manually and link it to a role.`)));
+      return;
+    }
+
+    const migrationsPath = `${dest}/src/infra/database/postgres/migrations`;
+
+    if (!fs.existsSync(migrationsPath)) {
+      console.log(bold(yellow('Postgres migrations folder not found, skipping permissions migration...')));
+      return;
+    }
+
+    const timestamp = Date.now();
+    const fileName = `${timestamp}-insert-${name}-permissions.ts`;
+    const content = getInsertPermissionsMigration(name, timestamp, roleNames);
+
+    fs.writeFileSync(`${migrationsPath}/${fileName}`, content);
+    trackFile(`src/infra/database/postgres/migrations/${fileName}`, 'migration');
+    console.log(bold(green(`✓ permissions migration created for role(s): ${roleNames.join(', ')}`)));
+  } catch (error) {
+    console.log(bold(red(`Error creating permissions migration: ${error.message}`)));
+  }
+};
+
+// registers the new controller in TestEnd2EndUtils.CONTROLLERS, so its @Permission(...)
+// metadata gets picked up by the dynamic e2e permission extraction and fixtures don't 403.
+const addControllerToE2ETestUtils = (dest, name) => {
+  try {
+    const utilsPath = `${dest}/src/utils/test/e2e/utils.ts`;
+
+    if (!fs.existsSync(utilsPath)) {
+      console.log(bold(yellow('e2e utils.ts not found, skipping controller registration...')));
+      return;
+    }
+
+    let content = fs.readFileSync(utilsPath, 'utf-8');
+    const controllerClassName = `${dashToPascal(name)}Controller`;
+    const importStatement = `import { ${controllerClassName} } from '@/modules/${name}/controller'`;
+
+    if (content.includes(importStatement)) {
+      console.log(bold(green(`${controllerClassName} already imported in e2e utils.ts`)));
+      return;
+    }
+
+    const moduleImportRegex = /import\s+{[^}]+}\s+from\s+'@\/modules\/[^']+'/g;
+    const matches = [...content.matchAll(moduleImportRegex)];
+
+    if (matches.length > 0) {
+      const lastMatch = matches[matches.length - 1];
+      const insertPosition = lastMatch.index + lastMatch[0].length;
+      content = content.slice(0, insertPosition) + '\n' + importStatement + content.slice(insertPosition);
+    }
+
+    const controllersArrayRegex = /CONTROLLERS:\s*Type\[\]\s*=\s*\[([^\]]*)\]/s;
+    const arrayMatch = content.match(controllersArrayRegex);
+
+    if (arrayMatch) {
+      const arrayContent = arrayMatch[1];
+
+      if (arrayContent.includes(controllerClassName)) {
+        console.log(bold(green(`${controllerClassName} already in CONTROLLERS array`)));
+        return;
+      }
+
+      const updatedArray = `${arrayContent.trimEnd()},\n    ${controllerClassName}\n  `;
+      content = content.replace(controllersArrayRegex, `CONTROLLERS: Type[] = [${updatedArray}]`);
+    }
+
+    fs.writeFileSync(utilsPath, content, 'utf-8');
+    console.log(bold(green(`✓ ${controllerClassName} added to e2e utils.ts CONTROLLERS`)));
+  } catch (error) {
+    console.log(bold(red(`Error adding controller to e2e utils.ts: ${error.message}`)));
+  }
+};
+
 import { getCoreUsecaseCreateTest } from './templates/core/use-cases/__tests__/create.spec.mjs';
 import { getCoreUsecaseUpdateTest } from './templates/core/use-cases/__tests__/update.spec.mjs';
 import { getCoreUsecaseDeleteTest } from './templates/core/use-cases/__tests__/delete.spec.mjs';
@@ -248,12 +424,14 @@ import { getCoreUsecaseUpdate } from './templates/core/use-cases/update.mjs';
 
 import { getModuleAdapter } from './templates/postgres/modules/adapter.mjs';
 import { getModuleController } from './templates/postgres/modules/controller.mjs';
+import { getModuleControllerE2ETest } from './templates/postgres/modules/controller.e2e.spec.mjs';
 import { getModule } from './templates/postgres/modules/module.mjs';
 import { getModuleRepository } from './templates/postgres/modules/repository.mjs';
 import { getModuleSchema } from './templates/postgres/schemas/schema.mjs';
 
 import { getModuleAdapter as getModuleAdapterMongo } from './templates/mongo/modules/adapter.mjs';
 import { getModuleController as getModuleControllerMongo } from './templates/mongo/modules/controller.mjs';
+import { getModuleControllerE2ETest as getModuleControllerE2ETestMongo } from './templates/mongo/modules/controller.e2e.spec.mjs';
 import { getModule as getModuleMongo } from './templates/mongo/modules/module.mjs';
 import { getModuleRepository as getModuleRepositoryMongo } from './templates/mongo/modules/repository.mjs';
 import { getModuleSchema as getModuleSchemaMongo } from './templates/mongo/schemas/schema.mjs';
@@ -479,6 +657,11 @@ const createPostgresCrud = async (name) => {
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepository(name))
     trackFile(`modules/${name}/repository.ts`, 'modules');
 
+    const modulesPathTest = `${modulesPath}/__tests__`;
+    fs.mkdirSync(modulesPathTest)
+    fs.writeFileSync(`${modulesPathTest}/controller.e2e.spec.ts`, getModuleControllerE2ETest(name))
+    trackFile(`modules/${name}/__tests__/controller.e2e.spec.ts`, 'modules/e2e');
+
     await createCore(name)
 
     return `${name}`
@@ -529,6 +712,11 @@ const createMongoCrud = async (name) => {
     trackFile(`modules/${name}/module.ts`, 'modules');
     fs.writeFileSync(`${modulesPath}/repository.ts`, getModuleRepositoryMongo(name))
     trackFile(`modules/${name}/repository.ts`, 'modules');
+
+    const modulesPathTest = `${modulesPath}/__tests__`;
+    fs.mkdirSync(modulesPathTest)
+    fs.writeFileSync(`${modulesPathTest}/controller.e2e.spec.ts`, getModuleControllerE2ETestMongo(name))
+    trackFile(`modules/${name}/__tests__/controller.e2e.spec.ts`, 'modules/e2e');
 
     await createCore(name)
 
@@ -587,6 +775,11 @@ export async function cli(args) {
 
   userInput.name = name.replace("_", "-").replace(" ", "-")
 
+  // DESTINATION PATH
+  const dest = path.resolve(`${__dirname}/../../../../`)
+
+  const selectedRoleNames = await getSelectedRoleNamesForCrud(dest, userInput.type)
+
   const options = await parseArgumentsInoOptions(userInput)
 
   const paths = []
@@ -621,8 +814,6 @@ export async function cli(args) {
 
   try {
 
-    // DESTINATION PATH
-    const dest = path.resolve(`${__dirname}/../../../../`)
     const src = paths[0]
 
     // VALIDATE 
@@ -739,6 +930,11 @@ export async function cli(args) {
       if (userInput.type === 'postgres:crud' || userInput.type === 'mongo:crud') {
         addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
         createTypeSpecDocs(dest, name);
+        if (userInput.type === 'postgres:crud') {
+          createTableMigration(dest, name);
+        }
+        createPermissionsMigration(dest, name, selectedRoleNames);
+        addControllerToE2ETestUtils(dest, name);
       } else if (userInput.type === 'module') {
         addModuleToAppModule(dest, name, `@/modules/${name}/module`, 'app.module.ts', 'Module');
       } else if (userInput.type === 'lib') {

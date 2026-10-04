@@ -3,10 +3,11 @@ import pluralize from 'pluralize'
 import { dashToPascal } from '../../../textUtils.mjs'
 
 const getModuleSchema = (name) => `import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document, PaginateModel, Schema as MongooseSchema } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 
 import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
+import { IMongoSchema } from '@/utils/mongoose';
 
 export type ${dashToPascal(name)}Document = Document & ${dashToPascal(name)}Entity;
 
@@ -17,7 +18,7 @@ export type ${dashToPascal(name)}Document = Document & ${dashToPascal(name)}Enti
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 })
-export class ${dashToPascal(name)} {
+export class ${dashToPascal(name)} implements IMongoSchema<${dashToPascal(name)}Document> {
   @Prop({ type: String })
   _id!: string;
 
@@ -26,6 +27,13 @@ export class ${dashToPascal(name)} {
 
   @Prop({ type: Date, default: null })
   deletedAt!: Date;
+
+  repository(connection: mongoose.Connection): PaginateModel<${dashToPascal(name)}Document> {
+    type Model = PaginateModel<${dashToPascal(name)}Document>;
+
+    const repository = connection.model<${dashToPascal(name)}Document, Model>(this.constructor.name, ${dashToPascal(name)}Schema as MongooseSchema);
+    return repository;
+  }
 }
 
 const ${dashToPascal(name)}Schema = SchemaFactory.createForClass(${dashToPascal(name)});

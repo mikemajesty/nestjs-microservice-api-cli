@@ -8,7 +8,7 @@ import { LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}Delete } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/test/utils';
+import { MockUtils, TestUtils } from '@/utils/test';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
@@ -22,10 +22,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
     const app = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
-        {
-          provide: I${dashToPascal(name)}Repository,
-          useValue: {}
-        },
+        TestUtils.mockProvider(I${dashToPascal(name)}Repository),
         {
           provide: I${dashToPascal(name)}Delete,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
@@ -60,7 +57,7 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute({ id: TestUtils.mockUUID() })).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: MockUtils.UUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
   test('when ${snakeToCamel(name)} deleted successfully, should expect a ${snakeToCamel(name)} deleted', async () => {

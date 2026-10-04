@@ -6,7 +6,6 @@ const getCoreUsecaseListTest = (name) => `import { ZodMockSchema } from '@mikema
 import { Test } from '@nestjs/testing';
 
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput, ${dashToPascal(name)}ListSchema, ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
-import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { I${dashToPascal(name)}List } from '@/modules/${name}/interfaces';
 import { TestUtils } from '@/utils/test/utils';
 import { ZodExceptionIssue } from '@/utils/validator';
@@ -20,18 +19,15 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [],
       providers: [
-        {
-          provide: I${dashToPascal(name)}Repository,
-          useValue: {}
-        },
+        TestUtils.mockProvider(I${dashToPascal(name)}Repository),
         {
           provide: I${dashToPascal(name)}List,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) => {
             return new ${dashToPascal(name)}ListUsecase(${snakeToCamel(name)}Repository);
           },
-          inject: [I${dashToPascal(name)}Repository, ILoggerAdapter]
+          inject: [I${dashToPascal(name)}Repository]
         }
       ]
     }).compile();

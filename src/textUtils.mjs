@@ -15,3 +15,9 @@ export const snakeToCamel = str =>
       .replace('-', '')
       .replace('_', '')
   );
+
+// single source of truth for CRUD permission names, shared by controller templates
+// and the permissions migration template, so they never drift apart.
+export const getPermissionNames = (name) => {
+  return [`${name}:create`, `${name}:update`, `${name}:getbyid`, `${name}:list`, `${name}:delete`];
+};

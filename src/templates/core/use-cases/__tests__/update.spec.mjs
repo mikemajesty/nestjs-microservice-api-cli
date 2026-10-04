@@ -7,7 +7,7 @@ import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}Update } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
-import { TestUtils } from '@/utils/test/utils';
+import { MockUtils, TestUtils } from '@/utils/test';
 import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
@@ -22,10 +22,7 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
     const app = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
-        {
-          provide: I${dashToPascal(name)}Repository,
-          useValue: {}
-        },
+        TestUtils.mockProvider(I${dashToPascal(name)}Repository),
         {
           provide: I${dashToPascal(name)}Update,
           useFactory: (${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository, logger: ILoggerAdapter) => {
@@ -66,14 +63,14 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
 
-    await expect(usecase.execute({ id: TestUtils.mockUUID() })).rejects.toThrow(ApiNotFoundException);
+    await expect(usecase.execute({ id: MockUtils.UUID() })).rejects.toThrow(ApiNotFoundException);
   });
 
   test('when ${snakeToCamel(name)} updated successfully, should expect a ${snakeToCamel(name)} updated', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(input);
     repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
-    await expect(usecase.execute({ id: TestUtils.mockUUID() })).resolves.toEqual(input);
+    await expect(usecase.execute({ id: MockUtils.UUID() })).resolves.toEqual(input);
   });
 });
 `
