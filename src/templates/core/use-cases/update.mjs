@@ -27,15 +27,15 @@ export class ${dashToPascal(name)}UpdateUsecase implements IUsecase {
       throw new ApiNotFoundException();
     }
 
-    const entity = new ${dashToPascal(name)}Entity({ ...${snakeToCamel(name)}, ...input });
+    ${snakeToCamel(name)}.merge(input);
 
-    await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity.toObject());
+    await this.${snakeToCamel(name)}Repository.updateOne({ id: ${snakeToCamel(name)}.id }, ${snakeToCamel(name)}.toData());
 
     this.loggerService.info({ message: '${snakeToCamel(name)} updated.', metadata: { ${snakeToCamel(name)}: input } });
 
-    const updated = await this.${snakeToCamel(name)}Repository.findById(entity.id);
+    const updated = await this.${snakeToCamel(name)}Repository.findById(${snakeToCamel(name)}.id);
 
-    return new ${dashToPascal(name)}Entity(updated as ${dashToPascal(name)}Entity).toObject();
+    return updated!.toData();
   }
 }
 

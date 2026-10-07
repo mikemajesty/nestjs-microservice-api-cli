@@ -52,7 +52,9 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   });
 
   const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
-  const ${snakeToCamel(name)} = mock.generate<${dashToPascal(name)}Entity>();
+  const ${snakeToCamel(name)} = mock.generate({
+    factory: (data) => new ${dashToPascal(name)}Entity(data)
+  });
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
     repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(null);
@@ -61,11 +63,11 @@ describe(${dashToPascal(name)}DeleteUsecase.name, () => {
   });
 
   test('when ${snakeToCamel(name)} deleted successfully, should expect a ${snakeToCamel(name)} deleted', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)}.clone());
     repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
     await expect(usecase.execute({ id: ${snakeToCamel(name)}.id })).resolves.toEqual({
-      ...${snakeToCamel(name)},
+      ...${snakeToCamel(name)}.toData(),
       deletedAt: expect.any(Date),
       updatedAt: expect.any(Date)
     });

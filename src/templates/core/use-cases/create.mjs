@@ -20,7 +20,7 @@ export class ${dashToPascal(name)}CreateUsecase implements IUsecase {
   async execute(input: ${dashToPascal(name)}CreateInput): Promise<${dashToPascal(name)}CreateOutput> {
     const entity = new ${dashToPascal(name)}Entity({ id: IDGeneratorUtils.uuid(), ...input });
 
-    const created = await this.${snakeToCamel(name)}Repository.create(entity.toObject());
+    const created = await this.${snakeToCamel(name)}Repository.create(entity.toData());
 
     return created;
   }

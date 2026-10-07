@@ -54,12 +54,13 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
   const docs = mock.generateMany(2, {
     overrides: {
       deletedAt: null
-    }
+    },
+    factory: (data) => new ${dashToPascal(name)}Entity(data)
   });
 
   const input = new ZodMockSchema(${dashToPascal(name)}ListSchema).generate();
   test('when ${pluralize(snakeToCamel(name))} are found, should expect an user list', async () => {
-    const output = { docs: docs as ${dashToPascal(name)}Entity[], page: 1, limit: 1, total: 1 };
+    const output = { docs, page: 1, limit: 1, total: 1 };
     repository.paginate = TestUtils.mockResolvedValue<${dashToPascal(name)}ListOutput>(output);
 
     await expect(usecase.execute(input)).resolves.toEqual({
@@ -71,7 +72,7 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
   });
 
   test('when ${pluralize(snakeToCamel(name))} not found, should expect an empty list', async () => {
-    const output = { docs: docs as ${dashToPascal(name)}Entity[], page: 1, limit: 1, total: 1 };
+    const output = { docs, page: 1, limit: 1, total: 1 };
     repository.paginate = TestUtils.mockResolvedValue<${dashToPascal(name)}ListOutput>(output);
 
     await expect(usecase.execute(input)).resolves.toEqual(output);

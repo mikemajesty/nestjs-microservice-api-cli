@@ -55,12 +55,14 @@ describe(${dashToPascal(name)}GetByIdUsecase.name, () => {
   });
 
   const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
-  const ${snakeToCamel(name)} = mock.generate<${dashToPascal(name)}Entity>();
+  const ${snakeToCamel(name)} = mock.generate({
+    factory: (data) => new ${dashToPascal(name)}Entity(data)
+  });
 
   test('when ${snakeToCamel(name)} found, should expect a ${snakeToCamel(name)} found', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)});
+    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(${snakeToCamel(name)}.clone());
 
-    await expect(usecase.execute({ id: ${snakeToCamel(name)}.id })).resolves.toEqual(${snakeToCamel(name)});
+    await expect(usecase.execute({ id: ${snakeToCamel(name)}.id })).resolves.toEqual(${snakeToCamel(name)}.toData());
   });
 });
 `

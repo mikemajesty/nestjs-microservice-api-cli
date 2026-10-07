@@ -479,7 +479,7 @@ import { getModuleSchema as getModuleSchemaMongo } from './templates/mongo/schem
 const createModule = async (name) => {
   if (!name) throw new Error('--name is required')
   name = getName(name)
-  const dirRoot = `${__dirname}/scafold/module/${name}`
+  const dirRoot = `${__dirname}/scaffold/module/${name}`
 
   try {
     if (fs.existsSync(dirRoot)) {
@@ -506,7 +506,7 @@ const createModule = async (name) => {
 const createInfra = async (name) => {
   if (!name) throw new Error('--name is required')
   name = getName(name)
-  const dirRoot = `${__dirname}/scafold/infra/${name}`
+  const dirRoot = `${__dirname}/scaffold/infra/${name}`
 
   try {
     if (fs.existsSync(dirRoot)) {
@@ -537,7 +537,7 @@ const createInfra = async (name) => {
 const createLib = async (name) => {
   if (!name) throw new Error('--name is required')
   name = getName(name)
-  const dirRoot = `${__dirname}/scafold/libs/${name}`
+  const dirRoot = `${__dirname}/scaffold/libs/${name}`
 
   try {
     if (fs.existsSync(dirRoot)) {
@@ -568,7 +568,7 @@ const createLib = async (name) => {
 const createCore = async (name) => {
   name = getName(name);
 
-  const dirRoot = `${__dirname}/scafold/core/${name}`
+  const dirRoot = `${__dirname}/scaffold/core/${name}`
 
   try {
 
@@ -627,7 +627,7 @@ const createCore = async (name) => {
 
 const createCoreSingle = async (name) => {
   name = getName(name);
-  const dirRoot = `${__dirname}/scafold/core-single/${name}`
+  const dirRoot = `${__dirname}/scaffold/core-single/${name}`
   try {
     if (fs.existsSync(dirRoot)) {
       fs.rmSync(dirRoot, { recursive: true });
@@ -667,7 +667,7 @@ const createCoreSingle = async (name) => {
 const createPostgresCrud = async (name) => {
   name = getName(name);
 
-  const dirRoot = `${__dirname}/scafold/postgres/${name}`
+  const dirRoot = `${__dirname}/scaffold/postgres/${name}`
 
   try {
     if (fs.existsSync(dirRoot)) {
@@ -678,7 +678,7 @@ const createPostgresCrud = async (name) => {
 
     fs.mkdirSync(`${dirRoot}/modules`)
 
-    const schemasPath = `${__dirname}/scafold/postgres/schemas`;
+    const schemasPath = `${__dirname}/scaffold/postgres/schemas`;
     if (fs.existsSync(schemasPath)) {
       fs.rmSync(schemasPath, { recursive: true });
     }
@@ -720,7 +720,7 @@ const createMongoCrud = async (name) => {
   if (!name) throw new Error('--name is required')
   name = getName(name)
 
-  const dirRoot = `${__dirname}/scafold/mongo/${name}`
+  const dirRoot = `${__dirname}/scaffold/mongo/${name}`
 
   try {
     if (fs.existsSync(dirRoot)) {
@@ -731,7 +731,7 @@ const createMongoCrud = async (name) => {
 
     fs.mkdirSync(`${dirRoot}/modules`)
 
-    const schemasPath = `${__dirname}/scafold/mongo/schemas`;
+    const schemasPath = `${__dirname}/scaffold/mongo/schemas`;
 
     if (fs.existsSync(schemasPath)) {
       fs.rmSync(schemasPath, { recursive: true });
@@ -827,27 +827,27 @@ export async function cli(args) {
   for (const key in options) {
     if (options[key]) {
       if (userInput.type === 'postgres:crud') {
-        paths.push(path.resolve(`${__dirname}/../src/scafold/postgres/`, options[key]))
+        paths.push(path.resolve(`${__dirname}/../src/scaffold/postgres/`, options[key]))
       }
 
       if (userInput.type === 'mongo:crud') {
-        paths.push(path.resolve(`${__dirname}/../src/scafold/mongo/`, options[key]))
+        paths.push(path.resolve(`${__dirname}/../src/scaffold/mongo/`, options[key]))
       }
 
       if (userInput.type === 'lib') {
-        paths.push(path.resolve(`${__dirname}/../src/scafold/libs/`, options[key]))
+        paths.push(path.resolve(`${__dirname}/../src/scaffold/libs/`, options[key]))
       }
 
       if (userInput.type === 'infra') {
-        paths.push(path.resolve(`${__dirname}/../src/scafold/infra/`, options[key]))
+        paths.push(path.resolve(`${__dirname}/../src/scaffold/infra/`, options[key]))
       }
 
       if (userInput.type === 'module') {
-        paths.push(path.resolve(`${__dirname}/../src/scafold/module/`, options[key]))
+        paths.push(path.resolve(`${__dirname}/../src/scaffold/module/`, options[key]))
       }
 
       if (userInput.type === 'core') {
-        paths.push(path.resolve(`${__dirname}/../src/scafold/core-single/`, options[key]))
+        paths.push(path.resolve(`${__dirname}/../src/scaffold/core-single/`, options[key]))
       }
     }
   }

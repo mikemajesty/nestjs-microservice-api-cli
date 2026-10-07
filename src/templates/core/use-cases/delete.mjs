@@ -6,7 +6,7 @@ import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 import { SchemaInfer } from '@/utils/validator';
 
-import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
+import { ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
 export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
@@ -23,13 +23,11 @@ export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
       throw new ApiNotFoundException();
     }
 
-    const entity = new ${dashToPascal(name)}Entity(${snakeToCamel(name)});
+    ${snakeToCamel(name)}.deactivate();
 
-    entity.deactivate();
+    await this.${snakeToCamel(name)}Repository.updateOne({ id: ${snakeToCamel(name)}.id }, ${snakeToCamel(name)}.toData());
 
-    await this.${snakeToCamel(name)}Repository.updateOne({ id: entity.id }, entity.toObject());
-
-    return entity.toObject();
+    return ${snakeToCamel(name)}.toData();
   }
 }
 

@@ -1,36 +1,25 @@
 import { dashToPascal } from "../../../textUtils.mjs"
 
 const getModuleRepository = (name) => `import { Injectable } from '@nestjs/common';
-import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ${dashToPascal(name)}Entity } from '@/core/${name}/entity/${name}';
 import { I${dashToPascal(name)}Repository } from '@/core/${name}/repository/${name}';
 import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}Schema } from '@/infra/database/postgres/schemas/${name}';
 import { TypeORMRepository } from '@/infra/repository/postgres/repository';
-import { ConvertTypeOrmFilter, SearchTypeEnum, ValidateDatabaseSortAllowed } from '@/utils/decorators';
-import { IEntity } from '@/utils/entity';
-import { PaginationUtils } from '@/utils/pagination';
+import { SearchTypeEnum, TransformSort, TransformTypeOrmSearch } from '@/utils/decorators';
 
 @Injectable()
-export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model> implements I${dashToPascal(name)}Repository {
+export class ${dashToPascal(name)}Repository extends TypeORMRepository<Model, ${dashToPascal(name)}Entity> implements I${dashToPascal(name)}Repository {
   constructor(readonly repository: Repository<Model>) {
-    super(repository);
+    super(repository, ${dashToPascal(name)}Entity);
   }
 
-  @ValidateDatabaseSortAllowed<${dashToPascal(name)}Entity>({ name: 'name' }, { name: 'createdAt' })
-  @ConvertTypeOrmFilter<${dashToPascal(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
+  @TransformSort<${dashToPascal(name)}Entity>({ name: 'name' }, { name: 'createdAt' })
+  @TransformTypeOrmSearch<${dashToPascal(name)}Entity>([{ name: 'name', type: SearchTypeEnum.like }])
   async paginate(input: ${dashToPascal(name)}ListInput): Promise<${dashToPascal(name)}ListOutput> {
-    const skip = PaginationUtils.calculateSkip(input);
-
-    const [docs, total] = await this.repository.findAndCount({
-      take: input.limit,
-      skip,
-      order: input.sort as FindOptionsOrder<IEntity>,
-      where: input.search as FindOptionsWhere<IEntity>
-    });
-
-    return { docs: docs.map((doc) => new ${dashToPascal(name)}Entity(doc).toObject()), total, page: input.page, limit: input.limit };
+    return this.applyPagination(input);
   }
 }
 

@@ -52,12 +52,13 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   });
 
   const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
-  const input = mock.generate<${dashToPascal(name)}Entity>({
+  const input = mock.generate({
     overrides: {
       updatedAt: null,
       createdAt: null,
       deletedAt: null
-    }
+    },
+    factory: (data) => new ${dashToPascal(name)}Entity(data)
   });
 
   test('when ${snakeToCamel(name)} not found, should expect an error', async () => {
@@ -67,10 +68,10 @@ describe(${dashToPascal(name)}UpdateUsecase.name, () => {
   });
 
   test('when ${snakeToCamel(name)} updated successfully, should expect a ${snakeToCamel(name)} updated', async () => {
-    repository.findById = TestUtils.mockResolvedValue<${dashToPascal(name)}Entity>(input);
+    repository.findById = TestUtils.mockResolvedValueOnce<${dashToPascal(name)}Entity>(input.clone()).mockResolvedValue(input.clone());
     repository.updateOne = TestUtils.mockResolvedValue<UpdatedModel>();
 
-    await expect(usecase.execute({ id: MockUtils.UUID() })).resolves.toEqual(input);
+    await expect(usecase.execute({ id: MockUtils.UUID() })).resolves.toEqual(input.toData());
   });
 });
 `
