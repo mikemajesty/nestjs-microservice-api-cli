@@ -11,7 +11,7 @@ import { ${dashToPascal(name)}GetByIdUsecase } from '@/core/${name}/use-cases/${
 import { ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { ${dashToPascal(name)}UpdateUsecase } from '@/core/${name}/use-cases/${name}-update';
 import { CacheRedisModule } from '@/infra/cache/redis';
-import { ConnectionName } from '@/infra/database/enum';
+import { MongoConnectionName } from '@/infra/database';
 import { ${dashToPascal(name)}, ${dashToPascal(name)}Document } from '@/infra/database/mongo/schemas/${name}';
 import { ILoggerAdapter, LoggerModule } from '@/infra/logger';
 import { TokenLibModule } from '@/libs/token';
@@ -43,7 +43,7 @@ import { ${dashToPascal(name)}Repository } from './repository';
 
         return new ${dashToPascal(name)}Repository(repository);
       },
-      inject: [getConnectionToken(ConnectionName.CATS)]
+      inject: [getConnectionToken(MongoConnectionName.MONGO)]
     },
     {
       provide: I${dashToPascal(name)}Create,

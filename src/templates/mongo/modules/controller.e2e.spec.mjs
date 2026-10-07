@@ -20,7 +20,6 @@ import { IPermissionRepository } from '@/core/permission/repository/permission';
 import { IRoleRepository } from '@/core/role/repository/role';
 import { IUserRepository } from '@/core/user/repository/user';
 import { ICacheAdapter } from '@/infra/cache';
-import { ConnectionName } from '@/infra/database/enum';
 import { ${dashToPascal(name)} } from '@/infra/database/mongo/schemas/${name}';
 import { ITokenAdapter } from '@/libs/token';
 import { GuardsModule } from '@/middlewares/guards/module';
@@ -54,7 +53,7 @@ describe(${dashToPascal(name)}Controller.name, () => {
   const permissionFixture = new PermissionFixture();
 
   beforeAll(async () => {
-    const { mongoConnection } = await mongoContainer.getTestMongo(ConnectionName.CATS);
+    const { mongoConnection } = await mongoContainer.getTestMongo();
     const { postgresConfig } = await postgresContainer.getPostgres();
     redisService = await redisContainer.getTestRedis();
 

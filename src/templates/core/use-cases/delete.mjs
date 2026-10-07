@@ -6,7 +6,7 @@ import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
 import { SchemaInfer } from '@/utils/validator';
 
-import { ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
+import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
 export const ${dashToPascal(name)}DeleteSchema = ${dashToPascal(name)}EntitySchema.pick({
   id: true
