@@ -486,7 +486,7 @@ const createModule = async (name) => {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
+    fs.mkdirSync(dirRoot, { recursive: true })
 
     fs.writeFileSync(`${dirRoot}/controller.ts`, getModuleControllerModule(name))
     trackFile(`modules/${name}/controller.ts`, 'modules');
@@ -513,7 +513,7 @@ const createInfra = async (name) => {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
+    fs.mkdirSync(dirRoot, { recursive: true })
 
     fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterInfra(name))
     trackFile(`infra/${name}/adapter.ts`, 'infra');
@@ -544,7 +544,7 @@ const createLib = async (name) => {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
+    fs.mkdirSync(dirRoot, { recursive: true })
 
     fs.writeFileSync(`${dirRoot}/adapter.ts`, getAdapterLib(name))
     trackFile(`libs/${name}/adapter.ts`, 'libs');
@@ -577,7 +577,7 @@ const createCore = async (name) => {
     }
 
     const dirCore = dirRoot;
-    fs.mkdirSync(dirCore)
+    fs.mkdirSync(dirCore, { recursive: true })
 
     const entityPath = `${dirCore}/entity`;
     const repositoryPath = `${dirCore}/repository`;
@@ -633,7 +633,7 @@ const createCoreSingle = async (name) => {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
+    fs.mkdirSync(dirRoot, { recursive: true })
 
     const usecasePath = `${dirRoot}/use-cases`
 
@@ -674,7 +674,7 @@ const createPostgresCrud = async (name) => {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
+    fs.mkdirSync(dirRoot, { recursive: true })
 
     fs.mkdirSync(`${dirRoot}/modules`)
 
@@ -727,7 +727,7 @@ const createMongoCrud = async (name) => {
       fs.rmSync(dirRoot, { recursive: true });
     }
 
-    fs.mkdirSync(dirRoot)
+    fs.mkdirSync(dirRoot, { recursive: true })
 
     fs.mkdirSync(`${dirRoot}/modules`)
 
