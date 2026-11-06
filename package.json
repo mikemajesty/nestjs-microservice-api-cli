@@ -1,6 +1,6 @@
 {
   "name": "@mikemajesty/microservice-crud",
-  "version": "7.1.25",
+  "version": "7.1.26",
   "description": "Monorepo CLI",
   "main": "src/cli.js",
   "type": "module",
