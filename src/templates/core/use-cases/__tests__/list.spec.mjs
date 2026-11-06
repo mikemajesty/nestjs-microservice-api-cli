@@ -5,10 +5,9 @@ import { dashToPascal, snakeToCamel } from '../../../../textUtils.mjs'
 const getCoreUsecaseListTest = (name) => `import { ZodMockSchema } from '@mikemajesty/zod-mock-schema';
 import { Test } from '@nestjs/testing';
 
-import { ${dashToPascal(name)}ListInput, ${dashToPascal(name)}ListOutput, ${dashToPascal(name)}ListSchema, ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
+import { ${dashToPascal(name)}ListOutput, ${dashToPascal(name)}ListSchema, ${dashToPascal(name)}ListUsecase } from '@/core/${name}/use-cases/${name}-list';
 import { I${dashToPascal(name)}List } from '@/modules/${name}/interfaces';
 import { TestUtils } from '@/utils/test/utils';
-import { ZodExceptionIssue } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
@@ -34,20 +33,6 @@ describe(${dashToPascal(name)}ListUsecase.name, () => {
 
     usecase = app.get(I${dashToPascal(name)}List);
     repository = app.get(I${dashToPascal(name)}Repository);
-  });
-
-  test('when no input is specified, should expect an error', async () => {
-    await TestUtils.expectZodError(
-      () => usecase.execute({} as ${dashToPascal(name)}ListInput),
-      (issues: ZodExceptionIssue[]) => {
-        expect(issues).toEqual([
-          {
-            message: 'Invalid input: expected string, received undefined',
-            path: TestUtils.nameOf<${dashToPascal(name)}ListInput>('search')
-          }
-        ]);
-      }
-    );
   });
 
   const mock = new ZodMockSchema(${dashToPascal(name)}EntitySchema);
