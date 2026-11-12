@@ -4,7 +4,7 @@ const getCoreUsecaseDelete = (name) => `import { I${dashToPascal(name)}Repositor
 import { ValidateSchema } from '@/utils/decorators';
 import { ApiNotFoundException } from '@/utils/exception';
 import { IUsecase } from '@/utils/usecase';
-import { SchemaInfer } from '@/utils/validator';
+import { InferSchema } from '@/utils/validator';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 
@@ -31,7 +31,7 @@ export class ${dashToPascal(name)}DeleteUsecase implements IUsecase {
   }
 }
 
-export type ${dashToPascal(name)}DeleteInput = SchemaInfer<typeof ${dashToPascal(name)}DeleteSchema>;
+export type ${dashToPascal(name)}DeleteInput = InferSchema<typeof ${dashToPascal(name)}DeleteSchema>;
 export type ${dashToPascal(name)}DeleteOutput = ${dashToPascal(name)}Entity;
 `
 
