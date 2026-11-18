@@ -1,6 +1,6 @@
 import { dashToPascal } from "../../../textUtils.mjs"
 
-const getCoreSingleEntity = (name) => `import { BaseEntity } from '@/utils/entity';
+const getCoreSingleEntity = (name) => `import { BaseEntity } from '@/utils/domain';
 import { InferSchema, InputValidator } from '@/utils/validator';
 
 const ID = InputValidator.uuid();
