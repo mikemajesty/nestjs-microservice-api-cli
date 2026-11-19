@@ -1,13 +1,13 @@
 import { dashToPascal } from "../../textUtils.mjs"
 
 const getServiceLib = (name) => `import { Injectable } from '@nestjs/common';
-import { InferSchema, InputValidator } from '@/utils/validator';
+import { InferSchema, Schema } from '@/utils/schema';
 
 import { ValidateSchema } from '@/utils/decorators';
 
 import { I${dashToPascal(name)}Adapter } from './adapter';
 
-const ${dashToPascal(name)}Schema = InputValidator.object({ name: InputValidator.string().trim() });
+const ${dashToPascal(name)}Schema = Schema.object({ name: Schema.string().trim() });
 
 @Injectable()
 export class ${dashToPascal(name)}Service implements I${dashToPascal(name)}Adapter {

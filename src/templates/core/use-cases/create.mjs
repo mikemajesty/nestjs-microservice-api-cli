@@ -4,7 +4,7 @@ const getCoreUsecaseCreate = (name) => `import { CreatedModel } from '@/infra/re
 import { ValidateSchema } from '@/utils/decorators';
 import { IDGeneratorUtils } from '@/utils/id-generator';
 import { IUsecase } from '@/utils/usecase';
-import { InferSchema } from '@/utils/validator';
+import { InferSchema } from '@/utils/schema';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';

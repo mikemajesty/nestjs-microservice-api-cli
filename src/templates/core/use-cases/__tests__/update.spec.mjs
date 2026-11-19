@@ -8,7 +8,7 @@ import { UpdatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}Update } from '@/modules/${name}/interfaces';
 import { ApiNotFoundException } from '@/utils/exception';
 import { MockUtils, TestUtils } from '@/utils/test';
-import { ZodExceptionIssue } from '@/utils/validator';
+import { ZodExceptionIssue } from '@/utils/schema';
 
 import { ${dashToPascal(name)}Entity, ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';

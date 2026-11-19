@@ -6,11 +6,11 @@ import { PaginationInput, PaginationOutput, PaginationSchema } from '@/utils/pag
 import { SearchSchema } from '@/utils/search';
 import { SortSchema } from '@/utils/sort';
 import { IUsecase } from '@/utils/usecase';
-import { InputValidator } from '@/utils/validator';
+import { Schema } from '@/utils/schema';
 
 import { I${dashToPascal(name)}Repository } from '../repository/${name}';
 
-export const ${dashToPascal(name)}ListSchema = InputValidator.intersection(PaginationSchema, SortSchema).and(SearchSchema);
+export const ${dashToPascal(name)}ListSchema = Schema.intersection(PaginationSchema, SortSchema).and(SearchSchema);
 
 export class ${dashToPascal(name)}ListUsecase implements IUsecase {
   constructor(private readonly ${snakeToCamel(name)}Repository: I${dashToPascal(name)}Repository) {}

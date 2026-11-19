@@ -7,7 +7,7 @@ import { CreatedModel } from '@/infra/repository';
 import { I${dashToPascal(name)}Create } from '@/modules/${name}/interfaces';
 import { ApiInternalServerException } from '@/utils/exception';
 import { TestUtils } from '@/utils/test/utils';
-import { ZodExceptionIssue } from '@/utils/validator';
+import { ZodExceptionIssue } from '@/utils/schema';
 
 import { ${dashToPascal(name)}EntitySchema } from '../../entity/${name}';
 import { I${dashToPascal(name)}Repository } from '../../repository/${name}';
