@@ -23,14 +23,10 @@ import { ICacheAdapter } from '@/infra/cache';
 import { ITokenAdapter } from '@/libs/token';
 import { GuardsModule } from '@/middlewares/guards/module';
 import { UserRequest } from '@/utils/request';
-import { TestUtils } from '@/utils/test';
-import { TestPostgresContainer, TestRedisContainer } from '@/utils/test/e2e/containers';
-import { PermissionFixture } from '@/utils/test/e2e/fixtures/permission';
-import { RoleFixture } from '@/utils/test/e2e/fixtures/role';
-import { UserFixture } from '@/utils/test/e2e/fixtures/user';
-import { FixtureUtils } from '@/utils/test/e2e/fixtures/utils';
-import { TestEnd2EndUtils } from '@/utils/test/e2e/utils';
+import { FixtureUtils, PermissionFixture, RoleFixture, TestEnd2EndUtils, TestPostgresContainer, TestRedisContainer, UserFixture } from '@/utils/test/e2e'
 
+import { ISessionAdapter } from '@/libs/session'
+import { TestUtils } from '@/utils/test'
 import { ${dashToPascal(name)}Controller } from '../controller';
 import { ${dashToPascal(name)}Module } from '../module';
 
@@ -48,6 +44,7 @@ describe(${dashToPascal(name)}Controller.name, () => {
   const userFixture = new UserFixture();
   const roleFixture = new RoleFixture();
   const permissionFixture = new PermissionFixture();
+  const sessionAdapter = TestEnd2EndUtils.sessionMock();
 
   beforeAll(async () => {
     const { postgresConfig } = await postgresContainer.getPostgres();
@@ -61,9 +58,12 @@ describe(${dashToPascal(name)}Controller.name, () => {
         verify: TestUtils.mockResolvedValue<UserRequest>({
           name: userFixture.entity.name,
           email: userFixture.entity.email,
-          id: userFixture.entity.id
+          id: userFixture.entity.id,
+          sid: TestEnd2EndUtils.SESSION_ID
         })
       })
+      .overrideProvider(ISessionAdapter)
+      .useValue(sessionAdapter)
       .overrideProvider(ICacheAdapter)
       .useValue(redisService)
       .compile();
